@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: LIBRARY
+server:
+  port: 8091
+eureka:
+  instance:
+    prefer-ip-address: true
+
+  client:
+    fetch-registry: true
+    register-with-eureka: true

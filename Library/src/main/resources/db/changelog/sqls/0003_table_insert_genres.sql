@@ -1,0 +1,8 @@
+--liquibase formatted sql
+
+--changeset Darshak:3
+
+CREATE TABLE GENRES(
+	GENRE_ID BIGINT PRIMARY KEY AUTO_INCREMENT,
+	GENRE_NAME VARCHAR(16)
+);
