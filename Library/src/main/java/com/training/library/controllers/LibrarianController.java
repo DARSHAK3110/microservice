@@ -1,6 +1,7 @@
 package com.training.library.controllers;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import com.training.library.dto.request.ResponseDto;
 import com.training.library.exceptions.CustomExceptionHandler;
 import com.training.library.services.LibrarianService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 @RequestMapping("/api/v1/library/librarians")
 public class LibrarianController {
@@ -21,9 +24,9 @@ public class LibrarianController {
 	@Autowired
 	private LibrarianService librarianService;
 	@PostMapping("/excel")
-	public ResponseEntity<ResponseDto> saveLbrarians(MultipartFile file) throws IOException, CustomExceptionHandler, URISyntaxException{
-		
-		ResponseDto result = this.librarianService.saveLibrarians(file);
+	public ResponseEntity<ResponseDto> saveLbrarians(MultipartFile file, HttpServletRequest req) throws IOException, CustomExceptionHandler, URISyntaxException, ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException, NoSuchFieldException{
+		String header = req.getHeader("username");
+		ResponseDto result = this.librarianService.saveLibrarians(file,header);
 		
 		return ResponseEntity.ok(result);
 	}

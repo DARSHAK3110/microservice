@@ -13,9 +13,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-public class Reservations {
+@Table(name = "reservations")
+public class Reservation {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,17 +27,22 @@ public class Reservations {
 	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "BOOK_ID")
-	private Books book;
+	private Book book;
+
+	@JsonIgnore
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "UPLOAD_ID")
+	private Upload upload;
 
 	@JsonIgnore
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "MEMBER_ID")
-	private Members member;
+	private Member member;
 
 	@Column(name = "RESERVATION_DATE")
 	private Date reservationDate;
 
-	public Reservations() {
+	public Reservation() {
 		super();
 	}
 
@@ -47,19 +54,19 @@ public class Reservations {
 		this.reservationId = reservationId;
 	}
 
-	public Books getBook() {
+	public Book getBook() {
 		return book;
 	}
 
-	public void setBook(Books book) {
+	public void setBook(Book book) {
 		this.book = book;
 	}
 
-	public Members getMember() {
+	public Member getMember() {
 		return member;
 	}
 
-	public void setMember(Members member) {
+	public void setMember(Member member) {
 		this.member = member;
 	}
 
@@ -71,4 +78,12 @@ public class Reservations {
 		this.reservationDate = reservationDate;
 	}
 
+	public Upload getUpload() {
+		return upload;
+	}
+
+	public void setUpload(Upload upload) {
+		this.upload = upload;
+	}
+	
 }

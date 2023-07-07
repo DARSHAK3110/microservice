@@ -3,6 +3,9 @@ package com.training.library.models;
 import java.util.List;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,10 +13,14 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
-public class Genres {
+@Table(name = "genres")
+public class Genre {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "GENRE_ID")
@@ -23,9 +30,14 @@ public class Genres {
 
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "genre", fetch = FetchType.EAGER)
-	private List<BooksGenres> bookGenre;
+	private List<BooksGenre> bookGenre;
 
-	public Genres() {
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "UPLOAD_ID")
+	private Upload upload;
+
+	public Genre() {
 		super();
 	}
 
@@ -45,12 +57,20 @@ public class Genres {
 		this.genreName = genreName;
 	}
 
-	public List<BooksGenres> getBookGenre() {
+	public List<BooksGenre> getBookGenre() {
 		return bookGenre;
 	}
 
-	public void setBookGenre(List<BooksGenres> bookGenre) {
+	public void setBookGenre(List<BooksGenre> bookGenre) {
 		this.bookGenre = bookGenre;
+	}
+
+	public Upload getUpload() {
+		return upload;
+	}
+
+	public void setUpload(Upload upload) {
+		this.upload = upload;
 	}
 
 }

@@ -2,7 +2,6 @@ package com.training.library.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,9 +10,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-public class BooksGenres {
+@Table(name="books_genres")
+public class BooksGenre {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,16 +22,16 @@ public class BooksGenres {
 	private Long bookGenreId;
 
 	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "BOOK_ID")
-	private Books book;
+	private Book book;
 
 	@JsonIgnore
-	@ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "GENRE_ID")
-	private Genres genre;
+	private Genre genre;
 
-	public BooksGenres() {
+	public BooksGenre() {
 		super();
 	}
 
@@ -42,25 +43,20 @@ public class BooksGenres {
 		this.bookGenreId = bookGenreId;
 	}
 
-	public Books getBook() {
+	public Book getBook() {
 		return book;
 	}
 
-	public void setBook(Books book) {
+	public void setBook(Book book) {
 		this.book = book;
 	}
 
-	public Genres getGenre() {
+	public Genre getGenre() {
 		return genre;
 	}
 
-	public void setGenre(Genres genre) {
+	public void setGenre(Genre genre) {
 		this.genre = genre;
-	}
-
-	@Override
-	public String toString() {
-		return "BooksGenres [bookGenreId=" + bookGenreId + ", book=" + book + ", genre=" + genre + "]";
 	}
 
 }

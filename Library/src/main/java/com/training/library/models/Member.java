@@ -5,6 +5,8 @@ import java.util.List;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,10 +14,14 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
-public class Members {
+@Table(name = "members")
+public class Member {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,13 +40,18 @@ public class Members {
 	@Column(name = "ADDRESS")
 	private String address;
 
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.EAGER)
-	private List<Borrowings> borrowings;
+	@JsonIgnore
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "UPLOAD_ID")
+	private Upload upload;
 
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.EAGER)
-	private List<Reservations> reservations;
+	private List<Borrowing> borrowings;
+
+	@Fetch(value = FetchMode.SUBSELECT)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "member", fetch = FetchType.EAGER)
+	private List<Reservation> reservations;
 
 	public Long getMemberId() {
 		return memberId;
@@ -82,27 +93,31 @@ public class Members {
 		this.address = address;
 	}
 
-	public List<Borrowings> getBorrowings() {
+	public List<Borrowing> getBorrowings() {
 		return borrowings;
 	}
 
-	public void setBorrowings(List<Borrowings> borrowings) {
+	public void setBorrowings(List<Borrowing> borrowings) {
 		this.borrowings = borrowings;
 	}
 
-	public List<Reservations> getReservations() {
+	public List<Reservation> getReservations() {
 		return reservations;
 	}
 
-	public void setReservations(List<Reservations> reservations) {
+	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
 	}
 
-	@Override
-	public String toString() {
-		return "Members [memberId=" + memberId + ", name=" + name + ", email=" + email + ", phone=" + phone
-				+ ", address=" + address + ", borrowings=" + borrowings + ", reservations=" + reservations + "]";
+	public Upload getUpload() {
+		return upload;
 	}
 
-	
+	public void setUpload(Upload upload) {
+		this.upload = upload;
+	}
+
+	public Member() {
+		super();
+	}
 }

@@ -1,6 +1,7 @@
 package com.training.library.controllers;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.training.library.dto.request.ResponseDto;
 import com.training.library.exceptions.CustomExceptionHandler;
 import com.training.library.services.BorrowingService;
-import com.training.library.services.GenreService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/api/v1/library/borrowings")
@@ -22,9 +24,9 @@ public class BorrowingController {
 	@Autowired
 	private BorrowingService borrowingService;
 	@PostMapping("/excel")
-	public ResponseEntity<ResponseDto> saveBorrowings(MultipartFile file) throws IOException, CustomExceptionHandler, URISyntaxException{
-		
-		ResponseDto result = this.borrowingService.saveBorrowings(file);
+	public ResponseEntity<ResponseDto> saveBorrowings(MultipartFile file, HttpServletRequest req) throws IOException, CustomExceptionHandler, URISyntaxException, ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException, NoSuchFieldException{
+		String header = req.getHeader("username");
+		ResponseDto result = this.borrowingService.saveBorrowings(file,header);
 		
 		return ResponseEntity.ok(result);
 	}

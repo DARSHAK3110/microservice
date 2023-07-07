@@ -2,9 +2,9 @@ package com.training.library.repositories;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.training.library.models.Books;
+import com.training.library.models.Book;
 
-public interface BookRepository extends JpaRepository<Books, Long> {
+public interface BookRepository extends JpaRepository<Book, Long> {
 	
-	Optional<Books> findByIsbn(Long number);
+	Optional<Book> findByIsbn(Long number);
 }

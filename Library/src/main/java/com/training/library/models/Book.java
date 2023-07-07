@@ -1,29 +1,31 @@
 package com.training.library.models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
-public class Books {
+@Table(name="books")
+public class Book {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "BOOK_ID")
-	private Long bookId;
+	@Column(name = "ISBN")
+	private Long isbn;
 
 	@Column(name = "TITLE")
 	private String title;
@@ -31,41 +33,37 @@ public class Books {
 	@Column(name = "PUBLICATION_DATE")
 	private Date publicationDate;
 
-	@OneToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "AUTHOR_ID")
 	private Author author;
 
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "book", fetch = FetchType.EAGER)
-	private List<BooksGenres> bookGenre;
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "UPLOAD_ID")
+	private Upload upload;
 
 	@Fetch(value = FetchMode.SUBSELECT)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "book", fetch = FetchType.EAGER)
-	private List<Borrowings> borrowings;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "book")
+	private List<BooksGenre> bookGenre = new ArrayList<>();
 
 	@Fetch(value = FetchMode.SUBSELECT)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "book", fetch = FetchType.EAGER)
-	private List<Reservations> reservations;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "book")
+	private List<Borrowing> borrowings;
 
-	@Column(name = "ISBN")
-	private Long isbn;
+	@Fetch(value = FetchMode.SUBSELECT)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "book")
+	private List<Reservation> reservations;
+
+	
 
 	@Column(name = "TOTAL_COPIES")
 	private Long totalCopies;
 
 	@Column(name = "AVAILABLE_COPIES")
-	private Long availableCopies;
+	private Long availCopies;
 
-	public Books() {
+	public Book() {
 		super();
-	}
-
-	public Long getBookId() {
-		return bookId;
-	}
-
-	public void setBookId(Long bookId) {
-		this.bookId = bookId;
 	}
 
 	public String getTitle() {
@@ -92,11 +90,19 @@ public class Books {
 		this.author = author;
 	}
 
-	public List<BooksGenres> getBookGenre() {
+	public Upload getUpload() {
+		return upload;
+	}
+
+	public void setUpload(Upload upload) {
+		this.upload = upload;
+	}
+
+	public List<BooksGenre> getBookGenre() {
 		return bookGenre;
 	}
 
-	public void setBookGenre(List<BooksGenres> bookGenre) {
+	public void setBookGenre(List<BooksGenre> bookGenre) {
 		this.bookGenre = bookGenre;
 	}
 
@@ -116,36 +122,33 @@ public class Books {
 		this.totalCopies = totalCopies;
 	}
 
-	public Long getAvailableCopies() {
-		return availableCopies;
+	public Long getAvailCopies() {
+		return availCopies;
 	}
 
-	public void setAvailableCopies(Long availableCopies) {
-		this.availableCopies = availableCopies;
+	public void setAvailCopies(Long availCopies) {
+		this.availCopies = availCopies;
 	}
 
-	public List<Borrowings> getBorrowings() {
+	public List<Borrowing> getBorrowings() {
 		return borrowings;
 	}
 
-	public void setBorrowings(List<Borrowings> borrowings) {
+	public void setBorrowings(List<Borrowing> borrowings) {
 		this.borrowings = borrowings;
 	}
 
-	public List<Reservations> getReservations() {
+	public List<Reservation> getReservations() {
 		return reservations;
 	}
 
-	public void setReservations(List<Reservations> reservations) {
+	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
 	}
-
-	@Override
-	public String toString() {
-		return "Books [bookId=" + bookId + ", title=" + title + ", publicationDate=" + publicationDate + ", author="
-				+ author + ", bookGenre=" + bookGenre + ", borrowings=" + borrowings + ", reservations=" + reservations
-				+ ", isbn=" + isbn + ", totalCopies=" + totalCopies + ", availableCopies=" + availableCopies + "]";
-	}
 	
+	public void addBookGenre(BooksGenre booksGenre) {
+		booksGenre.setBook(this);
+		this.bookGenre.add(booksGenre);
+	}
 
 }

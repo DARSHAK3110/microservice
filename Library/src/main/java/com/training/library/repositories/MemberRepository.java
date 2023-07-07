@@ -1,11 +1,9 @@
 package com.training.library.repositories;
 
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
+import com.training.library.models.Member;
 
-import com.training.library.models.Members;
-
-public interface MemberRepository extends JpaRepository<Members, Long>{
-	Optional<Members> findByEmail(String email);
+public interface MemberRepository extends JpaRepository<Member, Long>{
+	Optional<Member> findByEmail(String email);
 }
