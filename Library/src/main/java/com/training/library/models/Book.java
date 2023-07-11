@@ -3,6 +3,7 @@ package com.training.library.models;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -12,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -33,12 +33,12 @@ public class Book {
 	@Column(name = "PUBLICATION_DATE")
 	private Date publicationDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "AUTHOR_ID")
 	private Author author;
 
 	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "UPLOAD_ID")
 	private Upload upload;
 
@@ -149,6 +149,28 @@ public class Book {
 	public void addBookGenre(BooksGenre booksGenre) {
 		booksGenre.setBook(this);
 		this.bookGenre.add(booksGenre);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(author, availCopies, bookGenre, borrowings, isbn, publicationDate, reservations, title,
+				totalCopies, upload);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Book other = (Book) obj;
+		return Objects.equals(author, other.author) && Objects.equals(availCopies, other.availCopies)
+				&& Objects.equals(bookGenre, other.bookGenre) && Objects.equals(borrowings, other.borrowings)
+				&& Objects.equals(isbn, other.isbn) && Objects.equals(publicationDate, other.publicationDate)
+				&& Objects.equals(reservations, other.reservations) && Objects.equals(title, other.title)
+				&& Objects.equals(totalCopies, other.totalCopies) && Objects.equals(upload, other.upload);
 	}
 
 }

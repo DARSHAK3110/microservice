@@ -1,6 +1,8 @@
 package com.training.library.models;
 
 import java.util.List;
+import java.util.Objects;
+
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -9,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,11 +30,11 @@ public class Genre {
 	private String genreName;
 
 	@Fetch(value = FetchMode.SUBSELECT)
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "genre", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "genre")
 	private List<BooksGenre> bookGenre;
 
 	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "UPLOAD_ID")
 	private Upload upload;
 
@@ -71,6 +72,24 @@ public class Genre {
 
 	public void setUpload(Upload upload) {
 		this.upload = upload;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(bookGenre, genreId, genreName, upload);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Genre other = (Genre) obj;
+		return Objects.equals(bookGenre, other.bookGenre) && Objects.equals(genreId, other.genreId)
+				&& Objects.equals(genreName, other.genreName) && Objects.equals(upload, other.upload);
 	}
 
 }

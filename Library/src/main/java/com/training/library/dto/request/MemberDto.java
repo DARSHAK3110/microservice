@@ -10,7 +10,7 @@ public class MemberDto {
 	@Size(min = 3, max = 16, message = "member.excel.validation.memberName")
 	private String name;
 	@Email(message = "member.excel.validation.email")
-	@NotBlank
+	@NotBlank(message = "member.excel.validation.blank")
 	private String email;
 	@PhoneConstraint
 	private Long phone;
@@ -43,6 +43,13 @@ public class MemberDto {
 	}
 	public MemberDto() {
 		super();
+	}
+	public MemberDto(@Size(min = 3, max = 16, message = "member.excel.validation.memberName") String name,
+			@Email(message = "member.excel.validation.email") @NotBlank String email, Long phone) {
+		super();
+		this.name = name;
+		this.email = email;
+		this.phone = phone;
 	}
 		
 }

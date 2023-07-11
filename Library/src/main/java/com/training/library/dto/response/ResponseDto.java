@@ -1,4 +1,4 @@
-package com.training.library.dto.request;
+package com.training.library.dto.response;
 
 import java.util.Map;
 

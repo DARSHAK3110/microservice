@@ -35,4 +35,11 @@ public class ReservationDto {
 		super();
 	}
 
+	public ReservationDto(Long bookId, Long memberId, Date reservationDate) {
+		super();
+		this.bookId = bookId;
+		this.memberId = memberId;
+		this.reservationDate = reservationDate;
+	}
+
 }

@@ -52,4 +52,14 @@ public class BorrowingDto {
 	public BorrowingDto() {
 		super();
 	}
+
+	public BorrowingDto(Long bookId, Long memberId, Date borrowingDate, Date returnDate, Date dueDate) {
+		super();
+		this.bookId = bookId;
+		this.memberId = memberId;
+		this.borrowingDate = borrowingDate;
+		this.returnDate = returnDate;
+		this.dueDate = dueDate;
+	}
+
 }

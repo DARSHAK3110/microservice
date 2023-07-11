@@ -73,11 +73,15 @@ public class BookDto {
 		this.authorId = authorId;
 	}
 
-	@Override
-	public String toString() {
-		return "BookDto [isbn=" + isbn + ", title=" + title + ", publicationDate=" + publicationDate + ", availCopies="
-				+ availCopies + ", totalCopies=" + totalCopies + ", genreId=" + genreId + ", authorId=" + authorId
-				+ "]";
+	public BookDto(Long isbn, @Size(min = 3, max = 16, message = "book.excel.validation.title") String title,
+			Date publicationDate, Long authorId) {
+		super();
+		this.isbn = isbn;
+		this.title = title;
+		this.publicationDate = publicationDate;
+		this.authorId = authorId;
 	}
+
+
 
 }

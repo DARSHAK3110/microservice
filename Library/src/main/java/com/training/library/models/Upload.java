@@ -3,10 +3,13 @@ package com.training.library.models;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.annotation.CreatedDate;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -37,6 +40,7 @@ public class Upload {
 	@Column(name = "UPLOAD_DATE")
 	private Date uploadDate;
 
+	@JsonManagedReference
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "UPLOAD_ID")
@@ -162,6 +166,29 @@ public class Upload {
 
 	public void setReservations(List<Reservation> reservations) {
 		this.reservations = reservations;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(authors, books, borrowings, fileName, genres, librarians, members, reservations, uploadDate,
+				uploadId, uploadName);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Upload other = (Upload) obj;
+		return Objects.equals(authors, other.authors) && Objects.equals(books, other.books)
+				&& Objects.equals(borrowings, other.borrowings) && Objects.equals(fileName, other.fileName)
+				&& Objects.equals(genres, other.genres) && Objects.equals(librarians, other.librarians)
+				&& Objects.equals(members, other.members) && Objects.equals(reservations, other.reservations)
+				&& Objects.equals(uploadDate, other.uploadDate) && Objects.equals(uploadId, other.uploadId)
+				&& Objects.equals(uploadName, other.uploadName);
 	}
 
 }

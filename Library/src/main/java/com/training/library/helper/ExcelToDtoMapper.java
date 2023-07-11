@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -34,11 +35,10 @@ public class ExcelToDtoMapper {
 	public ExcelToDtoMapper(MultipartFile file) throws CustomExceptionHandler, IOException {
 		if (file != null) {
 			String content = file.getContentType();
-			if (content != null) {
-				if (!content.equals("application/vnd.ms-excel")
-						&& !content.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+			if (content != null &&  (!content.equals("application/vnd.ms-excel")
+						&& !content.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))) {
 					throw new CustomExceptionHandler("Please use .xlsx format!!");
-				}
+				
 			}
 
 			try {
@@ -68,6 +68,9 @@ public class ExcelToDtoMapper {
 				Field classField = obj.getClass().getDeclaredField(field.getName());
 				int index = header.get(field.getName());
 				XSSFCell cell = sheet.getRow(i).getCell(index);
+				if (cell == null || cell.getCellType() == CellType.BLANK) {
+				    continue;
+				 }
 				cellToField(obj, cell, classField);
 			}
 			ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -88,7 +91,7 @@ public class ExcelToDtoMapper {
 		
 		field.setAccessible(true);
 		if (type == String.class) {
-			field.set(obj, cell.getStringCellValue());
+			field.set(obj, (cell.getStringCellValue()).trim());
 		} else if (type == Date.class) {
 			field.set(obj, cell.getDateCellValue());
 		} else if (type == Boolean.class) {

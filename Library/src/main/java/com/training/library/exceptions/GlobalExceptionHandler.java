@@ -3,6 +3,7 @@ package com.training.library.exceptions;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -13,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import com.training.library.dto.request.ResponseDto;
+
+import com.training.library.dto.response.ResponseDto;
+
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.ConstraintViolationException;
 
@@ -24,23 +27,22 @@ public class GlobalExceptionHandler {
 	private Environment env;
 
 	@ExceptionHandler(CustomExceptionHandler.class)
-	public ResponseEntity<ResponseDto> SQLErrorHandler(CustomExceptionHandler e,Model model, HttpServletResponse response) throws IOException{
+	public ResponseEntity<ResponseDto> sqlErrorHandler(CustomExceptionHandler e,Model model, HttpServletResponse response) throws IOException{
 		ResponseDto res = new ResponseDto();
 		res.setMessage(e.getMessage());
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+		return new ResponseEntity<>(res,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<ResponseDto> validationHandler(ConstraintViolationException e,Model model, HttpServletResponse response) throws IOException{
 		ResponseDto res = new ResponseDto();
-		res.setMessage(e.getMessage());
 		Map<String, Object> result = new HashMap<>();
 		e.getConstraintViolations().forEach(constrain->{
-			result.put("Line number:", e.getMessage());
+		//	result.put("Line number", e.getMessage());
 			result.put(constrain.getPropertyPath().toString(), env.getRequiredProperty(constrain.getMessage()));
-		});
-		res.setResult(result);
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+	});
+		res.setMessage("Line number: "+e.getMessage()+"\n"+result);
+		return new ResponseEntity<>(res,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@ExceptionHandler(DataIntegrityViolationException.class)
@@ -48,5 +50,11 @@ public class GlobalExceptionHandler {
 		ResponseDto res = new ResponseDto();
 		res.setMessage("Data already available!!");
 		return new ResponseEntity<>(res,HttpStatus.CONFLICT);
+	}
+	@ExceptionHandler(NullPointerException.class)
+	public final ResponseEntity<ResponseDto> nullPointerExceptionHandler(Exception e) {
+		ResponseDto res = new ResponseDto();
+		res.setMessage("Please check your file structure!!");
+		return new ResponseEntity<>(res,HttpStatus.NOT_ACCEPTABLE);
 	}
 }

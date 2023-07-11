@@ -51,11 +51,9 @@ public abstract class ToEntity {
 	
 	@BeforeMapping
 	public Book setMemberAndBookOnBorrowingTreeDTO(BookDto bookDto) {
-		Book book;
-		book = bookService.getBook(bookDto.getIsbn());
-		if (book == null) {			
-			book = new Book();
-			book.setIsbn(bookDto.getIsbn());
+		Book book = bookService.getBook(bookDto.getIsbn());
+		if (book!= null) {			
+			book.addBookGenre(mapGenresFromIsbn(bookDto));
 		}
 		return book;
 	
@@ -65,7 +63,6 @@ public abstract class ToEntity {
 	public void setAuthorAndGenreOnBookTreeDTO(BookDto bookDto, @MappingTarget Book book) {
 		book.addBookGenre(mapGenresFromIsbn(bookDto));
 		book.setAuthor(mapAuthorFromAuthorId(bookDto.getAuthorId()));
-		book.setIsbn(bookDto.getIsbn());
 	}
 
 	public BooksGenre mapGenresFromIsbn(BookDto bookDto) {
