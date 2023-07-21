@@ -1,7 +1,7 @@
 package com.training.library.exceptions;
 
 public class CustomExceptionHandler extends Exception {
-
+ 
 	/**
 	 * 
 	 */
