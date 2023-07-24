@@ -38,7 +38,7 @@ public class SectionController {
 	private SectionService sectionService;
 
 	@GetMapping("/floors/{floorNo}")
-	public ResponseEntity<List<SectionResponseDto>> findSectionsByFloor(@PathVariable("floorNo") Long floorNo) {
+	public ResponseEntity<List<SectionResponseDto>> findSectionsByFloor(@PathVariable Long floorNo) {
 		System.out.println("aavyu");
 		List<SectionResponseDto> sections = sectionService.findSectionsByFloors(floorNo);
 		return ResponseEntity.ok(sections);
