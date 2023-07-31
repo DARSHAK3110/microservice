@@ -11,9 +11,8 @@ public class AuthorRequestDto {
 	private Long authorId;
 	@NotBlank(message = "author.validation.name.blank")
 	@Size(min = 3, message = "author.validation.name.size.min")
-	@Size(min = 16, message = "author.validation.name.size.max")
+	@Size(max = 16, message = "author.validation.name.size.max")
 	private String authorName;
-	@DateValidator
 	private Date authorDOB;
 
 	public Long getAuthorId() {

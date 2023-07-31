@@ -1,13 +1,15 @@
 package com.training.library.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,8 +28,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Controller
+@CrossOrigin
 @PropertySource("classpath:message.properties")
 @RequestMapping("/library/api/v1/floors")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class FloorController {
 	private static final String OPERATION_SUCCESS = "operation.success";
 	@Autowired
@@ -52,7 +56,7 @@ public class FloorController {
 	@PostMapping
 	public ResponseEntity<CustomBaseResponseDto> saveFloor(HttpServletRequest req,
 			@Valid @RequestBody FloorRequestDto dto) {
-		String userName = req.getHeader("username");
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		floorService.saveFloor(dto, userName);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}

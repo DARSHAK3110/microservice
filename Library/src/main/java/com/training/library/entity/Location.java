@@ -51,6 +51,9 @@ public class Location {
 	@Column(name = "deleted_at")
 	private Date deletedAt;
 
+	@Column(name = "is_available")
+	private Boolean isAvailable;
+
 	public String getPosition() {
 		return position;
 	}
@@ -109,6 +112,18 @@ public class Location {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public Boolean getIsAvailable() {
+		return isAvailable;
+	}
+
+	public void setIsAvailable(Boolean isAvailable) {
+		this.isAvailable = isAvailable;
+	}
+
+	public Shelf getShelf() {
+		return shelf;
 	}
 
 	public Location() {

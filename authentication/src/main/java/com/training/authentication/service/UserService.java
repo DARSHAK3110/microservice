@@ -1,6 +1,7 @@
 package com.training.authentication.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.collections4.map.HashedMap;
@@ -141,5 +142,11 @@ public class UserService {
 		}
 		logRepository.save(log);
 
+	}
+
+	public Map<String, Object>  getClaims(String jwt) {
+		Claims extractAllClaims = jwtService.extractAllClaims(jwt, "access");
+		Map<String, Object> claimsMap= new HashMap<>(extractAllClaims);
+		return claimsMap;
 	}
 }

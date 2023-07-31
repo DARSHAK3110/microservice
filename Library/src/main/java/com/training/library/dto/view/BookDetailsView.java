@@ -10,9 +10,9 @@ public interface BookDetailsView {
 	Long getIsbn();
 	@Value("#{target.author.authorName}")
 	String getAuthor();
+	@Value("#{target.author.authorId}")
+	Long getAuthorId();
 	Long getTotalCopies();
 	Long getAvailableCopies();
-	List<BookStatusView> getBookStatus();
-	
-
+	//List<BookStatusView> getBookStatus();
 }

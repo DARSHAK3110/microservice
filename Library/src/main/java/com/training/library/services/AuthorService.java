@@ -4,9 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.training.library.dto.request.AuthorRequestDto;
+import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.response.AuthorResponseDto;
 import com.training.library.entity.Author;
 import com.training.library.entity.User;
@@ -31,15 +35,12 @@ public class AuthorService {
 		return null;
 	}
 
-	public List<AuthorResponseDto> findAuthors() {
-		Optional<List<AuthorResponseDto>> authors = authorRepository.findAllByDeletedAtIsNull();
-		if (authors.isPresent()) {
-			return authors.get();
-		}
-		return null;
+	public Page<AuthorResponseDto> findAuthors(FilterDto dto) {
+		Pageable pageble = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+		return authorRepository.findAllByDeletedAtIsNull(dto.getSearch(),  pageble);
 	}
 
-	public List<AuthorResponseDto> saveAuthor(AuthorRequestDto dto, String userName) {
+	public void saveAuthor(AuthorRequestDto dto, String userName) {
 		Author author = new Author();
 		Optional<User> userOptional = userRepository.findByPhone(Long.parseLong(userName));
 
@@ -55,10 +56,9 @@ public class AuthorService {
 		author.setAuthorDOB(dto.getAuthorDOB());
 		author.setAuthorName(dto.getAuthorName());
 		authorRepository.save(author);
-		return findAuthors();
 	}
 
-	public List<AuthorResponseDto> updateAuthor(Long id, AuthorRequestDto dto) {
+	public void updateAuthor(Long id, AuthorRequestDto dto) {
 		Optional<Author> authorOptional = authorRepository.findById(id);
 		if (authorOptional.isPresent()) {
 			Author author = authorOptional.get();
@@ -66,13 +66,11 @@ public class AuthorService {
 			author.setAuthorName(dto.getAuthorName());
 			authorRepository.save(author);
 		}
-		return findAuthors();
 	}
 
 	@Transactional
-	public List<AuthorResponseDto> deleteAuthor(Long id) {
+	public void deleteAuthor(Long id) {
 		authorRepository.deleteByAuthorId(id);
-		return findAuthors();
 	}
 
 	public Author findAuthorByAuthorId(Long authorId) {

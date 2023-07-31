@@ -4,9 +4,18 @@ public class FilterDto {
 	private String search = "";
 	private int pageNumber;
 	private int pageSize;
+	private int availability;
 
 	public FilterDto() {
 		super();
+	}
+
+	public int getAvailability() {
+		return availability;
+	}
+
+	public void setAvailability(int availability) {
+		this.availability = availability;
 	}
 
 	public String getSearch() {

@@ -5,15 +5,21 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.training.library.dto.request.BookBorrowingRequestDto;
+import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.response.BookBorrowingResponseDto;
 import com.training.library.entity.BookBorrowing;
 import com.training.library.entity.BookDetails;
 import com.training.library.entity.BookStatus;
 import com.training.library.entity.User;
 import com.training.library.repositories.BookBorrowingRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class BookBorrowingService {
@@ -34,23 +40,21 @@ public class BookBorrowingService {
 		return null;
 	}
 
-	public List<BookBorrowingResponseDto> findAllBookBorrowing() {
-		Optional<List<BookBorrowingResponseDto>> bookBorrowingList = bookBorrowingRepository
-				.findAllByDeletedAtIsNull();
-		if (bookBorrowingList.isPresent()) {
-			return bookBorrowingList.get();
-		}
-		return Collections.emptyList();
+	public Page<BookBorrowingResponseDto> findAllBookBorrowing(FilterDto dto) {
+		Pageable pageble = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+		return bookBorrowingRepository.findAllwithSearch(dto.getSearch(),  pageble);
 	}
 
-	public List<BookBorrowingResponseDto> saveBookBorrowing(BookBorrowingRequestDto dto, String userName) {
+	public void saveBookBorrowing(BookBorrowingRequestDto dto, String userName) {
 		User borrower = userService.findByPhone(dto.getPhone());
 		BookStatus bookStatus = bookStatusService.findBookById(dto.getBookStatusId());
+		bookStatus.setAvailable(false);
+		bookStatusService.updateBookStatusAvailability(bookStatus);
 		BookBorrowing br = new BookBorrowing();
 		br.setBorrower(borrower);
 		br.setBookStatus(bookStatus);
 
-		User user = userService.findByPhone(Long.parseLong(userName));
+		User user = userService.findByPhone(Long.parseLong("9725953035"));
 
 		if (user == null) {
 			user = new User();
@@ -60,10 +64,10 @@ public class BookBorrowingService {
 		br.setUser(user);
 		br.setBorrowingDate(dto.getBorrowingDate());
 		bookBorrowingRepository.save(br);
-		return findAllBookBorrowing();
+
 	}
 
-	public List<BookBorrowingResponseDto> updateBookBorrowing(Long id, BookBorrowingRequestDto dto) {
+	public void updateBookBorrowing(Long id, BookBorrowingRequestDto dto) {
 		User borrower = userService.findByPhone(dto.getPhone());
 		BookStatus bookStatus = bookStatusService.findBookById(dto.getBookStatusId());
 		Optional<BookBorrowing> brOptional = bookBorrowingRepository.findById(id);
@@ -74,11 +78,25 @@ public class BookBorrowingService {
 			br.setBorrowingDate(dto.getBorrowingDate());
 			bookBorrowingRepository.save(br);
 		}
-		return findAllBookBorrowing();
 	}
 
-	public List<BookBorrowingResponseDto> deleteBookBorrowing(Long id) {
+	@Transactional
+	public void deleteBookBorrowing(Long id) {
+		BookBorrowingResponseDto bookBorrowing = findBookBorrowing(id);
+		BookStatus bookStatus = this.bookStatusService.findBookById(bookBorrowing.getBookId());
+		bookStatus.setAvailable(true);
+		this.bookStatusService.updateBookStatusAvailability(bookStatus);
 		bookBorrowingRepository.deleteByBookBorrowingId(id);
-		return findAllBookBorrowing();
+		
+		
+	}
+
+	public BookBorrowingResponseDto findBookBorrowingByBookStatus(Long id) {
+		Optional<BookBorrowingResponseDto> bookBorrowing = bookBorrowingRepository
+				.findByBookStatus_BookStatusIdAndDeletedAtIsNull(id);
+		if (bookBorrowing.isPresent()) {
+			return bookBorrowing.get();
+		}
+		return null;
 	}
 }

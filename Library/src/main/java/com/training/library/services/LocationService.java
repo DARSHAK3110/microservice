@@ -1,12 +1,15 @@
 package com.training.library.services;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.request.LocationRequestDto;
 import com.training.library.dto.response.LocationResponseDto;
 import com.training.library.entity.Location;
@@ -36,21 +39,18 @@ public class LocationService {
 		return null;
 	}
 
-	public List<LocationResponseDto> findLocations() {
-		Optional<List<LocationResponseDto>> locations = locationRepository.findAllByDeletedAtIsNull();
-		if (locations.isPresent()) {
-			return locations.get();
-		}
-		return Collections.emptyList();
+	public Page<LocationResponseDto> findLocations(FilterDto dto) {
+		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+		return locationRepository.findAllByDeletedAtIsNull(dto.getSearch(), pageable);
 	}
 
-	public List<LocationResponseDto> saveLocation(LocationRequestDto dto, String userName) {
+	public void saveLocation(LocationRequestDto dto, String userName) {
 		Location location = new Location();
-		Optional<User> userOptional = userRepository.findByPhone(Long.parseLong(userName));
+		Optional<User> userOptional = userRepository.findByPhone(Long.parseLong("9725953035"));
 		User user = null;
 		if (userOptional.isEmpty()) {
 			User newUser = new User();
-			newUser.setPhone(Long.parseLong(userName));
+			newUser.setPhone(Long.parseLong("9725953035"));
 			user = userRepository.save(newUser);
 		} else {
 			user = userOptional.get();
@@ -61,11 +61,12 @@ public class LocationService {
 		if (shelf.isPresent()) {
 			location.setShelf(shelf.get());
 		}
+		location.setIsAvailable(true);
 		locationRepository.save(location);
-		return findLocations();
+
 	}
 
-	public List<LocationResponseDto> updateLocation(Long id, LocationRequestDto dto) {
+	public void updateLocation(Long id, LocationRequestDto dto) {
 		Optional<Location> locationOptional = locationRepository.findById(id);
 		if (locationOptional.isPresent()) {
 			Location location = locationOptional.get();
@@ -76,21 +77,28 @@ public class LocationService {
 			}
 			locationRepository.save(location);
 		}
-		return findLocations();
+
 	}
 
-	@Transactional	
-	public List<LocationResponseDto> deleteLocation(Long id) {
+	@Transactional
+	public void deleteLocation(Long id) {
 		locationRepository.deleteByLocationId(id);
-		return findLocations();
 	}
 
 	public Location findLocationById(Long id) {
-		
+
 		Optional<Location> location = locationRepository.findById(id);
 		if (location.isPresent()) {
 			return location.get();
 		}
 		return null;
+	}
+
+	public List<LocationResponseDto> findLocationsByShelf(Long shelfId) {
+		return locationRepository.getAllByShelf_ShelfIdAndDeletedAtIsNotNull(shelfId);
+	}
+
+	public void updateLocationAvailability(Location location) {
+		locationRepository.save(location);
 	}
 }

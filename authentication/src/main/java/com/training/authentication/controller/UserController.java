@@ -1,7 +1,14 @@
 package com.training.authentication.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -11,6 +18,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.introspection.OAuth2IntrospectionAuthenticatedPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +34,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.training.authentication.dto.request.FilterDto;
 import com.training.authentication.dto.request.TokenRequestDto;
 import com.training.authentication.dto.request.UserLoginRequestDto;
@@ -30,13 +49,15 @@ import com.training.authentication.dto.response.CustomBaseResponseDto;
 import com.training.authentication.dto.response.TokenResponseDto;
 import com.training.authentication.dto.response.UserResponseDto;
 import com.training.authentication.service.UserService;
+
+import io.jsonwebtoken.lang.Strings;
 import io.micrometer.common.lang.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 
 @RestController
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin
 @PropertySource("classpath:message.properties")
 @RequestMapping("/api/v1/users")
 public class UserController {
@@ -63,10 +84,21 @@ public class UserController {
 		return ResponseEntity.of(Optional.of(user));
 	}
 
-	@ResponseStatus(code=HttpStatus.OK)
+	@ResponseStatus(code = HttpStatus.OK)
 	@PostMapping("/check_token")
-	public ResponseEntity<?> checkToken() {
-		return ResponseEntity.ok("done");
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<?> checkToken(HttpServletRequest request) throws IOException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String jwt = (String) authentication.getCredentials();
+		Map<String, Object> claims = this.userSerivceImpl.getClaims(jwt);
+		Map<String, Object> result = new HashMap<>();
+		result.put("active", true);
+		result.put("client_id", "library-client-id");
+		result.put("username", claims.get("sub"));
+		result.put("exp", claims.get("exp"));
+		result.put("scope", authentication.getAuthorities());
+		OAuth2IntrospectionAuthenticatedPrincipal principal = new OAuth2IntrospectionAuthenticatedPrincipal(result,(Collection<GrantedAuthority>) authentication.getAuthorities());
+		return ResponseEntity.ok(principal);
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -125,4 +157,5 @@ public class UserController {
 	public ResponseEntity<?> getCurrentUserInfo(UsernamePasswordAuthenticationToken token) {
 		return ResponseEntity.ok(token.getPrincipal());
 	}
+
 }

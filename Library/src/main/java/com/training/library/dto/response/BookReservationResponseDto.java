@@ -8,6 +8,7 @@ public class BookReservationResponseDto {
 	private String bookTitle;
 	private Long bookId;
 	private Long phone;
+	private String reserverName;
 	private Date reservationDate;
 	private Long isbn;
 

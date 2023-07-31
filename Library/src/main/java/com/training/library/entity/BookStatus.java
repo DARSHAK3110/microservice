@@ -54,27 +54,15 @@ public class BookStatus {
 	@Column(name = "deleted_at")
 	private Date deletedAt;
 
-	public Long getBookStatusId() {
-		return bookStatusId;
-	}
-
 	@ManyToOne
 	private Upload upload;
 
-	List<BookBorrowing> getBookBorrowing() {
-		return bookBorrowing;
+	public BookStatus() {
+		super();
 	}
 
-	public Upload getUpload() {
-		return upload;
-	}
-
-	public void setUpload(Upload upload) {
-		this.upload = upload;
-	}
-
-	public void setBookBorrowing(List<BookBorrowing> bookBorrowing) {
-		this.bookBorrowing = bookBorrowing;
+	public Long getBookStatusId() {
+		return bookStatusId;
 	}
 
 	public void setBookStatusId(Long bookStatusId) {
@@ -95,6 +83,14 @@ public class BookStatus {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public List<BookBorrowing> getBookBorrowing() {
+		return bookBorrowing;
+	}
+
+	public void setBookBorrowing(List<BookBorrowing> bookBorrowing) {
+		this.bookBorrowing = bookBorrowing;
 	}
 
 	public boolean isAvailable() {
@@ -129,8 +125,12 @@ public class BookStatus {
 		this.deletedAt = deletedAt;
 	}
 
-	public BookStatus() {
-		super();
+	public Upload getUpload() {
+		return upload;
+	}
+
+	public void setUpload(Upload upload) {
+		this.upload = upload;
 	}
 
 }

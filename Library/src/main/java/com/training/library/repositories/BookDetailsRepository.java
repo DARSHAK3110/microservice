@@ -1,8 +1,9 @@
 package com.training.library.repositories;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,7 +24,9 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails , Long>
 
 	Optional<BookDetailsView> findByBookDetailsIdAndDeletedAtIsNull(Long id);
 
-	Optional<List<BookDetailsView>> findAllByDeletedAtIsNull();
+	@Query(value =
+			  "select new com.training.library.dto.response.BookDetailsResponseDto(bookDetailsId,title, isbn, author.authorName, author.authorId,totalCopies, availableCopies) from BookDetails where deletedAt is null")
+	Page<BookDetailsView> findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(String title, String authorName,Pageable pageable);
 
 	@Modifying
 	@Query(value = "update book_details set deleted_at = now() where id= :id", nativeQuery = true)

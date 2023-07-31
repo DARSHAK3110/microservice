@@ -11,6 +11,7 @@ public class BookBorrowingResponseDto {
 	private Long phone;
 	private Date borrowingDate;
 	private Date returnDate;
+	private String bookTitle;
 
 	public Long getBookBorrowingId() {
 		return bookBorrowingId;
@@ -68,12 +69,20 @@ public class BookBorrowingResponseDto {
 		this.returnDate = returnDate;
 	}
 
+	public String getBookTitle() {
+		return bookTitle;
+	}
+
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
+	}
+
 	public BookBorrowingResponseDto() {
 		super();
 	}
 
 	public BookBorrowingResponseDto(Long bookBorrowingId, Long userId, Long location, Long bookId, Long phone,
-			Date borrowingDate, Date returnDate) {
+			Date borrowingDate, Date returnDate, String bookTitle) {
 		super();
 		this.bookBorrowingId = bookBorrowingId;
 		this.userId = userId;
@@ -82,6 +91,7 @@ public class BookBorrowingResponseDto {
 		this.phone = phone;
 		this.borrowingDate = borrowingDate;
 		this.returnDate = returnDate;
+		this.bookTitle = bookTitle;
 	}
 
 }

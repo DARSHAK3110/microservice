@@ -1,5 +1,6 @@
 package com.training.library.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.request.ShelfRequestDto;
+import com.training.library.dto.response.SectionResponseDto;
 import com.training.library.dto.response.ShelfResponseDto;
 import com.training.library.entity.Section;
 import com.training.library.entity.Shelf;
@@ -44,7 +46,7 @@ public class ShelfService {
 
 	public void saveShelf(ShelfRequestDto dto, String userName) {
 		Shelf shelf = new Shelf();
-		Optional<User> userOptional = userRepository.findByPhone(Long.parseLong(userName));
+		Optional<User> userOptional = userRepository.findByPhone(Long.parseLong("9725953035"));
 		User user = null;
 		if (userOptional.isEmpty()) {
 			User newUser = new User();
@@ -80,5 +82,9 @@ public class ShelfService {
 	@Transactional
 	public void deleteShelf(Long id) {
 		shelfRepository.deleteByShelfId(id);
+	}
+
+	public List<ShelfResponseDto> findShelfsBySection(Long sectionId) {
+		return shelfRepository.getAllBySection_SectionIdAndDeletedAtIsNotNull(sectionId);
 	}
 }

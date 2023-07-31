@@ -2,6 +2,8 @@ package com.training.library.dto.response;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import com.training.library.entity.BookStatus;
 
 public class BookDetailsResponseDto {
@@ -10,9 +12,9 @@ public class BookDetailsResponseDto {
 	private String title;
 	private Long isbn;
 	private String author;
+	private Long authorId;
 	private Long totalCopies;
 	private Long availableCopies;
-	private List<BookStatus> bookStatus;
 
 	public Long getBookDetailsId() {
 		return bookDetailsId;
@@ -66,26 +68,24 @@ public class BookDetailsResponseDto {
 		super();
 	}
 
-
-
-	public List<BookStatus> getBookStatus() {
-		return bookStatus;
+	public Long getAuthorId() {
+		return authorId;
 	}
 
-	public void setBookStatus(List<BookStatus> bookStatus) {
-		this.bookStatus = bookStatus;
+	public void setAuthorId(Long authorId) {
+		this.authorId = authorId;
 	}
 
-	public BookDetailsResponseDto(Long bookDetailsId, String title, Long isbn, Long totalCopies, Long availableCopies,
-			String author, List<BookStatus> bookStatus) {
+	public BookDetailsResponseDto(Long bookDetailsId, String title, Long isbn, String author, Long authorId,
+			Long totalCopies, Long availableCopies) {
 		super();
 		this.bookDetailsId = bookDetailsId;
 		this.title = title;
 		this.isbn = isbn;
 		this.author = author;
+		this.authorId = authorId;
 		this.totalCopies = totalCopies;
 		this.availableCopies = availableCopies;
-		this.bookStatus = bookStatus;
 	}
 
 }

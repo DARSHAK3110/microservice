@@ -45,7 +45,7 @@ public class SectionService {
 
 	public void saveSection(SectionRequestDto dto, String userName) {
 		Section section = new Section();
-		Optional<User> userOptional = userRepository.findByPhone(Long.parseLong(userName));
+		Optional<User> userOptional = userRepository.findByPhone(Long.parseLong("9725953035"));
 		User user = null;
 		if (userOptional.isEmpty()) {
 			User newUser = new User();

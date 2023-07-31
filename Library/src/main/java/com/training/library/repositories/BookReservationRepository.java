@@ -1,8 +1,9 @@
 package com.training.library.repositories;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,8 +17,8 @@ public interface BookReservationRepository extends JpaRepository<BookReservation
 	Optional<BookReservationResponseDto> findByBookReservationIdAndDeletedAtIsNull(Long id);
 	
 
-	@Query(value = "select new com.training.library.dto.response.BookReservationResponseDto(bookReservationId, reserver.userId, bookDetails.title, bookDetails.id, reserver.phone, reservationDate,bookDetails.isbn) from BookReservation where deletedAt is null")
-	Optional<List<BookReservationResponseDto>> findAllByDeletedAtIsNull();
+	@Query(value = "select new com.training.library.dto.response.BookReservationResponseDto(bookReservationId, reserver.userId, bookDetails.title, bookDetails.id, reserver.phone, reservationDate,bookDetails.isbn) from BookReservation where deletedAt is null and bookDetails.title like %:search% or reserver.phone like %:search%")
+	Page<BookReservationResponseDto> findAllByDeletedAtIsNull(String search, Pageable pageable);
 
 
 	@Modifying

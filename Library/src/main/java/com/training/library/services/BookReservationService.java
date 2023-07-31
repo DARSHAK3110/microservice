@@ -5,9 +5,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.training.library.dto.request.BookReservationRequestDto;
+import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.response.BookReservationResponseDto;
 import com.training.library.entity.BookDetails;
 import com.training.library.entity.BookReservation;
@@ -16,6 +21,8 @@ import com.training.library.repositories.BookReservationRepository;
 
 @Service
 public class BookReservationService {
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Autowired
 	private BookReservationRepository bookReservationRepository;
@@ -33,51 +40,46 @@ public class BookReservationService {
 		return null;
 	}
 
-	public List<BookReservationResponseDto> findAllBookReservation() {
-		Optional<List<BookReservationResponseDto>> bookReservationList = bookReservationRepository
-				.findAllByDeletedAtIsNull();
-		if (bookReservationList.isPresent()) {
-			return bookReservationList.get();
-		}
-		return Collections.emptyList();
+	public Page<BookReservationResponseDto> findAllBookReservation(FilterDto dto) {
+		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+		return bookReservationRepository.findAllByDeletedAtIsNull(dto.getSearch(), pageable);
 	}
 
-	public List<BookReservationResponseDto> saveBookReservation(BookReservationRequestDto dto, String userName) {
+	public void saveBookReservation(BookReservationRequestDto dto, String userName) {
 		User reserver = userService.findByPhone(dto.getPhone());
-		BookDetails bookDetails = bookDetailsService.findBookDetailsByISBN(dto.getBookDetailsId());
+		BookDetails bookDetails = bookDetailsService.findBookDetailsById(dto.getBookDetailsId());
 		BookReservation br = new BookReservation();
 		br.setReserver(reserver);
 		br.setBookDetails(bookDetails);
 
-		User user = userService.findByPhone(Long.parseLong(userName));
+		User user = userService.findByPhone(Long.parseLong("9725953035"));
 
 		if (user == null) {
 			user = new User();
 			user.setPhone(Long.parseLong(userName));
 			user = userService.saveUser(user);
-		} 
+		}
 		br.setUser(user);
 		br.setReservationDate(dto.getReservationDate());
 		bookReservationRepository.save(br);
-		return findAllBookReservation();
 	}
 
-	public List<BookReservationResponseDto> updateBookReservation(Long id, BookReservationRequestDto dto) {
+	public void updateBookReservation(Long id, BookReservationRequestDto dto) {
 		User reserver = userService.findByPhone(dto.getPhone());
 		BookDetails bookDetails = bookDetailsService.findBookDetailsById(dto.getBookDetailsId());
 		Optional<BookReservation> brOptional = bookReservationRepository.findById(id);
-		if(brOptional.isPresent()) {
+		if (brOptional.isPresent()) {
 			BookReservation br = new BookReservation();
 			br.setReserver(reserver);
 			br.setBookDetails(bookDetails);
 			br.setReservationDate(dto.getReservationDate());
 			bookReservationRepository.save(br);
 		}
-		return findAllBookReservation();
+
 	}
 
-	public List<BookReservationResponseDto> deleteBookReservation(Long id) {
+	public void deleteBookReservation(Long id) {
 		bookReservationRepository.deleteByBookReservationId(id);
-		return findAllBookReservation();
+
 	}
 }
