@@ -36,7 +36,6 @@ public class Author {
 	@Column(name = "date_of_birth")
 	private Date authorDOB;
 
-	
 	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
 	private List<BookDetails> books;
 
@@ -56,6 +55,10 @@ public class Author {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "deleted_at")
 	private Date deletedAt;
+
+	public Author() {
+		super();
+	}
 
 	public Long getAuthorId() {
 		return authorId;
@@ -89,11 +92,11 @@ public class Author {
 		this.books = books;
 	}
 
-	Date getCreatedAt() {
+	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	void setCreatedAt(Date createdAt) {
+	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 
@@ -105,24 +108,27 @@ public class Author {
 		this.user = user;
 	}
 
-	Date getUpdatedAt() {
+	public Date getUpdatedAt() {
 		return updatedAt;
 	}
 
-	void setUpdatedAt(Date updatedAt) {
+	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
-	Date getDeletedAt() {
+	public Date getDeletedAt() {
 		return deletedAt;
 	}
 
-	void setDeletedAt(Date deletedAt) {
+	public void setDeletedAt(Date deletedAt) {
 		this.deletedAt = deletedAt;
 	}
 
-	public Author() {
-		super();
+	@Override
+	public String toString() {
+		return "Author [authorId=" + authorId + ", authorName=" + authorName + ", authorDOB=" + authorDOB + ", books="
+				+ books + ", createdAt=" + createdAt + ", user=" + user + ", updatedAt=" + updatedAt + ", deletedAt="
+				+ deletedAt + "]";
 	}
 
 }

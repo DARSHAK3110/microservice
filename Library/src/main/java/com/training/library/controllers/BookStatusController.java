@@ -5,6 +5,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +25,7 @@ import com.training.library.services.BookStatusService;
 @CrossOrigin
 @RequestMapping("/library/api/v1/bookstatuses")
 @PropertySource("classpath:message.properties")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class BookStatusController {
 	@Autowired
 	private BookStatusService bookStatusService;
@@ -34,7 +36,6 @@ public class BookStatusController {
 	@GetMapping("/bookstatus/{id}")
 	public ResponseEntity<BookStatusResponseDto> findBookStatus(@PathVariable Long id) {
 		BookStatusResponseDto bookStatus = bookStatusService.findBookStatus(id);
-		
 		return ResponseEntity.ok(bookStatus);
 	} 
 
@@ -44,19 +45,15 @@ public class BookStatusController {
 		return ResponseEntity.ok(bookStatusPage);
 	}
 	
-
-	
 	@PutMapping("/bookstatus/{id}")
 	public ResponseEntity<CustomBaseResponseDto> updateBookDetails(@PathVariable Long id,
 			@RequestBody BookStatusRequestDto dto) {
-		bookStatusService.updateBookStatus(id, dto);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return bookStatusService.updateBookStatus(id, dto);
 	}
 	
 	@DeleteMapping("/bookstatus/{id}")
 	public ResponseEntity<CustomBaseResponseDto> deleteBookDetails(@PathVariable Long id) {
-		bookStatusService.deleteBookStatus(id);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return bookStatusService.deleteBookStatus(id);
 	}
 
 }

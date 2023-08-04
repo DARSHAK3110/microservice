@@ -1,17 +1,14 @@
 package com.training.authentication.security;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -28,7 +25,7 @@ public class JwtService {
 	}
 
 	public <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
-		final Claims claims = extractAllClaims(token,"access");
+		final Claims claims = extractAllClaims(token, "access");
 		return claimResolver.apply(claims);
 	}
 
@@ -40,12 +37,6 @@ public class JwtService {
 			return Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(getKeys(REFRESH_SECRET_KEY))).build()
 					.parseClaimsJws(token).getBody();
 		}
-	}
-	
-	public Collection<? extends GrantedAuthority> extractAuthorities(String token) {
-			Jws<Claims> parseClaimsJws = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(getKeys(SECRET_KEY))).build()
-					.parseClaimsJws(token);
-			return null;
 	}
 
 	public String generateToken(UserDetails customUserDetails) {
@@ -62,7 +53,7 @@ public class JwtService {
 
 		return Jwts.builder().setClaims(claims).setSubject(customUserDetails.getUsername())
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 60* 10 * 1000))
+				.setExpiration(new Date(System.currentTimeMillis() + 60 * 10 * 1000))
 				.signWith(Keys.hmacShaKeyFor(getKeys(SECRET_KEY)), SignatureAlgorithm.HS256).compact();
 	}
 

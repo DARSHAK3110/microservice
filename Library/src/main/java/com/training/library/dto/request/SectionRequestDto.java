@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 
 public class SectionRequestDto {
 	@NotBlank(message = "section.validation.name.blank")
-	@Size(min = 3, message = "section.validation.name.size.min")
 	@Size(max = 16, message = "section.validation.name.size.max")
 	private String sectionName;
 	@Min(value = 1, message = "section.validation.floor.id")

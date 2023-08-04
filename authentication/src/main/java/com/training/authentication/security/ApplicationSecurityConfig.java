@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -49,21 +48,19 @@ public class ApplicationSecurityConfig {
 				.authenticationProvider(authenticationProvider)
 				.addFilterBefore(jwtAuthValidation, UsernamePasswordAuthenticationFilter.class)
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint));
-		 OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(security);
+		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(security);
 		return security.build();
 	}
 
-	  @Bean
-	    public RegisteredClientRepository registeredClientRepository() {
-	        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-	          .clientId("library-client-id")
-	          .clientSecret("library-secret")
-	          .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-	          .authorizationGrantType(AuthorizationGrantType.JWT_BEARER)
-	          .build();
-	        return new InMemoryRegisteredClientRepository(registeredClient);
-	    }
-	  
+	@Bean
+	public RegisteredClientRepository registeredClientRepository() {
+		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+				.clientId("library-client-id").clientSecret("library-secret")
+				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
+				.authorizationGrantType(AuthorizationGrantType.JWT_BEARER).build();
+		return new InMemoryRegisteredClientRepository(registeredClient);
+	}
+
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();

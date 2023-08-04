@@ -13,7 +13,7 @@ import com.training.library.entity.BookStatus;
 
 public interface BookStatusRepository extends JpaRepository<BookStatus, Long>{
 
-	@Query(value = "select new com.training.library.dto.response.BookStatusResponseDto(bookStatusId, location.locationId,location.shelf.section.floor.floorId, location.shelf.section.sectionId,location.shelf.shelfId,location.shelf.section.floor.floorNo, location.shelf.section.sectionName, location.shelf.shelfNo, location.position, isAvailable) from BookStatus where bookStatusId = :id")
+	@Query(value = "select new com.training.library.dto.response.BookStatusResponseDto(bookStatusId, location.locationId,location.shelf.section.floor.floorId, location.shelf.section.sectionId,location.shelf.shelfId,location.shelf.section.floor.floorNo, location.shelf.section.sectionName, location.shelf.shelfNo, location.position, isAvailable) from BookStatus where bookStatusId = :id and deletedAt is null")
 	Optional<BookStatusResponseDto> findByBookStatusIdAndDeletedAtIsNull(Long id);
 
 	@Modifying
@@ -21,5 +21,9 @@ public interface BookStatusRepository extends JpaRepository<BookStatus, Long>{
 	void deleteByBookStatusId(Long id);
 	@Query(value = "select new com.training.library.dto.response.BookStatusResponseDto(bookStatusId, location.locationId,location.shelf.section.floor.floorId, location.shelf.section.sectionId,location.shelf.shelfId,location.shelf.section.floor.floorNo, location.shelf.section.sectionName, location.shelf.shelfNo, location.position, isAvailable) from BookStatus where bookDetails.bookDetailsId = :id")
 	Page<BookStatusResponseDto> findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(Pageable pageble, Long id);
+
+	@Query(value = "select new com.training.library.dto.response.BookStatusResponseDto(bookStatusId, location.locationId,location.shelf.section.floor.floorId, location.shelf.section.sectionId,location.shelf.shelfId,location.shelf.section.floor.floorNo, location.shelf.section.sectionName, location.shelf.shelfNo, location.position, isAvailable) from BookStatus where bookDetails.bookDetailsId = :id and isAvailable = :b")
+	Page<BookStatusResponseDto> findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(Pageable pageble, Long id,
+			boolean b);
 	
 }

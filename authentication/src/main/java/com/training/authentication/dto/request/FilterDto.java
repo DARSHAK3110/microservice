@@ -7,11 +7,11 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.training.authentication.entity.User;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-
 
 public class FilterDto implements Specification<User> {
 	@JsonProperty
@@ -25,51 +25,41 @@ public class FilterDto implements Specification<User> {
 	@JsonProperty
 	private int setSize;
 
-	
 	public String getFirstName() {
 		return firstName;
 	}
-
 
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 
-
 	public String getLastName() {
 		return lastName;
 	}
-
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
-
 	public String getPhoneNumber() {
 		return phoneNumber;
 	}
-
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 
-
 	public int getPageNumber() {
 		return pageNumber;
 	}
-
 
 	public void setPageNumber(int pageNumber) {
 		this.pageNumber = pageNumber;
 	}
 
-
 	public int getSetSize() {
 		return setSize;
 	}
-
 
 	public void setSetSize(int setSize) {
 		this.setSize = setSize;
@@ -88,12 +78,12 @@ public class FilterDto implements Specification<User> {
 
 		}
 		if (getLastName() != null && !getLastName().trim().equalsIgnoreCase("")) {
-					pred.add(criteriaBuilder.like(root.get("lastName").as(String.class),
+			pred.add(criteriaBuilder.like(root.get("lastName").as(String.class),
 					"%" + getLastName().trim().toLowerCase() + "%"));
 
 		}
-		if (getPhoneNumber() != null & !getPhoneNumber().trim().equalsIgnoreCase("")) {
-					pred.add(criteriaBuilder.like(root.get("phoneNumber").as(String.class),
+		if (getPhoneNumber() != null && !getPhoneNumber().trim().equalsIgnoreCase("")) {
+			pred.add(criteriaBuilder.like(root.get("phoneNumber").as(String.class),
 					"%" + getPhoneNumber().trim().toLowerCase() + "%"));
 
 		}

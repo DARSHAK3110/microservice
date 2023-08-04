@@ -1,6 +1,5 @@
 package com.training.library.repositories;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -16,13 +15,11 @@ public interface BookBorrowingRepository extends JpaRepository<BookBorrowing, Lo
 	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, returnDate,bookStatus.bookDetails.title) from BookBorrowing where deletedAt is null and bookBorrowingId = :id")
 	Optional<BookBorrowingResponseDto> findByBookBorrowingIdAndDeletedAtIsNull(Long id);
 	
-
 	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, returnDate,bookStatus.bookDetails.title) from BookBorrowing where bookStatus.bookDetails.title like %:search% or borrower.phone like %:search%")
 	Page<BookBorrowingResponseDto> findAllwithSearch(String search, Pageable pageble);
 
-
 	@Modifying
-	@Query(value = "update book_borrowing set deleted_at = now() and return_date = now() where id= :id", nativeQuery = true)
+	@Query(value = "update book_borrowing set deleted_at = now() where id= :id", nativeQuery = true)
 	void deleteByBookBorrowingId(Long id);
 
 	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, returnDate, bookStatus.bookDetails.title) from BookBorrowing where deletedAt is null and bookStatus.bookStatusId = :id")

@@ -1,8 +1,6 @@
 package com.training.authentication.controller;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.introspection.OAuth2IntrospectionAuthenticatedPrincipal;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,11 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
-import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import com.training.authentication.dto.request.FilterDto;
 import com.training.authentication.dto.request.TokenRequestDto;
 import com.training.authentication.dto.request.UserLoginRequestDto;
@@ -50,7 +41,6 @@ import com.training.authentication.dto.response.TokenResponseDto;
 import com.training.authentication.dto.response.UserResponseDto;
 import com.training.authentication.service.UserService;
 
-import io.jsonwebtoken.lang.Strings;
 import io.micrometer.common.lang.NonNull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -97,7 +87,8 @@ public class UserController {
 		result.put("username", claims.get("sub"));
 		result.put("exp", claims.get("exp"));
 		result.put("scope", authentication.getAuthorities());
-		OAuth2IntrospectionAuthenticatedPrincipal principal = new OAuth2IntrospectionAuthenticatedPrincipal(result,(Collection<GrantedAuthority>) authentication.getAuthorities());
+		OAuth2IntrospectionAuthenticatedPrincipal principal = new OAuth2IntrospectionAuthenticatedPrincipal(result,
+				(Collection<GrantedAuthority>) authentication.getAuthorities());
 		return ResponseEntity.ok(principal);
 	}
 
@@ -146,7 +137,6 @@ public class UserController {
 
 	@PostMapping("/refresh") // get refresh token
 	public ResponseEntity<TokenResponseDto> refreshToken(@RequestBody TokenRequestDto tokenDto) {
-
 		TokenResponseDto res = this.userSerivceImpl.refreshToken(tokenDto);
 		res.setMessage(env.getRequiredProperty(OPERATION_SUCCESS));
 		return ResponseEntity.ok(res);

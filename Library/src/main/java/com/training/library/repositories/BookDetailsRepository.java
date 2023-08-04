@@ -8,32 +8,23 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import com.training.library.dto.view.BookDetailsView;
+import com.training.library.dto.response.BookDetailsResponseDto;
 import com.training.library.entity.BookDetails;
 
 public interface BookDetailsRepository extends JpaRepository<BookDetails , Long>{
 
-//	@Query(value = "select new com.training.library.dto.response.BookDetailsResponseDto(bookDetailsId , title, isbn, totalCopies, availableCopies, author.authorName) from BookDetails where deletedAt is null and bookDetailsId = :id")
-//	Optional<BookDetailsResponseDto> findByBookDetailsIdAndDeletedAtIsNull(Long id);
-
-	/*
-	 * @Query(value =
-	 * "select new com.training.library.dto.response.BookDetailsResponseDto(bookDetailsId,title, isbn, totalCopies, availableCopies, author.authorName, bookStatus) from BookDetails where deletedAt is null"
-	 * ) Optional<List<BookDetailsResponseDto>> findAllByDeletedAtIsNull();
-	 */
-
-	Optional<BookDetailsView> findByBookDetailsIdAndDeletedAtIsNull(Long id);
+	@Query(value =
+			  "select new com.training.library.dto.response.BookDetailsResponseDto(bookDetailsId,title, isbn, author.authorName, author.authorId,totalCopies, availableCopies) from BookDetails where deletedAt is null and bookDetailsId = :id")
+	Optional<BookDetailsResponseDto> findByBookDetailsIdAndDeletedAtIsNull(Long id);
 
 	@Query(value =
-			  "select new com.training.library.dto.response.BookDetailsResponseDto(bookDetailsId,title, isbn, author.authorName, author.authorId,totalCopies, availableCopies) from BookDetails where deletedAt is null")
-	Page<BookDetailsView> findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(String title, String authorName,Pageable pageable);
+			  "select new com.training.library.dto.response.BookDetailsResponseDto(bookDetailsId,title, isbn, author.authorName, author.authorId,totalCopies, availableCopies) from BookDetails where deletedAt is null and title like %:title% or author.authorName like %:authorName%")
+	Page<BookDetailsResponseDto> findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(String title, String authorName,Pageable pageable);
 
 	@Modifying
 	@Query(value = "update book_details set deleted_at = now() where id= :id", nativeQuery = true)
 	void deleteByBookDetailsId(Long id);
 
-	
 	Optional<BookDetails> findByIsbn(Long bookDetailsId);
-
 	
 }

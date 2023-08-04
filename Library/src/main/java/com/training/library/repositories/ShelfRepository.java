@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import com.training.library.dto.response.SectionResponseDto;
 import com.training.library.dto.response.ShelfResponseDto;
 import com.training.library.entity.Shelf;
 

@@ -1,12 +1,11 @@
 package com.training.library.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,20 +28,19 @@ import jakarta.servlet.http.HttpServletRequest;
 @CrossOrigin
 @PropertySource("classpath:message.properties")
 @RequestMapping("/library/api/v1/borrowings")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class BookBorrowingController {
 	@Autowired
 	private BookBorrowingService bookBorrowingService;
-	private static final String OPERATION_SUCCESS = "operation.success";
-	@Autowired
-	private Environment env;
 
-	@GetMapping("/{id}")
+
+	@GetMapping("bookborrowing/{id}")
 	public ResponseEntity<BookBorrowingResponseDto> findBookBorrowing(@PathVariable Long id) {
 		BookBorrowingResponseDto bookBorrowing = bookBorrowingService.findBookBorrowing(id);
 		return ResponseEntity.ok(bookBorrowing);
 	}
 
-	@GetMapping("/bookStatus/{id}")
+	@GetMapping("/bookstatus/{id}")
 	public ResponseEntity<BookBorrowingResponseDto> findBookBorrowingByBookStatus(@PathVariable Long id) {
 		BookBorrowingResponseDto bookBorrowing = bookBorrowingService.findBookBorrowingByBookStatus(id);
 		return ResponseEntity.ok(bookBorrowing);
@@ -57,22 +55,12 @@ public class BookBorrowingController {
 	@PostMapping
 	public ResponseEntity<CustomBaseResponseDto> saveBookBorrowing(@RequestBody BookBorrowingRequestDto dto,
 			HttpServletRequest req) {
-		String userName = req.getHeader("username");
-		bookBorrowingService.saveBookBorrowing(dto, userName);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		return bookBorrowingService.saveBookBorrowing(dto, userName);
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<CustomBaseResponseDto> updateBookBorrowing(@PathVariable Long id,
-			@RequestBody BookBorrowingRequestDto dto) {
-		bookBorrowingService.updateBookBorrowing(id, dto);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
-	}
-
-	@DeleteMapping("/{id}")
+	@DeleteMapping("bookborrowing/{id}")
 	public ResponseEntity<CustomBaseResponseDto> deleteBookBorrowing(@PathVariable Long id) {
-		bookBorrowingService.deleteBookBorrowing(id);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return bookBorrowingService.deleteBookBorrowing(id);
 	}
-
 }

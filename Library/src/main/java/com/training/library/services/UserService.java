@@ -33,4 +33,10 @@ public class UserService {
 	public User saveUser(User user) {
 		return userRepository.save(user);
 	}
+	
+	public User newUser(String userName) {
+		User newUser = new User();
+		newUser.setPhone(Long.parseLong(userName));
+		return userRepository.save(newUser);
+	}
 }

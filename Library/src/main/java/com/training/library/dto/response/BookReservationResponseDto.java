@@ -79,5 +79,7 @@ public class BookReservationResponseDto {
 		this.reservationDate = reservationDate;
 		this.isbn = isbn;
 	}
+	public BookReservationResponseDto() {
+	}
 
 }

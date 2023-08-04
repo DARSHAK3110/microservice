@@ -4,32 +4,38 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.request.SectionRequestDto;
+import com.training.library.dto.response.CustomBaseResponseDto;
 import com.training.library.dto.response.SectionResponseDto;
 import com.training.library.entity.Floor;
 import com.training.library.entity.Section;
 import com.training.library.entity.User;
 import com.training.library.repositories.FloorRepository;
 import com.training.library.repositories.SectionRepository;
-import com.training.library.repositories.UserRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
+@PropertySource("classpath:message.properties")
 public class SectionService {
 	@Autowired
 	private SectionRepository sectionRepository;
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 	@Autowired
 	private FloorRepository floorRepository;
-
+	private static final String OPERATION_SUCCESS = "operation.success";
+	@Autowired
+	private Environment env;
 	public SectionResponseDto findSection(Long id) {
 		Optional<SectionResponseDto> section = sectionRepository.findBySectionIdAndDeletedAtIsNull(id);
 		if (section.isPresent()) {
@@ -43,16 +49,13 @@ public class SectionService {
 		return sectionRepository.findAllByDeletedAtIsNull(dto.getSearch(), pageble);
 	}
 
-	public void saveSection(SectionRequestDto dto, String userName) {
+	public ResponseEntity<CustomBaseResponseDto> saveSection(SectionRequestDto dto, String userName) {
 		Section section = new Section();
-		Optional<User> userOptional = userRepository.findByPhone(Long.parseLong("9725953035"));
 		User user = null;
-		if (userOptional.isEmpty()) {
-			User newUser = new User();
-			newUser.setPhone(Long.parseLong(userName));
-			user = userRepository.save(newUser);
-		} else {
-			user = userOptional.get();
+		user = userService.findByPhone(Long.parseLong(userName));
+		
+		if (user == null) {
+			user = userService.newUser(userName);
 		}
 		section.setUser(user);
 		Optional<Floor> floor = floorRepository.findByFloorNo(dto.getFloorNo());
@@ -61,10 +64,10 @@ public class SectionService {
 		}
 		section.setSectionName(dto.getSectionName());
 		sectionRepository.save(section);
-
+		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
-	public void updateSection(Long id, SectionRequestDto dto) {
+	public ResponseEntity<CustomBaseResponseDto> updateSection(Long id, SectionRequestDto dto) {
 		Optional<Section> sectionOptional = sectionRepository.findById(id);
 		if (sectionOptional.isPresent()) {
 			Section section = sectionOptional.get();
@@ -75,15 +78,16 @@ public class SectionService {
 			section.setSectionName(dto.getSectionName());
 			sectionRepository.save(section);
 		}
+		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
 	@Transactional
-	public void deleteSection(Long id) {
+	public ResponseEntity<CustomBaseResponseDto> deleteSection(Long id) {
 		sectionRepository.deleteBySectionId(id);
+		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
 	public List<SectionResponseDto> findSectionsByFloors(Long floorId) {
-		
 		return sectionRepository.getAllByFloor_FloorNoAndDeletedAtIsNotNull(floorId);
 	}
 }

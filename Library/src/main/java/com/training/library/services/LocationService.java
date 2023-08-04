@@ -4,33 +4,39 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.request.LocationRequestDto;
+import com.training.library.dto.response.CustomBaseResponseDto;
 import com.training.library.dto.response.LocationResponseDto;
 import com.training.library.entity.Location;
 import com.training.library.entity.Shelf;
 import com.training.library.entity.User;
 import com.training.library.repositories.LocationRepository;
 import com.training.library.repositories.ShelfRepository;
-import com.training.library.repositories.UserRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
+@PropertySource("classpath:message.properties")
 public class LocationService {
 
 	@Autowired
 	private LocationRepository locationRepository;
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 	@Autowired
 	private ShelfRepository shelfRepository;
-
+	private static final String OPERATION_SUCCESS = "operation.success";
+	@Autowired
+	private Environment env;
 	public LocationResponseDto findLocation(Long id) {
 		Optional<LocationResponseDto> location = locationRepository.findByLocationIdAndDeletedAtIsNull(id);
 		if (location.isPresent()) {
@@ -44,16 +50,12 @@ public class LocationService {
 		return locationRepository.findAllByDeletedAtIsNull(dto.getSearch(), pageable);
 	}
 
-	public void saveLocation(LocationRequestDto dto, String userName) {
+	public ResponseEntity<CustomBaseResponseDto> saveLocation(LocationRequestDto dto, String userName) {
 		Location location = new Location();
-		Optional<User> userOptional = userRepository.findByPhone(Long.parseLong("9725953035"));
 		User user = null;
-		if (userOptional.isEmpty()) {
-			User newUser = new User();
-			newUser.setPhone(Long.parseLong("9725953035"));
-			user = userRepository.save(newUser);
-		} else {
-			user = userOptional.get();
+		user = userService.findByPhone(Long.parseLong(userName));
+		if (user == null) {
+			user = userService.newUser(userName);
 		}
 		location.setUser(user);
 		location.setPosition(dto.getPosition());
@@ -63,10 +65,10 @@ public class LocationService {
 		}
 		location.setIsAvailable(true);
 		locationRepository.save(location);
-
+		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
-	public void updateLocation(Long id, LocationRequestDto dto) {
+	public ResponseEntity<CustomBaseResponseDto> updateLocation(Long id, LocationRequestDto dto) {
 		Optional<Location> locationOptional = locationRepository.findById(id);
 		if (locationOptional.isPresent()) {
 			Location location = locationOptional.get();
@@ -77,12 +79,13 @@ public class LocationService {
 			}
 			locationRepository.save(location);
 		}
-
+		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
 	@Transactional
-	public void deleteLocation(Long id) {
+	public ResponseEntity<CustomBaseResponseDto> deleteLocation(Long id) {
 		locationRepository.deleteByLocationId(id);
+		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));	
 	}
 
 	public Location findLocationById(Long id) {

@@ -17,7 +17,7 @@ public interface SectionRepository extends JpaRepository<Section, Long>  {
 	@Query(value = "select new com.training.library.dto.response.SectionResponseDto(sectionId,sectionName,floor.floorId,floor.floorNo) from Section where deletedAt is null and sectionId = :id")
 	Optional<SectionResponseDto> findBySectionIdAndDeletedAtIsNull(Long id);
 
-	@Query(value = "select new com.training.library.dto.response.SectionResponseDto(sectionId,sectionName,floor.floorId,floor.floorNo) from Section where deletedAt is null and sectionName like %:search% or floor.floorNo like %:search%")
+	@Query(value = "select new com.training.library.dto.response.SectionResponseDto(sectionId,sectionName,floor.floorId,floor.floorNo) from Section where deletedAt is null and floor.floorNo like %:search% or  sectionName like %:search% ")
 	Page<SectionResponseDto> findAllByDeletedAtIsNull(String search, Pageable pageble);
 
 	@Modifying

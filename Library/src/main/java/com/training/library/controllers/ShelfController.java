@@ -7,6 +7,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +32,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @CrossOrigin
 @PropertySource("classpath:message.properties")
 @RequestMapping("/library/api/v1/shelfs")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class ShelfController {
 
 	private static final String OPERATION_SUCCESS = "operation.success";
@@ -52,21 +55,18 @@ public class ShelfController {
 
 	@PostMapping
 	public ResponseEntity<CustomBaseResponseDto> saveShelf(@RequestBody ShelfRequestDto dto, HttpServletRequest req) {
-		String userName = req.getHeader("username");
-		shelfService.saveShelf(dto, userName);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		return shelfService.saveShelf(dto, userName);
 	}
 
 	@PutMapping("/shelf/{id}")
 	public ResponseEntity<CustomBaseResponseDto> updateShelf(@PathVariable Long id, @RequestBody ShelfRequestDto dto) {
-		shelfService.updateShelf(id, dto);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return shelfService.updateShelf(id, dto);
 	}
 
 	@DeleteMapping("/shelf/{id}")
 	public ResponseEntity<CustomBaseResponseDto> deleteShelf(@PathVariable Long id) {
-		shelfService.deleteShelf(id);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return shelfService.deleteShelf(id);
 	}
 	@GetMapping("/sections/{sectionId}")
 	public ResponseEntity<List<ShelfResponseDto>> findShelfsBySectionId(@PathVariable("sectionId") Long sectionId) {

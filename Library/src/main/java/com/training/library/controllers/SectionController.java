@@ -7,6 +7,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,6 +32,7 @@ import jakarta.validation.Valid;
 @CrossOrigin
 @PropertySource("classpath:message.properties")
 @RequestMapping("/library/api/v1/sections")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class SectionController {
 
 	private static final String OPERATION_SUCCESS = "operation.success";
@@ -62,7 +65,7 @@ public class SectionController {
 	@PostMapping
 	public ResponseEntity<CustomBaseResponseDto> saveSection(@Valid @RequestBody SectionRequestDto dto,
 			HttpServletRequest req) {
-		String userName = req.getHeader("username");
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		sectionService.saveSection(dto, userName);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}

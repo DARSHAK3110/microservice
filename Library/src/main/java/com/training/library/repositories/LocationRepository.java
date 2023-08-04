@@ -16,8 +16,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 	@Query(value = "select  new com.training.library.dto.response.LocationResponseDto(locationId,position,shelf.shelfId,shelf.shelfNo,shelf.section.sectionId,shelf.section.sectionName,shelf.section.floor.floorId,shelf.section.floor.floorNo) from Location where deletedAt is null and locationId = :id")
 	Optional<LocationResponseDto> findByLocationIdAndDeletedAtIsNull(Long id);
 
-	@Query(value = "select  new com.training.library.dto.response.LocationResponseDto(locationId,position,shelf.shelfId,shelf.shelfNo,shelf.section.sectionId,shelf.section.sectionName, shelf.section.floor.floorId,shelf.section.floor.floorNo) from Location where deletedAt is null ")
-	Page<LocationResponseDto> findAllByDeletedAtIsNull(String string, Pageable pageable);
+	@Query(value = "select  new com.training.library.dto.response.LocationResponseDto(locationId,position,shelf.shelfId,shelf.shelfNo,shelf.section.sectionId,shelf.section.sectionName, shelf.section.floor.floorId,shelf.section.floor.floorNo) from Location where deletedAt is null and shelf.section.sectionName like %:search% or shelf.section.floor.floorNo like %:search% or shelf.shelfNo like %:search% or position like %:search%")
+	Page<LocationResponseDto> findAllByDeletedAtIsNull(String search, Pageable pageable);
 
 	@Modifying
 	@Query(value = "update location set deleted_at = now() where id= :id", nativeQuery = true)

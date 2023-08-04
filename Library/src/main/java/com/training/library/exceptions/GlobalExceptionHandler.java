@@ -3,7 +3,6 @@ package com.training.library.exceptions;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -27,34 +26,37 @@ public class GlobalExceptionHandler {
 	private Environment env;
 
 	@ExceptionHandler(CustomExceptionHandler.class)
-	public ResponseEntity<ResponseDto> sqlErrorHandler(CustomExceptionHandler e,Model model, HttpServletResponse response) throws IOException{
+	public ResponseEntity<ResponseDto> sqlErrorHandler(CustomExceptionHandler e, Model model,
+			HttpServletResponse response) throws IOException {
 		ResponseDto res = new ResponseDto();
 		res.setMessage(e.getMessage());
-		return new ResponseEntity<>(res,HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
+
 	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<ResponseDto> validationHandler(ConstraintViolationException e,Model model, HttpServletResponse response) throws IOException{
+	public ResponseEntity<ResponseDto> validationHandler(ConstraintViolationException e, Model model,
+			HttpServletResponse response) throws IOException {
 		ResponseDto res = new ResponseDto();
 		Map<String, Object> result = new HashMap<>();
-		e.getConstraintViolations().forEach(constrain->{
-		//	result.put("Line number", e.getMessage());
+		e.getConstraintViolations().forEach(constrain -> {
+			// result.put("Line number", e.getMessage());
 			result.put(constrain.getPropertyPath().toString(), env.getRequiredProperty(constrain.getMessage()));
-	});
-		res.setMessage("Line number: "+e.getMessage()+"\n"+result);
-		return new ResponseEntity<>(res,HttpStatus.INTERNAL_SERVER_ERROR);
+		});
+		res.setMessage("Line number: " + e.getMessage() + "\n" + result);
+		return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
+
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public final ResponseEntity<ResponseDto> dataIntegrityExceptionHandler(Exception e) {
 		ResponseDto res = new ResponseDto();
 		res.setMessage("Data already available!!");
-		return new ResponseEntity<>(res,HttpStatus.CONFLICT);
+		return new ResponseEntity<>(res, HttpStatus.CONFLICT);
 	}
+
 	@ExceptionHandler(NullPointerException.class)
 	public final ResponseEntity<ResponseDto> nullPointerExceptionHandler(Exception e) {
 		ResponseDto res = new ResponseDto();
 		res.setMessage("Please check your file structure!!");
-		return new ResponseEntity<>(res,HttpStatus.NOT_ACCEPTABLE);
+		return new ResponseEntity<>(res, HttpStatus.NOT_ACCEPTABLE);
 	}
 }
