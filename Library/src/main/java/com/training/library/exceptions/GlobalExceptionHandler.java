@@ -2,6 +2,7 @@ package com.training.library.exceptions;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,12 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.training.library.dto.response.ResponseDto;
 
@@ -58,5 +63,20 @@ public class GlobalExceptionHandler {
 		ResponseDto res = new ResponseDto();
 		res.setMessage("Please check your file structure!!");
 		return new ResponseEntity<>(res, HttpStatus.NOT_ACCEPTABLE);
+	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<ResponseDto>  methodArgumentNotValidException(MethodArgumentNotValidException ex) {
+	    BindingResult result = ex.getBindingResult();
+	    final List<FieldError> fieldErrors = result.getFieldErrors();
+	    HashMap<String, String> hashMap = new HashMap<>();
+	    fieldErrors.forEach(fe->{
+	    	hashMap.put(fe.getField(), env.getRequiredProperty(fe.getDefaultMessage()));
+	    });
+	    
+	    ResponseDto res = new ResponseDto();
+	    res.setResult(hashMap);
+	    return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
 	}
 }

@@ -15,6 +15,8 @@ public class BookDetailsResponseDto {
 	private Long authorId;
 	private Long totalCopies;
 	private Long availableCopies;
+	private boolean addedToCart;
+	private boolean isReserved;
 
 	public Long getBookDetailsId() {
 		return bookDetailsId;
@@ -30,6 +32,14 @@ public class BookDetailsResponseDto {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public boolean isReserved() {
+		return isReserved;
+	}
+
+	public void setReserved(boolean isReserved) {
+		this.isReserved = isReserved;
 	}
 
 	public Long getIsbn() {
@@ -74,6 +84,14 @@ public class BookDetailsResponseDto {
 
 	public void setAuthorId(Long authorId) {
 		this.authorId = authorId;
+	}
+
+	public boolean isAddedToCart() {
+		return addedToCart;
+	}
+
+	public void setAddedToCart(boolean addedToCart) {
+		this.addedToCart = addedToCart;
 	}
 
 	public BookDetailsResponseDto(Long bookDetailsId, String title, Long isbn, String author, Long authorId,

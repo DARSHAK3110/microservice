@@ -83,7 +83,7 @@ public class ShelfService {
 
 	@Transactional
 	public ResponseEntity<CustomBaseResponseDto> deleteShelf(Long id) {
-		shelfRepository.deleteByShelfId(id);
+		shelfRepository.deleteById(id);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 

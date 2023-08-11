@@ -133,4 +133,11 @@ public class BookStatus {
 		this.upload = upload;
 	}
 
+	@Override
+	public String toString() {
+		return "BookStatus [bookStatusId=" + bookStatusId 
+				+ ", bookBorrowing=" + bookBorrowing + ", isAvailable=" + isAvailable + ", createdAt=" + createdAt
+				+ ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", upload=" + upload + "]";
+	}
+
 }

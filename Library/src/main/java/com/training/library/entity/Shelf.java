@@ -17,9 +17,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "shelf")
+@Table(name = "shelf",uniqueConstraints={
+	    @UniqueConstraint(columnNames = {"section_id", "shelf_no"})})
 public class Shelf {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

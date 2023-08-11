@@ -83,7 +83,7 @@ public class SectionService {
 
 	@Transactional
 	public ResponseEntity<CustomBaseResponseDto> deleteSection(Long id) {
-		sectionRepository.deleteBySectionId(id);
+		sectionRepository.deleteById(id);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 

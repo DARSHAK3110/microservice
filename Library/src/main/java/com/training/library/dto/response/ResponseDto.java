@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class ResponseDto {
 	String message;
-	Map<String, Object> result;
+	Map<String, String> result;
 	 
 	public String getMessage() {
 		return message;
@@ -14,15 +14,15 @@ public class ResponseDto {
 		this.message = message;
 	}
 
-	public Map<String, Object> getResult() {
+	public Map<String, String> getResult() {
 		return result;
 	}
 
-	public void setResult(Map<String, Object> result) {
+	public void setResult(Map<String, String> result) {
 		this.result = result;
 	}
 
-	public ResponseDto(String message, Map<String, Object> result) {
+	public ResponseDto(String message, Map<String, String> result) {
 		super();
 		this.message = message;
 		this.result = result;

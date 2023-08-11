@@ -89,4 +89,13 @@ public class Upload {
 		bd.setUpload(this);
 		this.bookDetails.add(bd);
 	}
+	
+	public void addAllBookDetails(List<BookDetails> bsList) {
+		bsList.forEach(bd->{
+			bd.setUpload(this);
+			this.bookDetails.add(bd);
+	});
+		
+	}
 }
+

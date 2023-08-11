@@ -42,7 +42,7 @@ class FloorRepositoryTest {
 	
 	@Test
 	void testFailFindByFloorIdAndDeletedAtIsNull() {
-		repo.deleteByFloorId(id);
+		repo.deleteById(id);
 		Optional<FloorResponseDto> floorResult = repo.findByFloorIdAndDeletedAtIsNull(id);
 		assertThat(floorResult.isEmpty()).isEqualTo(true);
 	}
@@ -67,7 +67,7 @@ class FloorRepositoryTest {
 
 	@Test
 	void testDeleteByFloorId() {
-		repo.deleteByFloorId(id);
+		repo.deleteById(id);
 		Optional<FloorResponseDto> authorOtional= repo.findByFloorIdAndDeletedAtIsNull(id);
 		assertThat(authorOtional).isEmpty();
 	}

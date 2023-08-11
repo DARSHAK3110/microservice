@@ -16,9 +16,11 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "location")
+@Table(name = "location", uniqueConstraints={
+	    @UniqueConstraint(columnNames = {"shelf_id", "position"})})
 public class Location {
 
 	@Id
@@ -29,6 +31,7 @@ public class Location {
 	@ManyToOne
 	private Shelf shelf;
 
+	@Column(name="position")
 	private String position;
 
 	@ManyToOne

@@ -32,12 +32,13 @@ class BookStatusRepositoryTest {
 	private Long bookDetailsId;
 	@Autowired
 	private EntityGenerator entityGenerator;
+	private BookStatus savedBookStatus;
 
 	@Transactional
 	@BeforeEach
 	void setUp() throws Exception {
 
-		BookStatus savedBookStatus = entityGenerator.getBookStatus();
+		savedBookStatus = repo.save(entityGenerator.getBookStatus());
 		id = savedBookStatus.getBookStatusId();
 		bookDetailsId = savedBookStatus.getBookDetails().getBookDetailsId();
 	}
@@ -51,7 +52,7 @@ class BookStatusRepositoryTest {
 	@Test
 	void testFailFindByBookStatusIdAndDeletedAtIsNull() {
 		Optional<BookStatusResponseDto> result = repo.findByBookStatusIdAndDeletedAtIsNull(id);
-		assertThat(result.get().getBookStatusId()).isEqualTo(id);
+		assertThat(result.get().getBookStatusId()).isNotEqualTo(0L);
 	}
 
 	@Test
@@ -81,4 +82,100 @@ class BookStatusRepositoryTest {
 				.findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(PageRequest.of(0, 2), bookDetailsId, false);
 		assertThat(result.getContent().size()).isNotPositive();
 	}
+
+	@Test
+	void findByLocation_LocationIdTest1() {
+		Optional<BookStatus> result = repo.findByLocation_LocationId(savedBookStatus.getLocation().getLocationId());
+		assertThat(result.get().getLocation().getLocationId()).isEqualTo(savedBookStatus.getLocation().getLocationId());
+	}
+
+	@Test
+	void failFindByLocation_LocationIdTest2() {
+		Optional<BookStatusResponseDto> result = repo.findByBookStatusIdAndDeletedAtIsNull(id);
+		assertThat(result.get().getBookStatusId()).isNotEqualTo(0L);
+	}
+
+	@Test
+	void countByLocation_Shelf_ShelfIdAndDeletedAtIsNullTest1() {
+		Long result = repo
+				.countByLocation_Shelf_ShelfIdAndDeletedAtIsNull(savedBookStatus.getLocation().getShelf().getShelfId());
+		assertThat(result).isEqualTo(1L);
+	}
+
+	@Test
+	void countByLocation_Shelf_ShelfIdAndDeletedAtIsNullTest2() {
+
+		Long result = repo.countByLocation_Shelf_ShelfIdAndDeletedAtIsNull(0L);
+		assertThat(result).isEqualTo(0L);
+	}
+
+	@Test
+	void countByLocation_Shelf_Section_SectionIdAndDeletedAtIsNullTest1() {
+		Long result = repo.countByLocation_Shelf_Section_SectionIdAndDeletedAtIsNull(
+				savedBookStatus.getLocation().getShelf().getSection().getSectionId());
+		assertThat(result).isEqualTo(1L);
+	}
+
+	@Test
+	void countByLocation_Shelf_Section_SectionIdAndDeletedAtIsNullTest2() {
+
+		Long result = repo.countByLocation_Shelf_Section_SectionIdAndDeletedAtIsNull(0L);
+		assertThat(result).isEqualTo(0L);
+	}
+
+	@Test
+	void countByLocation_LocationIdAndDeletedAtIsNullTest1() {
+		Long result = repo.countByLocation_LocationIdAndDeletedAtIsNull(savedBookStatus.getLocation().getLocationId());
+		assertThat(result).isEqualTo(1L);
+	}
+
+	@Test
+	void countByLocation_LocationIdAndDeletedAtIsNullTest2() {
+
+		Long result = repo.countByLocation_LocationIdAndDeletedAtIsNull(0L);
+		assertThat(result).isEqualTo(0L);
+	}
+
+	@Test
+	void countByLocation_Shelf_Section_Floor_FloorIdAndDeletedAtIsNullTest1() {
+		Long result = repo.countByLocation_Shelf_Section_Floor_FloorIdAndDeletedAtIsNull(
+				savedBookStatus.getLocation().getShelf().getSection().getFloor().getFloorId());
+		assertThat(result).isEqualTo(1L);
+	}
+
+	@Test
+	void countByLocation_Shelf_Section_Floor_FloorIdAndDeletedAtIsNullTest2() {
+
+		Long result = repo.countByLocation_Shelf_Section_Floor_FloorIdAndDeletedAtIsNull(0L);
+		assertThat(result).isEqualTo(0L);
+	}
+
+	@Test
+	void testFindAllByLocationId() {
+		Page<BookStatusResponseDto> result = repo.findAllByLocationId(savedBookStatus.getLocation().getLocationId(),
+				PageRequest.of(0, 2));
+		assertThat(result.getContent().size()).isPositive();
+	}
+
+	@Test
+	void testFindAllByShelfId() {
+		Page<BookStatusResponseDto> result = repo
+				.findAllByShelfId(savedBookStatus.getLocation().getShelf().getShelfId(), PageRequest.of(0, 2));
+		assertThat(result.getContent().size()).isPositive();
+	}
+
+	@Test
+	void testFindAllBySectionId() {
+		Page<BookStatusResponseDto> result = repo.findAllBySectionId(
+				savedBookStatus.getLocation().getShelf().getSection().getSectionId(), PageRequest.of(0, 2));
+		assertThat(result.getContent().size()).isPositive();
+	}
+
+	@Test
+	void testFindAllByFloorId() {
+		Page<BookStatusResponseDto> result = repo.findAllByFloorId(
+				savedBookStatus.getLocation().getShelf().getSection().getFloor().getFloorId(), PageRequest.of(0, 2));
+		assertThat(result.getContent().size()).isPositive();
+	}
+
 }

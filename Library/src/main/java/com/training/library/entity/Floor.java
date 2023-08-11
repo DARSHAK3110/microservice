@@ -30,7 +30,7 @@ public class Floor {
 	@Column(name = "id")
 	private Long floorId;
 
-	@Column(name = "floor_no")
+	@Column(name = "floor_no", unique = true)
 	private Long floorNo;
 
 	@JsonIgnore

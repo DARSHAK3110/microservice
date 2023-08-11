@@ -1,7 +1,5 @@
 package com.training.library.dto.response;
 
-import org.springframework.beans.factory.annotation.Value;
-
 public class BookStatusResponseDto {
 
 	private Long bookStatusId;
@@ -14,6 +12,8 @@ public class BookStatusResponseDto {
 	private Long shelfNo;
 	private String position;
 	private Boolean isAvailable;
+	private Long isbn;
+	private Long bookDetailsId;
 
 	public Long getBookStatusId() {
 		return bookStatusId;
@@ -95,8 +95,25 @@ public class BookStatusResponseDto {
 		this.isAvailable = isAvailable;
 	}
 
+	public Long getIsbn() {
+		return isbn;
+	}
+
+	public void setIsbn(Long isbn) {
+		this.isbn = isbn;
+	}
+
+	public Long getBookDetailsId() {
+		return bookDetailsId;
+	}
+
+	public void setBookDetailsId(Long bookDetailsId) {
+		this.bookDetailsId = bookDetailsId;
+	}
+
 	public BookStatusResponseDto(Long bookStatusId, Long locationId, Long floorId, Long sectionId, Long shelfId,
-			Long floorNo, String sectionName, Long shelfNo, String position, Boolean isAvailable) {
+			Long floorNo, String sectionName, Long shelfNo, String position, Boolean isAvailable, Long isbn,
+			Long bookDetailsId) {
 		super();
 		this.bookStatusId = bookStatusId;
 		this.locationId = locationId;
@@ -108,6 +125,8 @@ public class BookStatusResponseDto {
 		this.shelfNo = shelfNo;
 		this.position = position;
 		this.isAvailable = isAvailable;
+		this.isbn = isbn;
+		this.bookDetailsId = bookDetailsId;
 	}
 
 	public BookStatusResponseDto() {

@@ -70,7 +70,7 @@ class AuthorRepositoryTest {
 	}
 @BeforeEach
 	void newAuthor(){
-		Author save = entityGenerator.getAuthor();
+		Author save =  repo.save(entityGenerator.getAuthor());
 		this.id = save.getAuthorId();	
 	}
 }

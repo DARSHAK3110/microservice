@@ -2,7 +2,6 @@ package com.training.library.dto.request;
 
 import java.util.Date;
 
-import com.training.library.constraint.DateValidator;
 import com.training.library.constraint.PhoneNumberConstraint;
 
 import jakarta.validation.constraints.Min;
@@ -14,7 +13,6 @@ public class BookBorrowingRequestDto {
 	private Long phone;
 	@Min(value = 1, message = "bookBorrowing.validation.bookStatus.id")
 	private Long bookStatusId;
-	@DateValidator
 	private Date borrowingDate;
 
 	public Long getPhone() {

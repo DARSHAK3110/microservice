@@ -18,13 +18,17 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails , Long>
 	Optional<BookDetailsResponseDto> findByBookDetailsIdAndDeletedAtIsNull(Long id);
 
 	@Query(value =
-			  "select new com.training.library.dto.response.BookDetailsResponseDto(bookDetailsId,title, isbn, author.authorName, author.authorId,totalCopies, availableCopies) from BookDetails where deletedAt is null and title like %:title% or author.authorName like %:authorName%")
+			  "select new com.training.library.dto.response.BookDetailsResponseDto(bookDetailsId,title, isbn, author.authorName, author.authorId,totalCopies, availableCopies) from BookDetails where deletedAt is null and (title like %:title% or author.authorName like %:authorName%)")
 	Page<BookDetailsResponseDto> findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(String title, String authorName,Pageable pageable);
 
 	@Modifying
 	@Query(value = "update book_details set deleted_at = now() where id= :id", nativeQuery = true)
 	void deleteByBookDetailsId(Long id);
 
-	Optional<BookDetails> findByIsbn(Long bookDetailsId);
+	Optional<BookDetails> findByIsbn(Long isbn);
+
 	
+	@Query(value="select count(*) from BookDetails bd left join BookStatus bs on bd.bookDetailsId = bs.bookDetails.bookDetailsId where bs.isAvailable = FALSE and bs.deletedAt is null and bd.bookDetailsId = :id ")
+	Long countBookNotAvailable(Long id);
+
 }

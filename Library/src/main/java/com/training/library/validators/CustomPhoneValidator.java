@@ -8,6 +8,7 @@ public class CustomPhoneValidator implements ConstraintValidator<PhoneNumberCons
 
 	@Override
 	public boolean isValid(Long value, ConstraintValidatorContext context) {
+		System.out.println(value);
 		return value != null && value.toString().matches("[0-9]+") && (value.toString().length() == 10);
 
 	}

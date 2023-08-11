@@ -87,7 +87,7 @@ class BookBorrowingServiceTest {
 	void saveBookBorrowingTest1() {
 		BookBorrowingRequestDto req = entityGenerator.getBookBorrowingRequestDto();
 		User user = entityGenerator.getMockUser();
-		when(userService.findByPhone(123123123L)).thenReturn(null);
+		when(userService.findByPhone(1231231231L)).thenReturn(null);
 		when(userService.newUser("1231231231")).thenReturn(user);
 		when(bookStatusService.findBookById(any(Long.class))).thenReturn(entityGenerator.getMockBookStatus());
 		doNothing().when(bookDetailService).setAvailableCopies(any(BookDetails.class),any(String.class));
@@ -100,7 +100,7 @@ class BookBorrowingServiceTest {
 	void saveBookBorrowingTest2() {
 		BookBorrowingRequestDto req = entityGenerator.getBookBorrowingRequestDto();
 		User user = entityGenerator.getMockUser();
-		when(userService.findByPhone(123123123L)).thenReturn(user);
+		when(userService.findByPhone(1231231231L)).thenReturn(user);
 		when(bookStatusService.findBookById(any(Long.class))).thenReturn(entityGenerator.getMockBookStatus());
 		when(repo.save(any(BookBorrowing.class))).thenReturn(entityGenerator.getMockBookBorrowing());
 		doNothing().when(bookDetailService).setAvailableCopies(any(BookDetails.class),any(String.class));

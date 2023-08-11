@@ -65,7 +65,7 @@ class LocationRepositoryTest {
 
 	@Test
 	void testDeleteByLocationId() {
-		repo.deleteByLocationId(id);
+		repo.deleteById(id);
 		Optional<LocationResponseDto> locationOtional = repo.findByLocationIdAndDeletedAtIsNull(id);
 		assertThat(locationOtional).isEmpty();
 	}

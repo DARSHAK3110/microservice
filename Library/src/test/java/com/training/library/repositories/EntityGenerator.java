@@ -62,6 +62,10 @@ public class EntityGenerator {
 	@Autowired
 	private BookBorrowingRepository bookBorrowingRepository;
 
+	public EntityGenerator() {
+		super();
+	}
+
 	public Floor getFloor() {
 		Floor floor = new Floor();
 		floor.setFloorNo(1000000L);
@@ -304,7 +308,8 @@ public class EntityGenerator {
 
 	public LocationResponseDto getLocationResponseDto(Long id) {
 		LocationResponseDto locationResponseDto = new LocationResponseDto();
-		locationResponseDto.setShelfId(id);
+		locationResponseDto.setLocationId(id);
+		locationResponseDto.setPosition("testPosition");
 		locationResponseDto.setShelfNo(0L);
 		locationResponseDto.setSectionName("testSection");
 		return locationResponseDto;
@@ -341,7 +346,7 @@ public class EntityGenerator {
 	public BookDetailsRequestDto getBookDetailsRequestDto() {
 		BookDetailsRequestDto req = new BookDetailsRequestDto();
 		req.setTitle("testTitle");
-		req.setIsbn(1231231231L);
+		req.setIsbn(1231231231231L);
 		req.setAuthorId(0L);
 		return req;
 	}
@@ -376,7 +381,6 @@ public class EntityGenerator {
 		return req;
 	}
 
-
 	public BookReservationResponseDto getBookReservationResponseDto(Long id) {
 		BookReservationResponseDto bookReservationResponseDto = new BookReservationResponseDto();
 		bookReservationResponseDto.setBookReservationId(id);
@@ -394,7 +398,7 @@ public class EntityGenerator {
 	public BookReservationRequestDto getBookReservationRequestDto() {
 		BookReservationRequestDto req = new BookReservationRequestDto();
 		req.setBookDetailsId(0L);
-		req.setPhone(123123123L);
+		req.setPhone(1231231231L);
 		return req;
 	}
 
@@ -415,7 +419,8 @@ public class EntityGenerator {
 	public BookBorrowingRequestDto getBookBorrowingRequestDto() {
 		BookBorrowingRequestDto req = new BookBorrowingRequestDto();
 		req.setBookStatusId(0L);
-		req.setPhone(123123123L);
+		req.setPhone(1231231231L);
+		req.setBorrowingDate(new Date(System.currentTimeMillis()));
 		return req;
 	}
 

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,20 +34,15 @@ import jakarta.validation.Valid;
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class SectionController {
 
-	private static final String OPERATION_SUCCESS = "operation.success";
-	@Autowired
-	private Environment env;
-
 	@Autowired
 	private SectionService sectionService;
 
 	@GetMapping("/floors/{floorNo}")
 	public ResponseEntity<List<SectionResponseDto>> findSectionsByFloor(@PathVariable Long floorNo) {
-		System.out.println("aavyu");
 		List<SectionResponseDto> sections = sectionService.findSectionsByFloors(floorNo);
 		return ResponseEntity.ok(sections);
 	}
-	
+
 	@GetMapping("/section/{id}")
 	public ResponseEntity<SectionResponseDto> findSection(@PathVariable Long id) {
 		SectionResponseDto section = sectionService.findSection(id);
@@ -60,26 +54,22 @@ public class SectionController {
 		Page<SectionResponseDto> sections = sectionService.findSections(dto);
 		return ResponseEntity.ok(sections);
 	}
-	
 
 	@PostMapping
 	public ResponseEntity<CustomBaseResponseDto> saveSection(@Valid @RequestBody SectionRequestDto dto,
 			HttpServletRequest req) {
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		sectionService.saveSection(dto, userName);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return sectionService.saveSection(dto, userName);
 	}
 
 	@PutMapping("/section/{id}")
 	public ResponseEntity<CustomBaseResponseDto> updateSection(@PathVariable Long id,
 			@RequestBody SectionRequestDto dto) {
-		sectionService.updateSection(id, dto);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return sectionService.updateSection(id, dto);
 	}
 
 	@DeleteMapping("/section/{id}")
 	public ResponseEntity<CustomBaseResponseDto> deleteSection(@PathVariable Long id) {
-		sectionService.deleteSection(id);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return sectionService.deleteSection(id);
 	}
 }

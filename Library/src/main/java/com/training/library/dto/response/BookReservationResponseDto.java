@@ -8,9 +8,9 @@ public class BookReservationResponseDto {
 	private String bookTitle;
 	private Long bookId;
 	private Long phone;
-	private String reserverName;
 	private Date reservationDate;
 	private Long isbn;
+	private Boolean isAccepted;
 
 	public Long getBookReservationId() {
 		return bookReservationId;
@@ -68,8 +68,16 @@ public class BookReservationResponseDto {
 		this.isbn = isbn;
 	}
 
+	public Boolean getIsAccepted() {
+		return isAccepted;
+	}
+
+	public void setIsAccepted(Boolean isAccepted) {
+		this.isAccepted = isAccepted;
+	}
+
 	public BookReservationResponseDto(Long bookReservationId, Long userId, String bookTitle, Long bookId, Long phone,
-			Date reservationDate, Long isbn) {
+			Date reservationDate, Long isbn, Boolean isAccepted) {
 		super();
 		this.bookReservationId = bookReservationId;
 		this.userId = userId;
@@ -78,7 +86,9 @@ public class BookReservationResponseDto {
 		this.phone = phone;
 		this.reservationDate = reservationDate;
 		this.isbn = isbn;
+		this.isAccepted = isAccepted;
 	}
+
 	public BookReservationResponseDto() {
 	}
 

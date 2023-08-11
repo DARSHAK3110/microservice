@@ -20,6 +20,8 @@ import com.training.library.entity.BookReservation;
 import com.training.library.entity.User;
 import com.training.library.repositories.BookReservationRepository;
 
+import jakarta.validation.Valid;
+
 @Service
 @PropertySource("classpath:message.properties")
 public class BookReservationService {
@@ -69,6 +71,25 @@ public class BookReservationService {
 
 	public ResponseEntity<CustomBaseResponseDto> deleteBookReservation(Long id) {
 		bookReservationRepository.deleteByBookReservationId(id);
+		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+	}
+
+	public boolean checkReservation(Long bookDetailsId, String userName) {
+		
+		Optional<BookReservation> bookReservation = bookReservationRepository.findByBookDetails_BookDetailsIdAndReserver_PhoneAndDeletedAtIsNull(bookDetailsId,Long.parseLong(userName));
+		if(bookReservation.isPresent()) {
+			return true;
+		}
+		return false;
+	}
+
+	public ResponseEntity<CustomBaseResponseDto> saveBookReservationStatus(Long id, @Valid Boolean status) {
+		Optional<BookReservation> reservationOptional = bookReservationRepository.findById(id);
+		if(reservationOptional.isPresent()) {
+			BookReservation reservation = reservationOptional.get();
+			reservation.setIsAccepted(status);
+			bookReservationRepository.save(reservation);
+		}
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 }

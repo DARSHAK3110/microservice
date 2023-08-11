@@ -66,7 +66,7 @@ public class FloorService {
 	}
 
 	public ResponseEntity<CustomBaseResponseDto> deleteFloor(Long id) {
-		floorRepository.deleteByFloorId(id);
+		floorRepository.deleteById(id);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 

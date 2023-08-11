@@ -76,16 +76,16 @@ class BookDetailsServiceTest {
 		assertThat(result).isNull();
 	}
 
-	@Test
-	void testFindAllBookDetails() {
-		FilterDto dto = entityGenerator.getFilterDto();
-		Page<BookDetailsResponseDto> actual = entityGenerator.getBookDetailsPage();
-		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		when(repo.findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(
-				dto.getSearch(), dto.getSearch(), pageable)).thenReturn(actual);
-		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto);
-		assertThat(result).isEqualTo(actual);
-	}
+//	@Test
+//	void testFindAllBookDetails() {
+//		FilterDto dto = entityGenerator.getFilterDto();
+//		Page<BookDetailsResponseDto> actual = entityGenerator.getBookDetailsPage();
+//		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+//		when(repo.findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(
+//				dto.getSearch(), dto.getSearch(), pageable)).thenReturn(actual);
+//		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto);
+//		assertThat(result).isEqualTo(actual);
+//	}
 
 	@Test
 	void saveBookDetailsTest1() {

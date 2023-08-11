@@ -52,6 +52,9 @@ public class BookReservation {
 	@Column(name = "deleted_at")
 	private Date deletedAt;
 
+	@Column(name = "is_accepted")
+	private Boolean isAccepted;
+
 	public Long getBookReservationId() {
 		return bookReservationId;
 	}
@@ -118,6 +121,14 @@ public class BookReservation {
 
 	public BookReservation() {
 		super();
+	}
+
+	public Boolean getIsAccepted() {
+		return isAccepted;
+	}
+
+	public void setIsAccepted(Boolean isAccepted) {
+		this.isAccepted = isAccepted;
 	}
 
 }

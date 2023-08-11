@@ -1,6 +1,8 @@
 package com.training.library.entity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -41,6 +43,9 @@ public class User {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<BookReservation> bookReservation;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+	private List<Cart> cart = new ArrayList<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<BookBorrowing> bookBOrrowing;
@@ -145,6 +150,14 @@ public class User {
 
 	public void setBookBOrrowing(List<BookBorrowing> bookBOrrowing) {
 		this.bookBOrrowing = bookBOrrowing;
+	}
+
+	public List<Cart> getCart() {
+		return cart;
+	}
+
+	public void setCart(List<Cart> cart) {
+		this.cart = cart;
 	}
 
 }

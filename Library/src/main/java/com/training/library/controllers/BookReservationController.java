@@ -21,38 +21,46 @@ import com.training.library.dto.response.CustomBaseResponseDto;
 import com.training.library.services.BookReservationService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @Controller
 @CrossOrigin
 @RequestMapping("/library/api/v1/reservations")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class BookReservationController {
 	@Autowired
 	private BookReservationService bookReservationService;
 
-	@GetMapping("/reservaion/{id}")
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping("/reservation/{id}")
 	public ResponseEntity<BookReservationResponseDto> findBookReservation(@PathVariable Long id) {
 		BookReservationResponseDto bookReservation = bookReservationService.findBookReservation(id);
 		return ResponseEntity.ok(bookReservation);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
 	@GetMapping
 	public ResponseEntity<Page<BookReservationResponseDto>> findBookReservations(FilterDto dto) {
 		Page<BookReservationResponseDto> bookReservationList = bookReservationService.findAllBookReservation(dto);
 		return ResponseEntity.ok(bookReservationList);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
 	@PostMapping
-	public ResponseEntity<CustomBaseResponseDto> saveBookReservation(
-			@RequestBody BookReservationRequestDto dto, HttpServletRequest req) {
+	public ResponseEntity<CustomBaseResponseDto> saveBookReservation(@Valid @RequestBody BookReservationRequestDto dto,
+			HttpServletRequest req) {
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		return bookReservationService.saveBookReservation(dto,
-				userName);
+		return bookReservationService.saveBookReservation(dto, userName);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PostMapping("/status/{id}")
+	public ResponseEntity<CustomBaseResponseDto> saveBookReservationStatus(@PathVariable("id") Long id, @Valid @RequestBody Boolean status) {
+		return bookReservationService.saveBookReservationStatus(id,status);
+	}
 
-	@DeleteMapping("/reservaion/{id}")
-	public ResponseEntity<CustomBaseResponseDto>  deleteBookReservation(@PathVariable Long id) {
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@DeleteMapping("/reservation/{id}")
+	public ResponseEntity<CustomBaseResponseDto> deleteBookReservation(@PathVariable Long id) {
 		return bookReservationService.deleteBookReservation(id);
 	}
 

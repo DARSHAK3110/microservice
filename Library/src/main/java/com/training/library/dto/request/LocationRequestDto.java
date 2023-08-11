@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 
 public class LocationRequestDto {
 	@NotBlank(message = "location.validation.position.blank")
-	@Size(min = 16, message = "location.validation.position.size.max")
+	@Size(max = 16, message = "location.validation.position.size.max")
 	private String position;
 	@Min(value = 1, message = "location.validation.floor.id")
 	private Long floorId;

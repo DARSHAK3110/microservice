@@ -3,6 +3,7 @@ package com.training.library.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -44,6 +45,9 @@ public class BookDetails {
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "bookDetails")
 	private List<BookReservation> bookReservation;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "bookDetails")
+	private List<Cart> cart = new ArrayList<>();
 
 	@ManyToOne
 	private Author author;
@@ -165,9 +169,18 @@ public class BookDetails {
 		super();
 	}
 
+	public List<Cart> getCart() {
+		return cart;
+	}
+
+	public void setCart(List<Cart> cart) {
+		this.cart = cart;
+	}
+
 	public void addBookStatus(BookStatus bs) {
 		bs.setBookDetails(this);
 		getBookStatus().add(bs);
 	}
+
 
 }

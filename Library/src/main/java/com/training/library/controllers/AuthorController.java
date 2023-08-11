@@ -1,7 +1,6 @@
 package com.training.library.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.training.library.dto.request.AuthorRequestDto;
@@ -29,11 +27,11 @@ import jakarta.validation.Valid;
 @Controller
 @CrossOrigin
 @RequestMapping("/library/api/v1/authors")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AuthorController {
 	@Autowired
 	private AuthorService authorService;
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("author/{id}")
 	public ResponseEntity<AuthorResponseDto> findAuthor(@PathVariable Long id) {
 
@@ -41,13 +39,15 @@ public class AuthorController {
 		return ResponseEntity.ok(author);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping
-	public ResponseEntity<Page<AuthorResponseDto>> findAuthors(FilterDto dto,
-			@RequestHeader("Authorization") String token) {
+	public ResponseEntity<Page<AuthorResponseDto>> findAuthors(FilterDto dto) {
+		
 		Page<AuthorResponseDto> authors = authorService.findAuthors(dto);
 		return ResponseEntity.ok(authors);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping
 	public ResponseEntity<CustomBaseResponseDto> saveAuthor(@Valid @RequestBody AuthorRequestDto dto,
 			HttpServletRequest req) {
@@ -55,14 +55,17 @@ public class AuthorController {
 		return authorService.saveAuthor(dto, userName);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("author/{id}")
 	public ResponseEntity<CustomBaseResponseDto> updateAuthor(@PathVariable Long id,
 			@Valid @RequestBody AuthorRequestDto dto) {
 		return authorService.updateAuthor(id, dto);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("author/{id}")
 	public ResponseEntity<CustomBaseResponseDto> deleteAuthor(@PathVariable Long id) {
 		return authorService.deleteAuthor(id);
 	}
+
 }

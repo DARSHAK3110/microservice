@@ -24,6 +24,7 @@ import com.training.library.dto.response.LocationResponseDto;
 import com.training.library.services.LocationService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @Controller
 @CrossOrigin
@@ -48,7 +49,7 @@ public class LocationController {
 	}
 
 	@PostMapping
-	public ResponseEntity<CustomBaseResponseDto> saveLocation(@RequestBody LocationRequestDto dto,
+	public ResponseEntity<CustomBaseResponseDto> saveLocation(@Valid @RequestBody LocationRequestDto dto,
 			HttpServletRequest req) {
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		return locationService.saveLocation(dto, userName);
@@ -56,7 +57,7 @@ public class LocationController {
 
 	@PutMapping("/location/{id}")
 	public ResponseEntity<CustomBaseResponseDto> updateLocation(@PathVariable Long id,
-			@RequestBody LocationRequestDto dto) {
+			@Valid @RequestBody LocationRequestDto dto) {
 		return locationService.updateLocation(id, dto);
 	}
 

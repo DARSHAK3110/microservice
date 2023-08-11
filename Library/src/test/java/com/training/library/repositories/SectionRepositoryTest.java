@@ -41,7 +41,7 @@ class SectionRepositoryTest {
 	
 	@Test
 	void testFailFindBySectionIdAndDeletedAtIsNull() {
-		repo.deleteBySectionId(id);
+		repo.deleteById(id);
 		Optional<SectionResponseDto> result = repo.findBySectionIdAndDeletedAtIsNull(id);
 		assertThat(result).isEmpty();
 	}
@@ -53,7 +53,7 @@ class SectionRepositoryTest {
 
 	@Test
 	void testDeleteBySectionId() {
-		repo.deleteBySectionId(id);
+		repo.deleteById(id);
 		Optional<SectionResponseDto> authorOtional= repo.findBySectionIdAndDeletedAtIsNull(id);
 		assertThat(authorOtional).isEmpty();
 	}

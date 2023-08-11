@@ -5,6 +5,7 @@ public class FilterDto {
 	private int pageNumber;
 	private int pageSize;
 	private int availability;
+	private boolean user = false;
 
 	public FilterDto() {
 		super();
@@ -40,6 +41,23 @@ public class FilterDto {
 
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
+	}
+
+	public boolean isUser() {
+		return user;
+	}
+
+	public void setUser(boolean user) {
+		this.user = user;
+	}
+
+	public FilterDto(String search, int pageNumber, int pageSize, int availability, boolean user) {
+		super();
+		this.search = search;
+		this.pageNumber = pageNumber;
+		this.pageSize = pageSize;
+		this.availability = availability;
+		this.user = user;
 	}
 
 }

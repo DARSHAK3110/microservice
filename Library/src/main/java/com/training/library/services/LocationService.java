@@ -37,8 +37,11 @@ public class LocationService {
 	private static final String OPERATION_SUCCESS = "operation.success";
 	@Autowired
 	private Environment env;
+
 	public LocationResponseDto findLocation(Long id) {
+		System.out.println(id);
 		Optional<LocationResponseDto> location = locationRepository.findByLocationIdAndDeletedAtIsNull(id);
+		System.out.println(location.get().getPosition());
 		if (location.isPresent()) {
 			return location.get();
 		}
@@ -84,8 +87,8 @@ public class LocationService {
 
 	@Transactional
 	public ResponseEntity<CustomBaseResponseDto> deleteLocation(Long id) {
-		locationRepository.deleteByLocationId(id);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));	
+		locationRepository.deleteById(id);
+		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
 	public Location findLocationById(Long id) {
@@ -98,10 +101,14 @@ public class LocationService {
 	}
 
 	public List<LocationResponseDto> findLocationsByShelf(Long shelfId) {
-		return locationRepository.getAllByShelf_ShelfIdAndDeletedAtIsNotNull(shelfId);
+
+		List<LocationResponseDto> locations = locationRepository.getAllByShelf_ShelfIdAndDeletedAtIsNotNull(shelfId);
+		return locations;
 	}
 
 	public void updateLocationAvailability(Location location) {
 		locationRepository.save(location);
 	}
+
+
 }

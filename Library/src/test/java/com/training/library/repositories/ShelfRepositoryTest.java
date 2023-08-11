@@ -47,7 +47,7 @@ class ShelfRepositoryTest {
 
 	@Test
 	void testFailFindByShelfIdAndDeletedAtIsNull() {
-		repo.deleteByShelfId(id);
+		repo.deleteById(id);
 		Optional<ShelfResponseDto> result = repo.findByShelfIdAndDeletedAtIsNull(id);
 		assertThat(result.isEmpty()).isEqualTo(true);
 	}
@@ -60,7 +60,7 @@ class ShelfRepositoryTest {
 
 	@Test
 	void testDeleteByShelfId() {
-		repo.deleteByShelfId(id);
+		repo.deleteById(id);
 		Optional<ShelfResponseDto> shelfOtional = repo.findByShelfIdAndDeletedAtIsNull(id);
 		assertThat(shelfOtional).isEmpty();
 

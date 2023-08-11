@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+
 public class BookDetailsRequestDto {
 
 	@Min(value= 1,message = "bookDetails.validation.bookDetails.id" )
@@ -12,7 +13,7 @@ public class BookDetailsRequestDto {
 	private Long isbn;
 	@NotBlank(message = "bookDetails.validation.title.blank")
 	@Size(min = 3, message = "bookDetails.validation.title.size.min")
-	@Size(min = 16, message = "bookDetails.validation.title.size.max")
+	@Size(max = 16, message = "bookDetails.validation.title.size.max")
 	private String title;
 	@Min(value= 1,message = "bookDetails.validation.author.id" )
 	private Long authorId;
