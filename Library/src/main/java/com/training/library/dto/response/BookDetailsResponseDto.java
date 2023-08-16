@@ -1,11 +1,5 @@
 package com.training.library.dto.response;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Value;
-
-import com.training.library.entity.BookStatus;
-
 public class BookDetailsResponseDto {
 
 	private Long bookDetailsId;
@@ -17,7 +11,8 @@ public class BookDetailsResponseDto {
 	private Long availableCopies;
 	private boolean addedToCart;
 	private boolean isReserved;
-
+	private Long totalReserved;
+	private Long acceptedReserved;
 	public Long getBookDetailsId() {
 		return bookDetailsId;
 	}
@@ -92,6 +87,23 @@ public class BookDetailsResponseDto {
 
 	public void setAddedToCart(boolean addedToCart) {
 		this.addedToCart = addedToCart;
+	}
+
+	
+	public Long getTotalReserved() {
+		return totalReserved;
+	}
+
+	public void setTotalReserved(Long totalReserved) {
+		this.totalReserved = totalReserved;
+	}
+
+	public Long getAcceptedReserved() {
+		return acceptedReserved;
+	}
+
+	public void setAcceptedReserved(Long acceptedReserved) {
+		this.acceptedReserved = acceptedReserved;
 	}
 
 	public BookDetailsResponseDto(Long bookDetailsId, String title, Long isbn, String author, Long authorId,

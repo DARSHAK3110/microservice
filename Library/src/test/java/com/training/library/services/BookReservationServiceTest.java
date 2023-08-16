@@ -71,7 +71,7 @@ class BookReservationServiceTest {
 		Page<BookReservationResponseDto> actual = entityGenerator.getBookReservationPage();
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
 		when(repo.findAllByDeletedAtIsNull(dto.getSearch(), pageable)).thenReturn(actual);
-		Page<BookReservationResponseDto> result = service.findAllBookReservation(dto);
+		Page<BookReservationResponseDto> result = service.findAllBookReservation(dto,"1231231231");
 		assertThat(result).isEqualTo(actual);
 	}
 

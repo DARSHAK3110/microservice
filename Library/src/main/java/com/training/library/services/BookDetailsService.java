@@ -68,13 +68,15 @@ public class BookDetailsService {
 	}
 
 	public Page<BookDetailsResponseDto> findAllBookDetails(FilterDto dto, String userName) {
+
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
 		Page<BookDetailsResponseDto> result = bookDetailsRepository
 				.findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(
 						dto.getSearch(), dto.getSearch(), pageable);
-		if (dto.isUser()) {
+		
 			List<BookDetailsResponseDto> content = result.getContent();
 			for (BookDetailsResponseDto response : content) {
+				if (dto.isUser()) {	
 				if (checkInCart(response.getBookDetailsId(), userName)) {
 					response.setAddedToCart(true);
 				} else {
@@ -85,9 +87,10 @@ public class BookDetailsService {
 				} else {
 					response.setReserved(false);
 				}
-					
+				return PageableExecutionUtils.getPage(content, pageable, () -> result.getTotalElements());	
 			}
-			return PageableExecutionUtils.getPage(content, pageable, () -> result.getTotalElements());
+			response.setTotalReserved(reserveService.getTotalReservations(response.getBookDetailsId()));
+			response.setAcceptedReserved(reserveService.getTotalAcceptedReservations(response.getBookDetailsId()));
 		}
 		return result;
 	}

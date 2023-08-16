@@ -15,7 +15,7 @@ public interface BookBorrowingRepository extends JpaRepository<BookBorrowing, Lo
 	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, deletedAt,bookStatus.bookDetails.title) from BookBorrowing where deletedAt is null and bookBorrowingId = :id")
 	Optional<BookBorrowingResponseDto> findByBookBorrowingIdAndDeletedAtIsNull(Long id);
 	
-	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, deletedAt,bookStatus.bookDetails.title) from BookBorrowing where bookStatus.bookDetails.title like %:search% or borrower.phone like %:search%")
+	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, deletedAt,bookStatus.bookDetails.title) from BookBorrowing where (bookStatus.bookDetails.title like %:search% or borrower.phone like %:search%)")
 	Page<BookBorrowingResponseDto> findAllwithSearch(String search, Pageable pageble);
 
 	@Modifying
@@ -24,4 +24,7 @@ public interface BookBorrowingRepository extends JpaRepository<BookBorrowing, Lo
 
 	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, deletedAt, bookStatus.bookDetails.title) from BookBorrowing where deletedAt is null and bookStatus.bookStatusId = :id")
 	Optional<BookBorrowingResponseDto> findByBookStatus_BookStatusIdAndDeletedAtIsNull(Long id);
+
+	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, deletedAt,bookStatus.bookDetails.title) from BookBorrowing where borrower.phone = :userName and (bookStatus.bookDetails.title like %:search% or borrower.phone like %:search%)")
+	Page<BookBorrowingResponseDto> findAllwithSearch(String search, Pageable pageble, String userName);
 }

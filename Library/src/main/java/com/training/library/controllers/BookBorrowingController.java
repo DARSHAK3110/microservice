@@ -21,44 +21,47 @@ import com.training.library.dto.response.BookBorrowingResponseDto;
 import com.training.library.dto.response.CustomBaseResponseDto;
 import com.training.library.services.BookBorrowingService;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @Controller
 @CrossOrigin
 @PropertySource("classpath:message.properties")
 @RequestMapping("/library/api/v1/borrowings")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class BookBorrowingController {
 	@Autowired
 	private BookBorrowingService bookBorrowingService;
 
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("bookborrowing/{id}")
 	public ResponseEntity<BookBorrowingResponseDto> findBookBorrowing(@PathVariable Long id) {
 		BookBorrowingResponseDto bookBorrowing = bookBorrowingService.findBookBorrowing(id);
 		return ResponseEntity.ok(bookBorrowing);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/bookstatus/{id}")
 	public ResponseEntity<BookBorrowingResponseDto> findBookBorrowingByBookStatus(@PathVariable Long id) {
 		BookBorrowingResponseDto bookBorrowing = bookBorrowingService.findBookBorrowingByBookStatus(id);
 		return ResponseEntity.ok(bookBorrowing);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
 	@GetMapping
 	public ResponseEntity<Page<BookBorrowingResponseDto>> findBookBorrowings(FilterDto dto) {
-		Page<BookBorrowingResponseDto> bookBorrowingList = bookBorrowingService.findAllBookBorrowing(dto);
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		Page<BookBorrowingResponseDto> bookBorrowingList = bookBorrowingService.findAllBookBorrowing(dto,userName);
 		return ResponseEntity.ok(bookBorrowingList);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping
-	public ResponseEntity<CustomBaseResponseDto> saveBookBorrowing(@Valid @RequestBody BookBorrowingRequestDto dto,
-			HttpServletRequest req) {
+	public ResponseEntity<CustomBaseResponseDto> saveBookBorrowing(@Valid @RequestBody BookBorrowingRequestDto dto) {
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		return bookBorrowingService.saveBookBorrowing(dto, userName);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("bookborrowing/{id}")
 	public ResponseEntity<CustomBaseResponseDto> deleteBookBorrowing(@PathVariable Long id) {
 		return bookBorrowingService.deleteBookBorrowing(id);

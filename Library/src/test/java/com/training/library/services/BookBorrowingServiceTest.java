@@ -1,11 +1,8 @@
 package com.training.library.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -29,7 +26,6 @@ import com.training.library.dto.response.BookBorrowingResponseDto;
 import com.training.library.dto.response.CustomBaseResponseDto;
 import com.training.library.entity.BookBorrowing;
 import com.training.library.entity.BookDetails;
-import com.training.library.entity.BookStatus;
 import com.training.library.entity.User;
 import com.training.library.repositories.BookBorrowingRepository;
 import com.training.library.repositories.EntityGenerator;
@@ -79,7 +75,7 @@ class BookBorrowingServiceTest {
 		Page<BookBorrowingResponseDto> actual = entityGenerator.getBookBorrowingPage();
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
 		when(repo.findAllwithSearch(dto.getSearch(), pageable)).thenReturn(actual);
-		Page<BookBorrowingResponseDto> result = service.findAllBookBorrowing(dto);
+		Page<BookBorrowingResponseDto> result = service.findAllBookBorrowing(dto,"1231231231");
 		assertThat(result).isEqualTo(actual);
 	}
 

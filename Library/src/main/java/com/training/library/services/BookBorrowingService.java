@@ -47,8 +47,11 @@ public class BookBorrowingService {
 		return null;
 	}
 
-	public Page<BookBorrowingResponseDto> findAllBookBorrowing(FilterDto dto) {
+	public Page<BookBorrowingResponseDto> findAllBookBorrowing(FilterDto dto,String userName) {
 		Pageable pageble = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+		if(dto.isUser()) {
+			return bookBorrowingRepository.findAllwithSearch(dto.getSearch(), pageble, userName);
+		}
 		return bookBorrowingRepository.findAllwithSearch(dto.getSearch(), pageble);
 	}
 

@@ -39,9 +39,7 @@ public class LocationService {
 	private Environment env;
 
 	public LocationResponseDto findLocation(Long id) {
-		System.out.println(id);
 		Optional<LocationResponseDto> location = locationRepository.findByLocationIdAndDeletedAtIsNull(id);
-		System.out.println(location.get().getPosition());
 		if (location.isPresent()) {
 			return location.get();
 		}

@@ -10,7 +10,7 @@ public class SectionRequestDto {
 	private String sectionName;
 	@Min(value = 1, message = "section.validation.floor.id")
 	private Long floorNo;
-	@Min(value = 1, message = "section.validation.section.id")
+	@Min(value = 0, message = "section.validation.section.id")
 	private Long sectionId;
 
 	public Long getSectionId() {

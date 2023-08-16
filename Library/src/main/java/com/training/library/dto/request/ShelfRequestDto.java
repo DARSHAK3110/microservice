@@ -3,10 +3,10 @@ package com.training.library.dto.request;
 import jakarta.validation.constraints.Min;
 
 public class ShelfRequestDto {
-	@Min(value= 1,message = "shelf.validation.shelf.id" )
+	@Min(value= 0,message = "shelf.validation.shelf.id" )
 	private Long shelfId;
 
-	@Min(value= 1,message = "shelf.validation.shelf.no")
+	@Min(value= 0,message = "shelf.validation.shelf.no")
 	private Long shelfNo;
 
 	@Min(value= 1,message = "shelf.validation.section.id" )

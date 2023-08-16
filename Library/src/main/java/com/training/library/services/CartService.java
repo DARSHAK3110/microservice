@@ -50,7 +50,7 @@ public class CartService {
 	}
 
 	public boolean checkCart(Long bookDetailsId, String userName) {
-		Optional<Cart> cartItem = cartRepository.findByBookDetails_BookDetailsIdAndUser_Phone(bookDetailsId,Long.parseLong(userName));
+		Optional<Cart> cartItem = cartRepository.findByBookDetails_BookDetailsIdAndUser_PhoneAndDeletedAtIsNull(bookDetailsId,Long.parseLong(userName));
 		if(cartItem.isPresent()) {
 			return true;
 		}

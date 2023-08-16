@@ -1,5 +1,6 @@
 package com.training.library.repositories;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -31,4 +32,5 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails , Long>
 	@Query(value="select count(*) from BookDetails bd left join BookStatus bs on bd.bookDetailsId = bs.bookDetails.bookDetailsId where bs.isAvailable = FALSE and bs.deletedAt is null and bd.bookDetailsId = :id ")
 	Long countBookNotAvailable(Long id);
 
+	  
 }

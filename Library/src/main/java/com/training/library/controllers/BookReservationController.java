@@ -40,7 +40,8 @@ public class BookReservationController {
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
 	@GetMapping
 	public ResponseEntity<Page<BookReservationResponseDto>> findBookReservations(FilterDto dto) {
-		Page<BookReservationResponseDto> bookReservationList = bookReservationService.findAllBookReservation(dto);
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		Page<BookReservationResponseDto> bookReservationList = bookReservationService.findAllBookReservation(dto,userName);
 		return ResponseEntity.ok(bookReservationList);
 	}
 

@@ -36,10 +36,6 @@ public class BookBorrowing {
 	@Column(name = "borrowing_date")
 	private Date borrowingDate;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-	@Column(name = "return_date")
-	private Date returnDate;
-
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false)
@@ -87,14 +83,6 @@ public class BookBorrowing {
 
 	public void setBorrowingDate(Date borrowingDate) {
 		this.borrowingDate = borrowingDate;
-	}
-
-	public Date getReturnDate() {
-		return returnDate;
-	}
-
-	public void setReturnDate(Date returnDate) {
-		this.returnDate = returnDate;
 	}
 
 	public Date getCreatedAt() {

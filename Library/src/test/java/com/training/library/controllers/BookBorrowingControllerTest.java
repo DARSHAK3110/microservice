@@ -70,7 +70,7 @@ class BookBorrowingControllerTest {
 
 	@Test
 	void findBookBorrowingsTest1() throws Exception {
-		 when(bookBorrowingService.findAllBookBorrowing(any(FilterDto.class))).thenReturn(entityGenerator.getBookBorrowingPage());
+		 when(bookBorrowingService.findAllBookBorrowing(any(FilterDto.class),any(String.class))).thenReturn(entityGenerator.getBookBorrowingPage());
 		 mockMvc.perform(get("/library/api/v1/borrowings").content(mapper.writeValueAsString(entityGenerator.getFilterDto()))
 			.with(SecurityMockMvcRequestPostProcessors.opaqueToken()
 			.authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
@@ -81,7 +81,7 @@ class BookBorrowingControllerTest {
 
 	@Test
 	void findBookBorrowingsTest2() throws Exception {
-		when(bookBorrowingService.findAllBookBorrowing(any(FilterDto.class))).thenReturn(null);
+		when(bookBorrowingService.findAllBookBorrowing(any(FilterDto.class),any(String.class))).thenReturn(null);
 		mockMvc.perform(get("/library/api/v1/borrowings").with(SecurityMockMvcRequestPostProcessors.opaqueToken()
 			.authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))).andExpect(status().isOk())
 			.andExpect(MockMvcResultMatchers.jsonPath("$").doesNotExist());
