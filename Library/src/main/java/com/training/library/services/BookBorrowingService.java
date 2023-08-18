@@ -38,6 +38,7 @@ public class BookBorrowingService {
 	private static final String OPERATION_SUCCESS = "operation.success";
 	@Autowired
 	private Environment env;
+
 	public BookBorrowingResponseDto findBookBorrowing(Long id) {
 		Optional<BookBorrowingResponseDto> bookBorrowing = bookBorrowingRepository
 				.findByBookBorrowingIdAndDeletedAtIsNull(id);
@@ -47,9 +48,9 @@ public class BookBorrowingService {
 		return null;
 	}
 
-	public Page<BookBorrowingResponseDto> findAllBookBorrowing(FilterDto dto,String userName) {
+	public Page<BookBorrowingResponseDto> findAllBookBorrowing(FilterDto dto, String userName) {
 		Pageable pageble = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		if(dto.isUser()) {
+		if (dto.isUser()) {
 			return bookBorrowingRepository.findAllwithSearch(dto.getSearch(), pageble, userName);
 		}
 		return bookBorrowingRepository.findAllwithSearch(dto.getSearch(), pageble);
@@ -78,13 +79,19 @@ public class BookBorrowingService {
 
 	@Transactional
 	public ResponseEntity<CustomBaseResponseDto> deleteBookBorrowing(Long id) {
-		BookBorrowingResponseDto bookBorrowing = findBookBorrowing(id);
-		BookStatus bookStatus = this.bookStatusService.findBookById(bookBorrowing.getBookId());
-		bookStatus.setAvailable(true);
-		BookDetails bookDetails = bookStatus.getBookDetails();
-		bookDetailService.setAvailableCopies(bookDetails, "checkOut");
-		this.bookStatusService.updateBookStatusAvailability(bookStatus);
-		bookBorrowingRepository.deleteByBookBorrowingId(id);
+		BookBorrowingResponseDto bookBorrowing = null;
+		Optional<BookBorrowingResponseDto> bookBorrowingOptional = bookBorrowingRepository
+				.findByBookBorrowingIdAndDeletedAtIsNull(id);
+		if (bookBorrowingOptional.isPresent()) {
+			bookBorrowing = bookBorrowingOptional.get();
+			BookStatus bookStatus = this.bookStatusService.findBookById(bookBorrowing.getBookId());
+			bookStatus.setAvailable(true);
+			BookDetails bookDetails = bookStatus.getBookDetails();
+			bookDetailService.setAvailableCopies(bookDetails, "checkOut");
+			this.bookStatusService.updateBookStatusAvailability(bookStatus);
+			bookBorrowingRepository.deleteByBookBorrowingId(id);
+		}
+		
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 

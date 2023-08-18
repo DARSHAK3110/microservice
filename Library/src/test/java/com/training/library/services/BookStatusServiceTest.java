@@ -1,6 +1,8 @@
 package com.training.library.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
@@ -53,6 +55,9 @@ class BookStatusServiceTest {
 	private UploadRepository uploadRepository;
 	@Mock
 	private LocationService locationService;
+
+	@Mock
+	private BookDetailsService bookDetailsService;
 	@Mock
 	private Environment env;
 
@@ -69,23 +74,45 @@ class BookStatusServiceTest {
 		assertThat(result).isNull();
 	}
 
-//	@Test
-//	void deleteBookStatusTest() {
-//		BookStatus mockBookStatus = entityGenerator.getMockBookStatus();
-//		mockBookStatus.getBookDetails().setBookDetailsId(0L);
-//		when(repo.findById(anyLong())).thenReturn(Optional.of(mockBookStatus));
-//		when(locationService.findLocationById(entityGenerator.getMockBookStatus().getLocation().getLocationId())).thenReturn(entityGenerator.getMockLocation());
-//		ResponseEntity<CustomBaseResponseDto> result = service.deleteBookStatus(0L);
-//		assertThat(result).isNotNull();
-//	}
-//	
-//
-//	@Test
-//	void deleteBookStatusTest2() {
-//		when(locationService.findLocationById(entityGenerator.getMockBookStatus().getLocation().getLocationId())).thenReturn(entityGenerator.getMockLocation());
-//		ResponseEntity<CustomBaseResponseDto> result = service.deleteBookStatus(entityGenerator.getMockBookStatus());
-//		assertThat(result).isNotNull();
-//	}
+	@Test
+	void deleteBookStatusTest() {
+		BookStatus mockBookStatus = entityGenerator.getMockBookStatus();
+		mockBookStatus.setBookStatusId(0L);
+		mockBookStatus.getBookDetails().setBookDetailsId(0L);
+		when(repo.findById(anyLong())).thenReturn(Optional.of(mockBookStatus));
+		when(locationService.findLocationById(any(Long.class))).thenReturn(entityGenerator.getMockLocation());
+		ResponseEntity<CustomBaseResponseDto> result = service.deleteBookStatus(0L);
+		assertThat(result).isNotNull();
+	}
+	
+	@Test
+	void deleteBookStatusTest3() {
+		BookStatus mockBookStatus = entityGenerator.getMockBookStatus();
+		mockBookStatus.setBookStatusId(0L);
+		mockBookStatus.setAvailable(false);
+		mockBookStatus.getBookDetails().setBookDetailsId(0L);
+		RuntimeException exception = assertThrows(RuntimeException.class,
+				() -> service.deleteBookStatus(mockBookStatus));
+		assertThat(exception.getMessage()).isEqualTo("For delete book, book really required at location");
+	}
+
+	
+	@Test
+	void deleteBookStatusTest4() {
+		BookStatus mockBookStatus = entityGenerator.getMockBookStatus();
+		mockBookStatus.setBookStatusId(0L);
+		mockBookStatus.setAvailable(false);
+		mockBookStatus.getBookDetails().setBookDetailsId(0L);
+		RuntimeException exception = assertThrows(RuntimeException.class,
+				() -> service.deleteBookStatus(mockBookStatus));
+		assertThat(exception.getMessage()).isEqualTo("For delete book, book really required at location");
+	}
+	@Test
+	void deleteBookStatusTest2() {
+		when(locationService.findLocationById(entityGenerator.getMockBookStatus().getLocation().getLocationId())).thenReturn(entityGenerator.getMockLocation());
+		ResponseEntity<CustomBaseResponseDto> result = service.deleteBookStatus(entityGenerator.getMockBookStatus());
+		assertThat(result).isNotNull();
+	}
 
 	@Test
 	void updateBookStatusTest1() {

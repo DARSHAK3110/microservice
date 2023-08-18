@@ -2,8 +2,11 @@ package com.training.library.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -66,8 +69,20 @@ class BookReservationServiceTest {
 	}
 
 	@Test
-	void testFindAllBookReservation() {
+	void findAllBookReservationTest1() {
 		FilterDto dto = entityGenerator.getFilterDto();
+		dto.setUser(true);
+		Page<BookReservationResponseDto> actual = entityGenerator.getBookReservationPage();
+		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+		when(repo.findAllByDeletedAtIsNull("1231231231", pageable,Long.parseLong("1231231231"))).thenReturn(actual);
+		Page<BookReservationResponseDto> result = service.findAllBookReservation(dto,"1231231231");
+		assertThat(result).isEqualTo(actual);
+	}
+	
+	@Test
+	void findAllBookReservationTest2() {
+		FilterDto dto = entityGenerator.getFilterDto();
+		dto.setUser(false);
 		Page<BookReservationResponseDto> actual = entityGenerator.getBookReservationPage();
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
 		when(repo.findAllByDeletedAtIsNull(dto.getSearch(), pageable)).thenReturn(actual);
@@ -79,7 +94,7 @@ class BookReservationServiceTest {
 	void saveBookReservationTest1() {
 		BookReservationRequestDto req = entityGenerator.getBookReservationRequestDto();
 		User user = entityGenerator.getMockUser();
-		when(userService.findByPhone(123123123L)).thenReturn(null);
+		when(userService.findByPhone(1231231231L)).thenReturn(null);
 		when(userService.newUser("1231231231")).thenReturn(user);
 		when(bookDetailsService.findBookDetailsById(any(Long.class))).thenReturn(entityGenerator.getMockBookDetails());
 		when(repo.save(any(BookReservation.class))).thenReturn(entityGenerator.getMockBookReservation());
@@ -91,7 +106,7 @@ class BookReservationServiceTest {
 	void saveBookReservationTest2() {
 		BookReservationRequestDto req = entityGenerator.getBookReservationRequestDto();
 		User user = entityGenerator.getMockUser();
-		when(userService.findByPhone(123123123L)).thenReturn(user);
+		when(userService.findByPhone(1231231231L)).thenReturn(user);
 		when(bookDetailsService.findBookDetailsById(any(Long.class))).thenReturn(entityGenerator.getMockBookDetails());
 		when(repo.save(any(BookReservation.class))).thenReturn(entityGenerator.getMockBookReservation());
 		ResponseEntity<CustomBaseResponseDto> result = service.saveBookReservation(req, "1231231231");
@@ -104,4 +119,47 @@ class BookReservationServiceTest {
 		assertThat(result).isNotNull();
 	}
 
+	
+	@Test
+	void checkReservationTest1() {
+		when(repo.findByBookDetails_BookDetailsIdAndReserver_PhoneAndDeletedAtIsNull(any(Long.class),any(Long.class))).thenReturn(Optional.of(entityGenerator.getMockBookReservation()));
+		boolean result = service.checkReservation(0L,"1231231231");
+		assertThat(result).isTrue();
+	}
+
+	@Test
+	void checkReservationTest2() {
+		when(repo.findByBookDetails_BookDetailsIdAndReserver_PhoneAndDeletedAtIsNull(any(Long.class),any(Long.class))).thenReturn(Optional.empty());
+		boolean result = service.checkReservation(0L,"1231231231");
+		assertThat(result).isFalse();
+	}
+
+	@Test
+	void saveBookReservationStatusTest1() {
+		when(repo.findById(any(Long.class))).thenReturn(Optional.empty());
+		ResponseEntity<CustomBaseResponseDto> result = service.saveBookReservationStatus(0L, true);
+		assertThat(result).isNotNull();
+	}
+	
+	@Test
+	void saveBookReservationStatusTest2() {
+		when(repo.findById(any(Long.class))).thenReturn(Optional.of(entityGenerator.getMockBookReservation()));
+		when(repo.save(any(BookReservation.class))).thenReturn(entityGenerator.getMockBookReservation());
+		ResponseEntity<CustomBaseResponseDto> result = service.saveBookReservationStatus(0L, true);
+		assertThat(result).isNotNull();
+	}
+	@Test
+	void saveBookReservationStatusTest3() {
+		when(repo.findById(any(Long.class))).thenReturn(Optional.empty());
+		ResponseEntity<CustomBaseResponseDto> result = service.saveBookReservationStatus(0L, false);
+		verify(repo,times(1)).deleteByBookReservationId(0L);
+		assertThat(result).isNotNull();
+	}
+	
+	@Test
+	void deleteByReservationDateTest1() {
+		service.deleteByReservationDate();
+		verify(repo,times(1)).deleteAllByReservationDateBefore(any(Date.class));
+	}
+	
 }

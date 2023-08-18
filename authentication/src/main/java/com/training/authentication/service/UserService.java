@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,7 @@ import com.training.authentication.dto.request.FilterDto;
 import com.training.authentication.dto.request.TokenRequestDto;
 import com.training.authentication.dto.request.UserRequestDto;
 import com.training.authentication.dto.response.ClaimsResponseDto;
+import com.training.authentication.dto.response.CustomBaseResponseDto;
 import com.training.authentication.dto.response.TokenResponseDto;
 import com.training.authentication.dto.response.UserResponseDto;
 import com.training.authentication.entity.Log;
@@ -30,6 +33,9 @@ import io.jsonwebtoken.ExpiredJwtException;
 @Service
 public class UserService {
 
+	private static final String OPERATION_SUCCESS = "operation.success";
+	@Autowired
+	private Environment env;
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
@@ -68,11 +74,12 @@ public class UserService {
 	}
 
 	@Transactional
-	public void deleteUser(Long userId) {
+	public ResponseEntity<CustomBaseResponseDto> deleteUser(Long userId) {
 		this.userRepository.deleteUser(userId);
+		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
-	public String updateUser(Long userId, UserRequestDto user) {
+	public ResponseEntity<CustomBaseResponseDto> updateUser(Long userId, UserRequestDto user) {
 		Optional<User> userOptional = this.userRepository.findByPhoneNumberAndDeletedAtIsNull(userId);
 		User savedUser = null;
 		if (userOptional.isPresent()) {
@@ -84,7 +91,7 @@ public class UserService {
 			Map<String, Object> map = new HashedMap<>();
 			map.put("name", user.getFirstName() + " " + user.getLastName());
 			map.put("role", user.getRole());
-			return jwtService.generateToken(new CustomUserDetail(savedUser), map);
+			return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 		}
 		return null;
 	}
@@ -101,6 +108,7 @@ public class UserService {
 			res.setUserId(user.getPhoneNumber());
 			res.setRefreshToken(jwtService.generateRefreshToken(phoneNumer));
 			res.setToken(jwtService.generateToken(new CustomUserDetail(user), map));
+			res.setMessage(env.getRequiredProperty(OPERATION_SUCCESS));
 			return res;
 		}
 		return null;

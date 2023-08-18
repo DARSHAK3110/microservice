@@ -77,17 +77,17 @@ public class BookDetailsService {
 			List<BookDetailsResponseDto> content = result.getContent();
 			for (BookDetailsResponseDto response : content) {
 				if (dto.isUser()) {	
-				if (checkInCart(response.getBookDetailsId(), userName)) {
+				if (cartService.checkCart(response.getBookDetailsId(), userName)) {
 					response.setAddedToCart(true);
 				} else {
 					response.setAddedToCart(false);
 				}
-				if (isReserved(response.getBookDetailsId(), userName)) {
+				if (reserveService.checkReservation(response.getBookDetailsId(), userName)) {
 					response.setReserved(true);
 				} else {
 					response.setReserved(false);
 				}
-				return PageableExecutionUtils.getPage(content, pageable, () -> result.getTotalElements());	
+				return PageableExecutionUtils.getPage(content, pageable, result::getTotalElements);	
 			}
 			response.setTotalReserved(reserveService.getTotalReservations(response.getBookDetailsId()));
 			response.setAcceptedReserved(reserveService.getTotalAcceptedReservations(response.getBookDetailsId()));
@@ -95,13 +95,6 @@ public class BookDetailsService {
 		return result;
 	}
 
-	private boolean isReserved(Long bookDetailsId, String userName) {
-		return reserveService.checkReservation(bookDetailsId, userName);
-	}
-
-	private boolean checkInCart(Long bookDetailsId, String userName) {
-		return cartService.checkCart(bookDetailsId, userName);
-	}
 
 	public ResponseEntity<CustomBaseResponseDto> saveBookDetails(BookDetailsRequestDto dto, String userName) {
 		BookDetails bookDetails = new BookDetails();

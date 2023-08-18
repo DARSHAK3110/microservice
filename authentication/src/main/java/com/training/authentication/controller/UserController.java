@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,9 +50,7 @@ import jakarta.validation.constraints.Min;
 @PropertySource("classpath:message.properties")
 @RequestMapping("/api/v1/users")
 public class UserController {
-	private static final String OPERATION_SUCCESS = "operation.success";
-	@Autowired
-	private Environment env;
+	
 	@Autowired
 	private UserService userSerivceImpl;
 	Logger log = Logger.getLogger(UserController.class.getName());
@@ -95,23 +92,20 @@ public class UserController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/{userId}") // delete user
 	public ResponseEntity<CustomBaseResponseDto> deleteUser(@PathVariable @Min(1) Long userId) {
-		this.userSerivceImpl.deleteUser(userId);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return this.userSerivceImpl.deleteUser(userId);
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or #userId == authentication.principal")
 	@PutMapping("/{userId}") // update user
 	public ResponseEntity<CustomBaseResponseDto> updateUser(@Valid @RequestBody UserRequestDto user,
 			@PathVariable @Min(1) Long userId) {
-		this.userSerivceImpl.updateUser(userId, user);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return this.userSerivceImpl.updateUser(userId, user);
 	}
 
 	@PostMapping // ad user and get token
 	public ResponseEntity<TokenResponseDto> saveUser(@Valid @RequestBody UserRequestDto user) {
 		this.userSerivceImpl.saveUser(user);
 		TokenResponseDto res = new TokenResponseDto();
-		res.setMessage(env.getRequiredProperty(OPERATION_SUCCESS));
 		return ResponseEntity.ok(res);
 	}
 
@@ -122,7 +116,6 @@ public class UserController {
 
 		TokenResponseDto res = this.userSerivceImpl.generateToken(user.getPhoneNumber());
 		this.userSerivceImpl.logUser(user.getPhoneNumber());
-		res.setMessage(env.getRequiredProperty(OPERATION_SUCCESS));
 		return ResponseEntity.ok(res);
 	}
 
@@ -131,21 +124,15 @@ public class UserController {
 	ResponseEntity<ClaimsResponseDto> tokenDetails(@NonNull HttpServletRequest request) {
 		String header = request.getHeader("Authorization");
 		ClaimsResponseDto details = this.userSerivceImpl.getDetails(header);
-		details.setMessage(env.getRequiredProperty(OPERATION_SUCCESS));
 		return ResponseEntity.ok(details);
 	}
 
 	@PostMapping("/refresh") // get refresh token
 	public ResponseEntity<TokenResponseDto> refreshToken(@RequestBody TokenRequestDto tokenDto) {
-		TokenResponseDto res = this.userSerivceImpl.refreshToken(tokenDto);
-		res.setMessage(env.getRequiredProperty(OPERATION_SUCCESS));
+		TokenResponseDto res = this.userSerivceImpl.refreshToken(tokenDto);		
 		return ResponseEntity.ok(res);
 
 	}
 
-	@GetMapping(path = "/users/current")
-	public ResponseEntity<?> getCurrentUserInfo(UsernamePasswordAuthenticationToken token) {
-		return ResponseEntity.ok(token.getPrincipal());
-	}
 
 }

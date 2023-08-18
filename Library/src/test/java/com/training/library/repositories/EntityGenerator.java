@@ -115,6 +115,7 @@ public class EntityGenerator {
 
 	public Location getMockLocation() {
 		Location location = new Location();
+		location.setLocationId(0L);
 		location.setPosition("a11");
 		location.setShelf(getMockShelf());
 		return location;
@@ -348,6 +349,7 @@ public class EntityGenerator {
 		req.setTitle("testTitle");
 		req.setIsbn(1231231231231L);
 		req.setAuthorId(0L);
+		req.setBookStatus(getBookStatusRequestDto());
 		return req;
 	}
 

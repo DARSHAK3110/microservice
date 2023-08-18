@@ -1,7 +1,6 @@
 package com.training.library.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;
 
@@ -16,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.training.library.dto.response.AuthorResponseDto;
 import com.training.library.dto.response.FloorResponseDto;
 import com.training.library.entity.Floor;
 

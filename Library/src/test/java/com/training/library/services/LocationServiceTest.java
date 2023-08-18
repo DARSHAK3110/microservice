@@ -57,7 +57,7 @@ class LocationServiceTest {
 	void findLocationTest1() {
 		when(repo.findByLocationIdAndDeletedAtIsNull(any(Long.class))).thenReturn(Optional.of(entityGenerator.getLocationResponseDto(0L)));
 		LocationResponseDto result = service.findLocation(0L);
-		assertThat(result.getShelfId()).isEqualTo(0L);
+		assertThat(result.getLocationId()).isEqualTo(0L);
 	}
 
 	@Test

@@ -106,7 +106,7 @@ public class BookReservationService {
 			bookReservationRepository.save(reservation);
 		}
 		if (!status) {
-			deleteBookReservation(id);
+			bookReservationRepository.deleteByBookReservationId(id);
 		}
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}

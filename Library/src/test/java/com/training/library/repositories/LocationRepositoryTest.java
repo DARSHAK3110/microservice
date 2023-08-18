@@ -17,10 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.training.library.dto.response.LocationResponseDto;
-import com.training.library.entity.Floor;
 import com.training.library.entity.Location;
-import com.training.library.entity.Section;
-import com.training.library.entity.Shelf;
 
 import jakarta.transaction.Transactional;
 

@@ -18,7 +18,7 @@ import jakarta.persistence.TemporalType;
 
 
 @Entity
-@Table(name = "log", schema = "authentication")
+@Table(name = "log")
 public class Log {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

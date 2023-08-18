@@ -71,24 +71,24 @@ class BookDetailsControllerTest {
 			.andExpect((MockMvcResultMatchers.jsonPath("$.bookDetailsId").value("0")));
 }
 
-//	@Test
-//	void findAllBookDetailsTest1() throws Exception {
-//		 when(bookDetailsService.findAllBookDetails(any(FilterDto.class))).thenReturn(entityGenerator.getBookDetailsPage());
-//		 mockMvc.perform(get("/library/api/v1/bookdetails").content(mapper.writeValueAsString(entityGenerator.getFilterDto()))
-//			.with(SecurityMockMvcRequestPostProcessors.opaqueToken()
-//			.authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
-//			.andExpect(status().isOk())
-//			.andExpect((MockMvcResultMatchers.jsonPath("$.numberOfElements").value("1")))
-//			.andReturn();
-//	}
+	@Test
+	void findAllBookDetailsTest1() throws Exception {
+		 when(bookDetailsService.findAllBookDetails(any(FilterDto.class),any(String.class))).thenReturn(entityGenerator.getBookDetailsPage());
+		 mockMvc.perform(get("/library/api/v1/bookdetails").content(mapper.writeValueAsString(entityGenerator.getFilterDto()))
+			.with(SecurityMockMvcRequestPostProcessors.opaqueToken()
+			.authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
+			.andExpect(status().isOk())
+			.andExpect((MockMvcResultMatchers.jsonPath("$.numberOfElements").value("1")))
+			.andReturn();
+	}
 
-//	@Test
-//	void findAllBookDetailsTest2() throws Exception {
-//		when(bookDetailsService.findAllBookDetails(any(FilterDto.class))).thenReturn(null);
-//		mockMvc.perform(get("/library/api/v1/bookdetails").with(SecurityMockMvcRequestPostProcessors.opaqueToken()
-//			.authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))).andExpect(status().isOk())
-//			.andExpect(MockMvcResultMatchers.jsonPath("$").doesNotExist());
-//	}
+	@Test
+	void findAllBookDetailsTest2() throws Exception {
+		when(bookDetailsService.findAllBookDetails(any(FilterDto.class),any(String.class))).thenReturn(null);
+		mockMvc.perform(get("/library/api/v1/bookdetails").with(SecurityMockMvcRequestPostProcessors.opaqueToken()
+			.authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))).andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.jsonPath("$").doesNotExist());
+	}
 
 	@Test
 	void saveBookDetailsTest1() throws JsonProcessingException, Exception {
@@ -127,11 +127,11 @@ class BookDetailsControllerTest {
 				.opaqueToken().authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))).andExpect(status().isOk());
 	}
 
-//	@Test
-//	void saveBooksTest1() throws Exception {
-//		mockMvc.perform(post("/library/api/v1/bookdetails/excel/{isbn}", 0).with(SecurityMockMvcRequestPostProcessors
-//				.opaqueToken().authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))).andExpect(status().isOk());
-//	}
+	@Test
+	void saveBooksTest1() throws Exception {
+		mockMvc.perform(post("/library/api/v1/bookdetails/excel/{isbn}", 0).with(SecurityMockMvcRequestPostProcessors
+				.opaqueToken().authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))).andExpect(status().isOk());
+	}
 
 
 }
