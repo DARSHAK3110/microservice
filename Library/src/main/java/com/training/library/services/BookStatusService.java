@@ -104,6 +104,11 @@ public class BookStatusService {
 			}
 		}
 	}
+	
+	public Page<BookStatusResponseDto> findAllBookStatusByISBN(FilterDto dto, Long id) {
+		Pageable pageble = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+		return bookStatusRepository.findAllByDeletedAtIsNullAndBookDetails_ISBN(pageble, id);
+	}
 
 	public void updateBookStatusAvailability(BookStatus bookStatus) {
 		bookStatusRepository.save(bookStatus);
@@ -156,5 +161,11 @@ public class BookStatusService {
 		Pageable pageble = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
 		return bookStatusRepository.findAllBySectionId(id, pageble);
 	}
+
+	public void updateReservation(BookStatus bs) {
+		bookStatusRepository.save(bs);
+	}
+
+	
 
 }

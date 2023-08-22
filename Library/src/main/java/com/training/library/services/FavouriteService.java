@@ -16,20 +16,20 @@ import org.springframework.stereotype.Service;
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.response.BookDetailsResponseDto;
 import com.training.library.dto.response.CustomBaseResponseDto;
-import com.training.library.entity.Cart;
+import com.training.library.entity.Favourite;
 import com.training.library.entity.User;
-import com.training.library.repositories.CartRepository;
+import com.training.library.repositories.FavouriteRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
 @PropertySource("classpath:message.properties")
-public class CartService {
+public class FavouriteService {
 	private static final String OPERATION_SUCCESS = "operation.success";
 	@Autowired
 	private Environment env;
 	@Autowired
-	private CartRepository cartRepository;
+	private FavouriteRepository favouriteRepository;
 	@Autowired
 	private BookDetailsService bookDetailsService;
 	@Autowired
@@ -38,19 +38,19 @@ public class CartService {
 	private BookReservationService reserveService;
 	
 	public ResponseEntity<CustomBaseResponseDto> saveBookDetailsToCart(Long bookDetailsId, String userName) {
-		Cart cart = new Cart();
-		cart.setBookDetails(bookDetailsService.findBookDetailsById(bookDetailsId));
+		Favourite favourite= new Favourite();
+		favourite.setBookDetails(bookDetailsService.findBookDetailsById(bookDetailsId));
 		User user = userService.findByPhone(Long.parseLong(userName));
 		if (user == null) {
 			user = userService.newUser(userName);
 		}
-		cart.setUser(user);
-		cartRepository.save(cart);
+		favourite.setUser(user);
+		favouriteRepository.save(favourite);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
 	public boolean checkCart(Long bookDetailsId, String userName) {
-		Optional<Cart> cartItem = cartRepository.findByBookDetails_BookDetailsIdAndUser_PhoneAndDeletedAtIsNull(bookDetailsId,Long.parseLong(userName));
+		Optional<Favourite> cartItem = favouriteRepository.findByBookDetails_BookDetailsIdAndUser_PhoneAndDeletedAtIsNull(bookDetailsId,Long.parseLong(userName));
 		if(cartItem.isPresent()) {
 			return true;
 		}
@@ -59,13 +59,13 @@ public class CartService {
 
 	@Transactional
 	public ResponseEntity<CustomBaseResponseDto> deleteBookDetailsFromCart(Long id) {
-		cartRepository.deleteByBookDetails_BookDetailsId(id);
+		favouriteRepository.deleteByBookDetails_BookDetailsId(id);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
 	public Page<BookDetailsResponseDto> findAllBookDetailsByUserId(FilterDto dto, String userName) {
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		Page<BookDetailsResponseDto> result = cartRepository
+		Page<BookDetailsResponseDto> result = favouriteRepository
 				.findAllByUserId(
 						dto.getSearch(), dto.getSearch(), pageable,Long.parseLong(userName));
 			List<BookDetailsResponseDto> content = result.getContent();

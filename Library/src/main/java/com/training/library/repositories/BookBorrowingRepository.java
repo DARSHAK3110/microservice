@@ -1,5 +1,6 @@
 package com.training.library.repositories;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -27,4 +28,23 @@ public interface BookBorrowingRepository extends JpaRepository<BookBorrowing, Lo
 
 	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, deletedAt,bookStatus.bookDetails.title) from BookBorrowing where borrower.phone = :userName and (bookStatus.bookDetails.title like %:search% or borrower.phone like %:search%)")
 	Page<BookBorrowingResponseDto> findAllwithSearch(String search, Pageable pageble, String userName);
+
+	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, deletedAt,bookStatus.bookDetails.title) from BookBorrowing where borrower.phone = :userName and (bookStatus.bookDetails.title like %:search% or borrower.phone like %:search%) and borrowingDate between :startDate and :endDate   order by createdAt desc")
+	Page<BookBorrowingResponseDto> findAllwithSearchByBorrowingDate(String search, Pageable pageble, String userName,
+			Date startDate, Date endDate);
+	
+	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, deletedAt,bookStatus.bookDetails.title) from BookBorrowing where (bookStatus.bookDetails.title like %:search% or borrower.phone like %:search%) and borrowingDate between :startDate and :endDate   order by createdAt desc")
+	Page<BookBorrowingResponseDto> findAllwithSearchBorrowingDate(String search, Pageable pageble, Date startDate,
+			Date endDate);
+	
+	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, deletedAt,bookStatus.bookDetails.title) from BookBorrowing where borrower.phone = :userName and (bookStatus.bookDetails.title like %:search% or borrower.phone like %:search%) and deletedAt between :startDate and :endDate   order by createdAt desc")
+	Page<BookBorrowingResponseDto> findAllwithSearchByReturnDate(String search, Pageable pageble, String userName,
+			Date startDate, Date endDate);
+	
+	@Query(value = "select new com.training.library.dto.response.BookBorrowingResponseDto(bookBorrowingId, borrower.userId, bookStatus.location.locationId, bookStatus.id, borrower.phone, borrowingDate, deletedAt,bookStatus.bookDetails.title) from BookBorrowing where (bookStatus.bookDetails.title like %:search% or borrower.phone like %:search%) and deletedAt between :startDate and :endDate   order by createdAt desc")
+	Page<BookBorrowingResponseDto> findAllwithSearchReturnDate(String search, Pageable pageble, Date startDate,
+			Date endDate);
+
+	Long countByDeletedAtIsNullAndBorrower_Phone(Long id);
+	
 }

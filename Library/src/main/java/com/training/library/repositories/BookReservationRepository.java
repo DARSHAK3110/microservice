@@ -18,12 +18,12 @@ public interface BookReservationRepository extends JpaRepository<BookReservation
 	Optional<BookReservationResponseDto> findByBookReservationIdAndDeletedAtIsNull(Long id);
 	
 
-	@Query(value = "select new com.training.library.dto.response.BookReservationResponseDto(bookReservationId, reserver.userId, bookDetails.title, bookDetails.id, reserver.phone, reservationDate,bookDetails.isbn, isAccepted, bookDetails.totalCopies, bookDetails.availableCopies) from BookReservation where bookDetails.title like %:search% or reserver.phone like %:search% order by createdAt desc")
-	Page<BookReservationResponseDto> findAllByDeletedAtIsNull(String search, Pageable pageable);
+	@Query(value = "select new com.training.library.dto.response.BookReservationResponseDto(bookReservationId, reserver.userId, bookDetails.title, bookDetails.id, reserver.phone, reservationDate,bookDetails.isbn, isAccepted, bookDetails.totalCopies, bookDetails.availableCopies) from BookReservation where (bookDetails.title like %:search% or reserver.phone like %:search%) and reservationDate between :startDate and :endDate order by createdAt desc")
+	Page<BookReservationResponseDto> findAllByDeletedAtIsNull(String search, Pageable pageable, Date startDate, Date endDate);
 
 
-	@Query(value = "select new com.training.library.dto.response.BookReservationResponseDto(bookReservationId, reserver.userId, bookDetails.title, bookDetails.id, reserver.phone, reservationDate,bookDetails.isbn, isAccepted) from BookReservation where reserver.phone = :userId and(bookDetails.title like %:search% or reserver.phone like %:search%) order by createdAt desc")
-	Page<BookReservationResponseDto> findAllByDeletedAtIsNull(String search, Pageable pageable, Long userId);
+	@Query(value = "select new com.training.library.dto.response.BookReservationResponseDto(bookReservationId, reserver.userId, bookDetails.title, bookDetails.id, reserver.phone, reservationDate,bookDetails.isbn, isAccepted) from BookReservation where reserver.phone = :userId and(bookDetails.title like %:search% or reserver.phone like %:search%)  and reservationDate between :startDate and :endDate  order by createdAt desc")
+	Page<BookReservationResponseDto> findAllByDeletedAtIsNull(String search, Pageable pageable, Long userId,  Date startDate, Date endDate);
 
 	
 	@Modifying
@@ -41,6 +41,9 @@ public interface BookReservationRepository extends JpaRepository<BookReservation
 	Long countByBookDetails_BookDetailsIdAndDeletedAtIsNull(Long bookDetailsId);
 
 	Long countByBookDetails_BookDetailsIdAndDeletedAtIsNullAndIsAcceptedTrue(Long bookDetailsId);
+
+
+	Long countByDeletedAtIsNullAndReserver_Phone(Long id);
 }
 
 

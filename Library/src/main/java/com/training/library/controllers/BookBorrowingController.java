@@ -1,5 +1,7 @@
 package com.training.library.controllers;
 
+import java.text.ParseException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
@@ -45,10 +47,18 @@ public class BookBorrowingController {
 		BookBorrowingResponseDto bookBorrowing = bookBorrowingService.findBookBorrowingByBookStatus(id);
 		return ResponseEntity.ok(bookBorrowing);
 	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+	@GetMapping("/bookcounter/{id}")
+	public ResponseEntity<Boolean> countBookBorrowingByUser(@PathVariable Long id) {
+		Boolean result = bookBorrowingService.countBookBorrowingByUserPhone(id);
+		return ResponseEntity.ok(result);
+	}
+
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
 	@GetMapping
-	public ResponseEntity<Page<BookBorrowingResponseDto>> findBookBorrowings(FilterDto dto) {
+	public ResponseEntity<Page<BookBorrowingResponseDto>> findBookBorrowings(FilterDto dto) throws ParseException {
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		Page<BookBorrowingResponseDto> bookBorrowingList = bookBorrowingService.findAllBookBorrowing(dto,userName);
 		return ResponseEntity.ok(bookBorrowingList);

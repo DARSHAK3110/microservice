@@ -3,10 +3,10 @@ package com.training.library.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,7 +47,7 @@ public class BookDetails {
 	private List<BookReservation> bookReservation;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "bookDetails")
-	private List<Cart> cart = new ArrayList<>();
+	private List<Favourite> favourite = new ArrayList<>();
 
 	@ManyToOne
 	private Author author;
@@ -169,18 +169,17 @@ public class BookDetails {
 		super();
 	}
 
-	public List<Cart> getCart() {
-		return cart;
+	public List<Favourite> getFavourite() {
+		return favourite;
 	}
 
-	public void setCart(List<Cart> cart) {
-		this.cart = cart;
+	public void setFavourite(List<Favourite> favourite) {
+		this.favourite = favourite;
 	}
 
 	public void addBookStatus(BookStatus bs) {
 		bs.setBookDetails(this);
 		getBookStatus().add(bs);
 	}
-
 
 }

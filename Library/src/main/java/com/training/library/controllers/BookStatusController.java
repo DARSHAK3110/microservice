@@ -44,6 +44,12 @@ public class BookStatusController {
 		return ResponseEntity.ok(bookStatusPage);
 	}
 
+	@GetMapping("/isbn/{id}")
+	public ResponseEntity<Page<BookStatusResponseDto>> findBookStatusByISBN(@PathVariable Long id,
+			FilterDto dto) {
+		Page<BookStatusResponseDto> bookStatusPage = bookStatusService.findAllBookStatusByISBN(dto, id);
+		return ResponseEntity.ok(bookStatusPage);
+	}
 	@PutMapping("/bookstatus/{id}")
 	public ResponseEntity<CustomBaseResponseDto> updateBookStatus(@PathVariable Long id,
 			@Valid @RequestBody BookStatusRequestDto dto) {

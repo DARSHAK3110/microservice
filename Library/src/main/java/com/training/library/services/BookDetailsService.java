@@ -46,7 +46,7 @@ public class BookDetailsService {
 	@Autowired
 	private AuthorService authorService;
 	@Autowired
-	private CartService cartService;
+	private FavouriteService favouriteService;
 	@Autowired
 	private BookReservationService reserveService;
 	@Autowired
@@ -77,7 +77,7 @@ public class BookDetailsService {
 			List<BookDetailsResponseDto> content = result.getContent();
 			for (BookDetailsResponseDto response : content) {
 				if (dto.isUser()) {	
-				if (cartService.checkCart(response.getBookDetailsId(), userName)) {
+				if (favouriteService.checkCart(response.getBookDetailsId(), userName)) {
 					response.setAddedToCart(true);
 				} else {
 					response.setAddedToCart(false);
@@ -236,6 +236,14 @@ public class BookDetailsService {
 		upload.addAllBookDetails(List.of(bookDetails));
 		uploadRepository.save(upload);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+	}
+
+	public Boolean checkBookAvailable(Long bookId) {
+		Long result = bookDetailsRepository.countByDeletedAtIsNullAndBookDetailsIdAndBookStatus_IsAvailableTrueAndBookStatus_IsReservedIsFalse(bookId);
+		if(result>0) {
+			return true;
+		}
+		return false;
 	}
 
 }

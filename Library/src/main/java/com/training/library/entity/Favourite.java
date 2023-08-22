@@ -15,9 +15,9 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
-@Table(name = "cart")
-@IdClass(CartId.class)
-public class Cart {
+@Table(name = "favourite")
+@IdClass(FavouriteId.class)
+public class Favourite {
 
 	@Id
 	@ManyToOne
@@ -81,7 +81,7 @@ public class Cart {
 		this.user = user;
 	}
 
-	public Cart() {
+	public Favourite() {
 		super();
 	}
 

@@ -6,6 +6,9 @@ public class FilterDto {
 	private int pageSize;
 	private int availability;
 	private boolean user = false;
+	private String startDate;
+	private String endDate;
+	private boolean deletedAt;
 
 	public FilterDto() {
 		super();
@@ -51,13 +54,28 @@ public class FilterDto {
 		this.user = user;
 	}
 
-	public FilterDto(String search, int pageNumber, int pageSize, int availability, boolean user) {
-		super();
-		this.search = search;
-		this.pageNumber = pageNumber;
-		this.pageSize = pageSize;
-		this.availability = availability;
-		this.user = user;
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+
+	public boolean isDeletedAt() {
+		return deletedAt;
+	}
+
+	public void setDeletedAt(boolean deletedAt) {
+		this.deletedAt = deletedAt;
 	}
 
 }

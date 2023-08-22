@@ -40,6 +40,12 @@ public class BookStatus {
 	@Column(name = "is_available")
 	private boolean isAvailable;
 
+	@Column(name = "is_reserved")
+	private boolean isReserved = false;
+	
+	@OneToOne(optional = true, cascade = CascadeType.ALL, mappedBy = "bookStatus")
+	private BookReservation bookReservation;
+	
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false)
@@ -133,11 +139,21 @@ public class BookStatus {
 		this.upload = upload;
 	}
 
-	@Override
-	public String toString() {
-		return "BookStatus [bookStatusId=" + bookStatusId 
-				+ ", bookBorrowing=" + bookBorrowing + ", isAvailable=" + isAvailable + ", createdAt=" + createdAt
-				+ ", updatedAt=" + updatedAt + ", deletedAt=" + deletedAt + ", upload=" + upload + "]";
+	public boolean isReserved() {
+		return isReserved;
 	}
+
+	public void setReserved(boolean isReserved) {
+		this.isReserved = isReserved;
+	}
+
+	public BookReservation getBookReservation() {
+		return bookReservation;
+	}
+
+	public void setBookReservation(BookReservation bookReservation) {
+		this.bookReservation = bookReservation;
+	}
+	
 
 }

@@ -1,5 +1,9 @@
 package com.training.library.services;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +52,33 @@ public class BookBorrowingService {
 		return null;
 	}
 
-	public Page<BookBorrowingResponseDto> findAllBookBorrowing(FilterDto dto, String userName) {
+	public Page<BookBorrowingResponseDto> findAllBookBorrowing(FilterDto dto, String userName) throws ParseException {
 		Pageable pageble = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		if (dto.isUser()) {
-			return bookBorrowingRepository.findAllwithSearch(dto.getSearch(), pageble, userName);
+		if (dto.getStartDate() == null) {
+			dto.setStartDate("2020-01-01");
 		}
-		return bookBorrowingRepository.findAllwithSearch(dto.getSearch(), pageble);
+		if (dto.getEndDate() == null) {
+			dto.setEndDate(LocalDate.now().plusDays(3).toString());
+		}
+		if (!dto.isDeletedAt()) {
+			if (dto.isUser()) {
+				return bookBorrowingRepository.findAllwithSearchByBorrowingDate(dto.getSearch(), pageble, userName,
+						new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
+						new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()));
+			}
+			return bookBorrowingRepository.findAllwithSearchBorrowingDate(dto.getSearch(), pageble,
+					new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
+					new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()));
+		} else {
+			if (dto.isUser()) {
+				return bookBorrowingRepository.findAllwithSearchByReturnDate(dto.getSearch(), pageble, userName,
+						new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
+						new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()));
+			}
+			return bookBorrowingRepository.findAllwithSearchReturnDate(dto.getSearch(), pageble,
+					new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
+					new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()));
+		}
 	}
 
 	public ResponseEntity<CustomBaseResponseDto> saveBookBorrowing(BookBorrowingRequestDto dto, String userName) {
@@ -72,7 +97,7 @@ public class BookBorrowingService {
 			user = userService.newUser(userName);
 		}
 		br.setUser(user);
-		br.setBorrowingDate(dto.getBorrowingDate());
+		br.setBorrowingDate(new Date(System.currentTimeMillis()));
 		bookBorrowingRepository.save(br);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
@@ -91,7 +116,7 @@ public class BookBorrowingService {
 			this.bookStatusService.updateBookStatusAvailability(bookStatus);
 			bookBorrowingRepository.deleteByBookBorrowingId(id);
 		}
-		
+
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
@@ -102,5 +127,14 @@ public class BookBorrowingService {
 			return bookBorrowing.get();
 		}
 		return null;
+	}
+
+	public Boolean countBookBorrowingByUserPhone(Long id) {
+
+		Long counter = bookBorrowingRepository.countByDeletedAtIsNullAndBorrower_Phone(id);
+		if(counter<3) {
+			return true;
+		}
+		return false;
 	}
 }

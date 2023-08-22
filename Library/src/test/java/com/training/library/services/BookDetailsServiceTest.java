@@ -74,7 +74,7 @@ class BookDetailsServiceTest {
 	@Mock
 	private Environment env;
 	@Mock
-	private CartService cartService;
+	private FavouriteService cartService;
 	@Test
 	void findBookDetailsTest1() {
 		when(repo.findByBookDetailsIdAndDeletedAtIsNull(any(Long.class))).thenReturn(Optional.of(entityGenerator.getBookDetailsResponseDto(0L)));

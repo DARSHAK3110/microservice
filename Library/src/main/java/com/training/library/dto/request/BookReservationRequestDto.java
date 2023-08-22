@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Min;
 public class BookReservationRequestDto {
 	@PhoneNumberConstraint
 	private Long phone;
-	@Min(value= 1,message = "bookReservation.validation.bookDetails.id" )
+	@Min(value = 1, message = "bookReservation.validation.bookDetails.id")
 	private Long bookDetailsId;
 	private Date reservationDate;
 
@@ -40,5 +40,4 @@ public class BookReservationRequestDto {
 	public void setReservationDate(Date reservationDate) {
 		this.reservationDate = reservationDate;
 	}
-
 }

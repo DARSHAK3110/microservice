@@ -17,30 +17,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.response.BookDetailsResponseDto;
 import com.training.library.dto.response.CustomBaseResponseDto;
-import com.training.library.services.CartService;
+import com.training.library.services.FavouriteService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @CrossOrigin
 @RequestMapping("/library/api/v1/cart")
-public class CartController {
+public class FavouriteController {
 	@Autowired
-	private CartService cartService;
+	private FavouriteService favouriteService;
 	
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostMapping
 	public ResponseEntity<CustomBaseResponseDto> saveBookDetailsToCart(@RequestBody Long bookDetailsId,
 			HttpServletRequest req) {
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		return cartService.saveBookDetailsToCart(bookDetailsId, userName);
+		return favouriteService.saveBookDetailsToCart(bookDetailsId, userName);
 	}
 	
 	@GetMapping
 	public ResponseEntity<Page<BookDetailsResponseDto>> findAllCartItems(FilterDto dto,
 			HttpServletRequest req) {
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		Page<BookDetailsResponseDto> bookDetailsPage = cartService.findAllBookDetailsByUserId(dto,userName);
+		Page<BookDetailsResponseDto> bookDetailsPage = favouriteService.findAllBookDetailsByUserId(dto,userName);
 		return ResponseEntity.ok(bookDetailsPage);
 	}
 	
@@ -48,6 +48,6 @@ public class CartController {
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@DeleteMapping("/cartitem/{id}")
 	public ResponseEntity<CustomBaseResponseDto> deleteBoofDetailsFromCart(@PathVariable("id") Long id) {
-		return cartService.deleteBookDetailsFromCart(id);
+		return favouriteService.deleteBookDetailsFromCart(id);
 	}
 }

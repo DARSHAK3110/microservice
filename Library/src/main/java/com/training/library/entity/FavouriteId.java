@@ -1,10 +1,10 @@
 package com.training.library.entity;
 
-public class CartId {
+public class FavouriteId {
 	private User user;
 	private BookDetails bookDetails;
 
-	public CartId(User user, BookDetails bookDetails) {
+	public FavouriteId(User user, BookDetails bookDetails) {
 		super();
 		this.user = user;
 		this.bookDetails = bookDetails;
@@ -26,7 +26,7 @@ public class CartId {
 		this.bookDetails = bookDetails;
 	}
 
-	public CartId() {
+	public FavouriteId() {
 		super();
 	}
 

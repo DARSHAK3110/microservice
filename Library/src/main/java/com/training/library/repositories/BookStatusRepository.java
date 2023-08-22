@@ -48,4 +48,7 @@ public interface BookStatusRepository extends JpaRepository<BookStatus, Long> {
 
 	@Query(value = "select new com.training.library.dto.response.BookStatusResponseDto(bookStatusId, location.locationId,location.shelf.section.floor.floorId, location.shelf.section.sectionId,location.shelf.shelfId,location.shelf.section.floor.floorNo, location.shelf.section.sectionName, location.shelf.shelfNo, location.position, isAvailable, bookDetails.isbn, bookDetails.bookDetailsId) from BookStatus where location.shelf.section.floor.floorId = :id and deletedAt is null" )
 	Page<BookStatusResponseDto> findAllByFloorId(Long id, Pageable pageble);
+
+	@Query(value = "select new com.training.library.dto.response.BookStatusResponseDto(bookStatusId, location.locationId,location.shelf.section.floor.floorId, location.shelf.section.sectionId,location.shelf.shelfId,location.shelf.section.floor.floorNo, location.shelf.section.sectionName, location.shelf.shelfNo, location.position, isAvailable, bookDetails.isbn, bookDetails.bookDetailsId) from BookStatus where  bookDetails.isbn = :id and deletedAt is null and isReserved = FALSE")
+	Page<BookStatusResponseDto> findAllByDeletedAtIsNullAndBookDetails_ISBN(Pageable pageble, Long id);
 }

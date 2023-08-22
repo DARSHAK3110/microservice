@@ -7,12 +7,15 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -35,6 +38,9 @@ public class BookReservation {
 
 	@ManyToOne
 	private BookDetails bookDetails;
+
+	@OneToOne(optional = true, cascade = CascadeType.ALL)
+	private BookStatus bookStatus;
 
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
@@ -129,6 +135,14 @@ public class BookReservation {
 
 	public void setIsAccepted(Boolean isAccepted) {
 		this.isAccepted = isAccepted;
+	}
+
+	public BookStatus getBookStatus() {
+		return bookStatus;
+	}
+
+	public void setBookStatus(BookStatus bookStatus) {
+		this.bookStatus = bookStatus;
 	}
 
 }
