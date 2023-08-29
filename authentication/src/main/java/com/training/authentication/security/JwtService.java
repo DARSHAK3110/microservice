@@ -30,8 +30,8 @@ public class JwtService {
 	}
 
 	public Claims extractAllClaims(String token, String tokenType) {
-		if (tokenType.equals("access")) {
-			return Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(getKeys(SECRET_KEY))).build()
+		    if (tokenType.equals("access")) {
+		    	return Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(getKeys(SECRET_KEY))).build()
 					.parseClaimsJws(token).getBody();
 		} else {
 			return Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(getKeys(REFRESH_SECRET_KEY))).build()

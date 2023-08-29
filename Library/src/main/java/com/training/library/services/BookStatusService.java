@@ -96,13 +96,13 @@ public class BookStatusService {
 		Pageable pageble = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
 		if (dto.getAvailability() == 0) {
 			return bookStatusRepository.findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(pageble, id);
-		} else {
-			if (dto.getAvailability() == 1) {
-				return bookStatusRepository.findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(pageble, id, true);
-			} else {
-				return bookStatusRepository.findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(pageble, id, false);
-			}
 		}
+		else if (dto.getAvailability() == 1) {
+				return bookStatusRepository.findAllByDeletedAtIsNullAndBookDetails_BookDetailsIdAndIsAvailableTrue(pageble, id);
+			} else {
+				return bookStatusRepository.findAllByDeletedAtIsNullAndBookDetails_BookDetailsIdAndIsReservesTrue(pageble, id);
+			}
+		
 	}
 	
 	public Page<BookStatusResponseDto> findAllBookStatusByISBN(FilterDto dto, Long id) {

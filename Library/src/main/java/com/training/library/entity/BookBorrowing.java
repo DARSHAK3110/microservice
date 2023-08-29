@@ -32,10 +32,6 @@ public class BookBorrowing {
 	@ManyToOne
 	private BookStatus bookStatus;
 
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-	@Column(name = "borrowing_date")
-	private Date borrowingDate;
-
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "created_at", nullable = false)
@@ -75,14 +71,6 @@ public class BookBorrowing {
 
 	public void setBookStatus(BookStatus bookStatus) {
 		this.bookStatus = bookStatus;
-	}
-
-	public Date getBorrowingDate() {
-		return borrowingDate;
-	}
-
-	public void setBorrowingDate(Date borrowingDate) {
-		this.borrowingDate = borrowingDate;
 	}
 
 	public Date getCreatedAt() {

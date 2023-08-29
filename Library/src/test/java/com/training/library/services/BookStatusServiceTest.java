@@ -1,11 +1,9 @@
 package com.training.library.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -158,7 +156,7 @@ class BookStatusServiceTest {
 		FilterDto dto = entityGenerator.getFilterDto();
 		dto.setAvailability(-1);
 		Pageable pageble = PageRequest.of(0, 2);
-		when(repo.findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(pageble, 0L, false)).thenReturn(null);
+		when(repo.findAllByDeletedAtIsNullAndBookDetails_BookDetailsIdAndIsReservesTrue(pageble, 0L)).thenReturn(null);
 		Page<BookStatusResponseDto> result = service.findAllBookStatusByBookDetailsId(dto, 0L);
 		assertThat(result).isNull();
 	}
@@ -169,7 +167,7 @@ class BookStatusServiceTest {
 		Page<BookStatusResponseDto> bookStatusPage = entityGenerator.getBookStatusPage();
 		dto.setAvailability(1);
 		Pageable pageble = PageRequest.of(0, 2);
-		when(repo.findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(pageble, 0L, true)).thenReturn(bookStatusPage);
+		when(repo.findAllByDeletedAtIsNullAndBookDetails_BookDetailsIdAndIsAvailableTrue(pageble, 0L)).thenReturn(bookStatusPage);
 		Page<BookStatusResponseDto> result = service.findAllBookStatusByBookDetailsId(dto, 0L);
 		assertThat(result.getContent().size()).isPositive();
 	}
@@ -232,26 +230,36 @@ class BookStatusServiceTest {
 	}
 
 	@Test
-	void testFindAllBooksByLocation() {
+	void findAllBooksByLocationTest() {
 		service.findAllBooksByLocation(0L, entityGenerator.getFilterDto());
 		verify(repo, times(1)).findAllByLocationId(anyLong(), any(Pageable.class));
 	}
 
 	@Test
-	void testFindAllBooksByShelf() {
+	void testFindAllBooksByShelfTest() {
 		service.findAllBooksByShelf(0L, entityGenerator.getFilterDto());
 		verify(repo, times(1)).findAllByShelfId(anyLong(), any(Pageable.class));
 	}
 
 	@Test
-	void testFindAllBooksByFloor() {
+	void findAllBooksByFloorTest() {
 		service.findAllBooksByFloor(0L, entityGenerator.getFilterDto());
 		verify(repo, times(1)).findAllByFloorId(anyLong(), any(Pageable.class));
 	}
 
 	@Test
-	void testFindAllBooksBySection() {
+	void findAllBooksBySectionTest() {
 		service.findAllBooksBySection(0L, entityGenerator.getFilterDto());
 		verify(repo, times(1)).findAllBySectionId(anyLong(), any(Pageable.class));
+	}
+	@Test
+	void updateReservationTest() {
+		service.updateReservation(entityGenerator.getMockBookStatus());
+		verify(repo, times(1)).save(any(BookStatus.class));
+	}
+	@Test
+	void findAllBookStatusByISBNTest() {
+		service.findAllBookStatusByISBN(entityGenerator.getFilterDto(),0L);
+		verify(repo, times(1)).findAllByDeletedAtIsNullAndBookDetails_ISBN(any(Pageable.class), anyLong());
 	}
 }

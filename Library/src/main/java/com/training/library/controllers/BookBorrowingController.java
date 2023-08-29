@@ -76,4 +76,6 @@ public class BookBorrowingController {
 	public ResponseEntity<CustomBaseResponseDto> deleteBookBorrowing(@PathVariable Long id) {
 		return bookBorrowingService.deleteBookBorrowing(id);
 	}
+	
+	
 }

@@ -126,4 +126,12 @@ class BookBorrowingControllerTest {
 				.andExpect(MockMvcResultMatchers.jsonPath("$").doesNotExist());
 		}
 
+	@Test
+	void countBookBorrowingByUserTest1() throws Exception {
+		mockMvc.perform(
+				get("/library/api/v1/borrowings/bookcounter/{id}", 1L).with(SecurityMockMvcRequestPostProcessors
+						.opaqueToken().authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
+				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$").isBoolean());
+	}
 }

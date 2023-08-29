@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -51,6 +53,8 @@ class BookBorrowingServiceTest {
 	@Mock
 	private BookStatusService bookStatusService;
 	@Mock
+	private BookReservationService bookReservationService;
+	@Mock
 	private BookDetailsService bookDetailService;
 	@Mock
 	private Environment env;
@@ -70,12 +74,64 @@ class BookBorrowingServiceTest {
 	}
 
 	@Test
-	void testFindAllBookBorrowing() {
+	void findAllBookBorrowingTest1() throws ParseException {
 		FilterDto dto = entityGenerator.getFilterDto();
+		dto.setUser(true);
+		dto.setDeletedAt(false);
+		dto = entityGenerator.setDate(dto);
 		Page<BookBorrowingResponseDto> actual = entityGenerator.getBookBorrowingPage();
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		when(repo.findAllwithSearch(dto.getSearch(), pageable)).thenReturn(actual);
+		when(repo.findAllwithSearchByBorrowingDate(dto.getSearch(), pageable, "1231231231",
+				new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
+				new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()))).thenReturn(actual);
 		Page<BookBorrowingResponseDto> result = service.findAllBookBorrowing(dto, "1231231231");
+		assertThat(result).isNotNull();
+	}
+
+	@Test
+	void findAllBookBorrowingTest2() throws ParseException {
+		FilterDto dto = entityGenerator.getFilterDto();
+		dto.setUser(false);
+		dto.setDeletedAt(false);
+		dto = entityGenerator.setDate(dto);
+		Page<BookBorrowingResponseDto> actual = entityGenerator.getBookBorrowingPage();
+		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+		when(repo.findAllwithSearchBorrowingDate(dto.getSearch(), pageable,
+				new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
+				new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()))).thenReturn(actual);
+		Page<BookBorrowingResponseDto> result = service.findAllBookBorrowing(dto, "1231231231");
+		assertThat(result).isEqualTo(actual);
+	}
+
+	@Test
+	void findAllBookBorrowingTest3() throws ParseException {
+		FilterDto dto = entityGenerator.getFilterDto();
+		dto.setUser(true);
+		dto.setDeletedAt(true);
+		dto = entityGenerator.setDate(dto);
+		Page<BookBorrowingResponseDto> actual = entityGenerator.getBookBorrowingPage();
+		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+		when(repo.findAllwithSearchByReturnDate(dto.getSearch(), pageable, "1231231231",
+				new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
+				new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()))).thenReturn(actual);
+		Page<BookBorrowingResponseDto> result = service.findAllBookBorrowing(dto, "1231231231");
+		System.out.println(result);
+		assertThat(result).isNotNull();
+	}
+
+	@Test
+	void findAllBookBorrowingTest4() throws ParseException {
+		FilterDto dto = entityGenerator.getFilterDto();
+		dto.setUser(false);
+		dto.setDeletedAt(true);
+		dto = entityGenerator.setDate(dto);
+		Page<BookBorrowingResponseDto> actual = entityGenerator.getBookBorrowingPage();
+		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
+		when(repo.findAllwithSearchReturnDate(dto.getSearch(), pageable,
+				new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
+				new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()))).thenReturn(actual);
+		Page<BookBorrowingResponseDto> result = service.findAllBookBorrowing(dto, "1231231231");
+		System.out.println(result);
 		assertThat(result).isEqualTo(actual);
 	}
 
@@ -105,17 +161,6 @@ class BookBorrowingServiceTest {
 	}
 
 	@Test
-	void findAllBookBorrowingTest2() {
-		FilterDto dto = entityGenerator.getFilterDto();
-		dto.setUser(true);
-		Page<BookBorrowingResponseDto> actual = entityGenerator.getBookBorrowingPage();
-		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		when(repo.findAllwithSearch(dto.getSearch(), pageable, "1231231231")).thenReturn(actual);
-		Page<BookBorrowingResponseDto> result = service.findAllBookBorrowing(dto, "1231231231");
-		assertThat(result).isEqualTo(actual);
-	}
-
-	@Test
 	void deleteBookBorrowingTest1() {
 		BookStatus mockBookStatus = entityGenerator.getMockBookStatus();
 		BookBorrowingResponseDto dto = entityGenerator.getBookBorrowingResponseDto(0L);
@@ -127,7 +172,23 @@ class BookBorrowingServiceTest {
 		verify(repo, times(1)).deleteByBookBorrowingId(0L);
 		assertThat(result).isNotNull();
 	}
-	
+
+	@Test
+	void saveBookBorrowingTest3() {
+		BookBorrowingRequestDto req = entityGenerator.getBookBorrowingRequestDto();
+		req.setIsReserved(true);
+		req.setPhone(1231231231L);
+		User user = entityGenerator.getMockUser();
+		when(userService.findByPhone(1231231231L)).thenReturn(null);
+		doNothing().when(bookReservationService).setReservationFinished(req.getPhone(), req.getBookStatusId());
+		when(userService.newUser("1231231231")).thenReturn(user);
+		when(bookStatusService.findBookById(any(Long.class))).thenReturn(entityGenerator.getMockBookStatus());
+		doNothing().when(bookDetailService).setAvailableCopies(any(BookDetails.class), any(String.class));
+		when(repo.save(any(BookBorrowing.class))).thenReturn(entityGenerator.getMockBookBorrowing());
+		ResponseEntity<CustomBaseResponseDto> result = service.saveBookBorrowing(req, "1231231231");
+		assertThat(result).isNotNull();
+	}
+
 	@Test
 	void deleteBookBorrowingTest2() {
 		when(repo.findByBookBorrowingIdAndDeletedAtIsNull(any(Long.class))).thenReturn(Optional.empty());
@@ -149,5 +210,19 @@ class BookBorrowingServiceTest {
 		  BookBorrowingResponseDto result = service.findBookBorrowingByBookStatus(0L);
 		  assertThat(result).isNull();
 	  }
+
+	@Test
+	void countBookBorrowingByUserPhoneTest1() {
+		when(repo.countByDeletedAtIsNullAndBorrower_Phone(any(Long.class))).thenReturn(0L);
+		Boolean result = service.countBookBorrowingByUserPhone(1231231231L);
+		assertThat(result).isTrue();
+	}
+
+	@Test
+	void countBookBorrowingByUserPhoneTest2() {
+		when(repo.countByDeletedAtIsNullAndBorrower_Phone(any(Long.class))).thenReturn(3L);
+		Boolean result = service.countBookBorrowingByUserPhone(1231231231L);
+		assertThat(result).isFalse();
+	}
 
 }

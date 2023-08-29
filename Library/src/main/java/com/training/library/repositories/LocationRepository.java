@@ -20,4 +20,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
 	@Query(value = "select  new com.training.library.dto.response.LocationResponseDto(locationId,position,shelf.shelfId,shelf.shelfNo,shelf.section.sectionId,shelf.section.sectionName, shelf.section.floor.floorNo, shelf.section.floor.floorId) from Location where deletedAt is null and shelf.shelfId= :shelfId and isAvailable = TRUE")
 	List<LocationResponseDto> getAllByShelf_ShelfIdAndDeletedAtIsNotNull(Long shelfId);
+
+	Long countByPositionAndShelf_ShelfId(String result, Long shelfId);
 }

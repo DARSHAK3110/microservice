@@ -20,4 +20,6 @@ public interface FloorRepository extends JpaRepository<Floor, Long> {
 
 	Optional<Floor> findByFloorNo(Long floorNo);
 
+	Long countByFloorNo(Long floorNo);
+
 }

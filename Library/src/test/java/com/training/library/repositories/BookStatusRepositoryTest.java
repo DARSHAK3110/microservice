@@ -72,16 +72,10 @@ class BookStatusRepositoryTest {
 	@Test
 	void testAvailableFindAllByDeletedAtIsNullAndBookDetails_BookDetailsIdPageableLongBoolean() {
 		Page<BookStatusResponseDto> result = repo
-				.findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(PageRequest.of(0, 2), bookDetailsId, true);
+				.findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(PageRequest.of(0, 2), bookDetailsId);
 		assertThat(result.getContent().size()).isPositive();
 	}
 
-	@Test
-	void testNotAvailableFindAllByDeletedAtIsNullAndBookDetails_BookDetailsIdPageableLongBoolean() {
-		Page<BookStatusResponseDto> result = repo
-				.findAllByDeletedAtIsNullAndBookDetails_BookDetailsId(PageRequest.of(0, 2), bookDetailsId, false);
-		assertThat(result.getContent().size()).isNotPositive();
-	}
 
 	@Test
 	void findByLocation_LocationIdTest1() {

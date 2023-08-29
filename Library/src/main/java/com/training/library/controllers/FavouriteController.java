@@ -23,21 +23,21 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @CrossOrigin
-@RequestMapping("/library/api/v1/cart")
+@RequestMapping("/library/api/v1/favourite")
 public class FavouriteController {
 	@Autowired
 	private FavouriteService favouriteService;
 	
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@PostMapping
-	public ResponseEntity<CustomBaseResponseDto> saveBookDetailsToCart(@RequestBody Long bookDetailsId,
+	public ResponseEntity<CustomBaseResponseDto> saveBookDetailsToFavourite(@RequestBody Long bookDetailsId,
 			HttpServletRequest req) {
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		return favouriteService.saveBookDetailsToCart(bookDetailsId, userName);
+		return favouriteService.saveBookDetailsToFavourite(bookDetailsId, userName);
 	}
 	
 	@GetMapping
-	public ResponseEntity<Page<BookDetailsResponseDto>> findAllCartItems(FilterDto dto,
+	public ResponseEntity<Page<BookDetailsResponseDto>> findAllFavouriteItems(FilterDto dto,
 			HttpServletRequest req) {
 		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
 		Page<BookDetailsResponseDto> bookDetailsPage = favouriteService.findAllBookDetailsByUserId(dto,userName);
@@ -46,8 +46,8 @@ public class FavouriteController {
 	
 
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@DeleteMapping("/cartitem/{id}")
-	public ResponseEntity<CustomBaseResponseDto> deleteBoofDetailsFromCart(@PathVariable("id") Long id) {
-		return favouriteService.deleteBookDetailsFromCart(id);
+	@DeleteMapping("/favouriteitem/{id}")
+	public ResponseEntity<CustomBaseResponseDto> deleteBoofDetailsFromFavourite(@PathVariable("id") Long id) {
+		return favouriteService.deleteBookDetailsFromFavourite(id);
 	}
 }

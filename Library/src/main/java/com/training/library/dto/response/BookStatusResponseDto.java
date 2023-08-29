@@ -14,7 +14,7 @@ public class BookStatusResponseDto {
 	private Boolean isAvailable;
 	private Long isbn;
 	private Long bookDetailsId;
-
+	private Boolean isReserved;
 	public Long getBookStatusId() {
 		return bookStatusId;
 	}
@@ -111,9 +111,18 @@ public class BookStatusResponseDto {
 		this.bookDetailsId = bookDetailsId;
 	}
 
+	
+	public Boolean getIsReserved() {
+		return isReserved;
+	}
+
+	public void setIsReserved(Boolean isReserved) {
+		this.isReserved = isReserved;
+	}
+
 	public BookStatusResponseDto(Long bookStatusId, Long locationId, Long floorId, Long sectionId, Long shelfId,
 			Long floorNo, String sectionName, Long shelfNo, String position, Boolean isAvailable, Long isbn,
-			Long bookDetailsId) {
+			Long bookDetailsId, Boolean isReserved) {
 		super();
 		this.bookStatusId = bookStatusId;
 		this.locationId = locationId;
@@ -127,6 +136,7 @@ public class BookStatusResponseDto {
 		this.isAvailable = isAvailable;
 		this.isbn = isbn;
 		this.bookDetailsId = bookDetailsId;
+		this.isReserved = isReserved;
 	}
 
 	public BookStatusResponseDto() {

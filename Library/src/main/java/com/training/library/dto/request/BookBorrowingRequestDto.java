@@ -14,7 +14,7 @@ public class BookBorrowingRequestDto {
 	@Min(value = 1, message = "bookBorrowing.validation.bookStatus.id")
 	private Long bookStatusId;
 	private Date borrowingDate;
-
+	private Boolean isReserved = false;
 	public Long getPhone() {
 		return phone;
 	}
@@ -45,6 +45,14 @@ public class BookBorrowingRequestDto {
 
 	public void setBorrowingDate(Date borrowingDate) {
 		this.borrowingDate = borrowingDate;
+	}
+
+	public Boolean getIsReserved() {
+		return isReserved;
+	}
+
+	public void setIsReserved(Boolean isReserved) {
+		this.isReserved = isReserved;
 	}
 
 	public BookBorrowingRequestDto() {

@@ -37,7 +37,7 @@ public class FavouriteService {
 	@Autowired
 	private BookReservationService reserveService;
 	
-	public ResponseEntity<CustomBaseResponseDto> saveBookDetailsToCart(Long bookDetailsId, String userName) {
+	public ResponseEntity<CustomBaseResponseDto> saveBookDetailsToFavourite(Long bookDetailsId, String userName) {
 		Favourite favourite= new Favourite();
 		favourite.setBookDetails(bookDetailsService.findBookDetailsById(bookDetailsId));
 		User user = userService.findByPhone(Long.parseLong(userName));
@@ -49,16 +49,16 @@ public class FavouriteService {
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 
-	public boolean checkCart(Long bookDetailsId, String userName) {
-		Optional<Favourite> cartItem = favouriteRepository.findByBookDetails_BookDetailsIdAndUser_PhoneAndDeletedAtIsNull(bookDetailsId,Long.parseLong(userName));
-		if(cartItem.isPresent()) {
+	public boolean checkFavourite(Long bookDetailsId, String userName) {
+		Optional<Favourite> favouriteItem = favouriteRepository.findByBookDetails_BookDetailsIdAndUser_PhoneAndDeletedAtIsNull(bookDetailsId,Long.parseLong(userName));
+		if(favouriteItem.isPresent()) {
 			return true;
 		}
 		return false;
 	}
 
 	@Transactional
-	public ResponseEntity<CustomBaseResponseDto> deleteBookDetailsFromCart(Long id) {
+	public ResponseEntity<CustomBaseResponseDto> deleteBookDetailsFromFavourite(Long id) {
 		favouriteRepository.deleteByBookDetails_BookDetailsId(id);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}

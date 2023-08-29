@@ -1,5 +1,7 @@
 package com.training.library.controllers;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -17,10 +19,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.request.FloorRequestDto;
+import com.training.library.dto.request.SectionRequestDto;
 import com.training.library.dto.response.CustomBaseResponseDto;
 import com.training.library.dto.response.FloorResponseDto;
+import com.training.library.dto.response.MessageResponseDto;
 import com.training.library.services.FloorService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -70,5 +77,19 @@ public class FloorController {
 	public ResponseEntity<CustomBaseResponseDto> deleteFloor(@PathVariable Long id) {
 		floorService.deleteFloor(id);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+	}
+	
+	@PutMapping("/auto")
+	public ResponseEntity<CustomBaseResponseDto> autoDelete(@Valid @RequestBody MessageResponseDto dto,
+			HttpServletRequest req)throws StreamReadException, DatabindException, IOException {
+		FloorRequestDto floorDto = new ObjectMapper().convertValue(dto.getEntityRequestDto(), FloorRequestDto.class);
+		return floorService.deleteLetter(floorDto, dto.getUserName());
+	}
+	
+	@PutMapping("/autodelete")
+	public ResponseEntity<CustomBaseResponseDto> autoDelete(@Valid @RequestBody FloorRequestDto dto,
+			HttpServletRequest req) {
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		return floorService.autoDeleteMessage(dto, userName,"floor");
 	}
 }

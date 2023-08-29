@@ -38,6 +38,8 @@ public class BookBorrowingService {
 	@Autowired
 	private BookDetailsService bookDetailService;
 	@Autowired
+	private BookReservationService bookReservationService;
+	@Autowired
 	private UserService userService;
 	private static final String OPERATION_SUCCESS = "operation.success";
 	@Autowired
@@ -85,6 +87,7 @@ public class BookBorrowingService {
 		User borrower = userService.findByPhone(dto.getPhone());
 		BookStatus bookStatus = bookStatusService.findBookById(dto.getBookStatusId());
 		bookStatus.setAvailable(false);
+		bookStatus.setReserved(false);
 		bookStatusService.updateBookStatusAvailability(bookStatus);
 		BookBorrowing br = new BookBorrowing();
 		br.setBorrower(borrower);
@@ -92,13 +95,14 @@ public class BookBorrowingService {
 		BookDetails bookDetails = bookStatus.getBookDetails();
 		bookDetailService.setAvailableCopies(bookDetails, "checkIn");
 		User user = userService.findByPhone(Long.parseLong(userName));
-
 		if (user == null) {
 			user = userService.newUser(userName);
 		}
 		br.setUser(user);
-		br.setBorrowingDate(new Date(System.currentTimeMillis()));
 		bookBorrowingRepository.save(br);
+		if(dto.getIsReserved()) {
+			bookReservationService.setReservationFinished(dto.getPhone(),dto.getBookStatusId());	
+		}
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 

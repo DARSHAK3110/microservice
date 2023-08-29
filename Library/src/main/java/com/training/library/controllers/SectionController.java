@@ -1,5 +1,6 @@
 package com.training.library.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,15 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.training.library.dto.request.FilterDto;
+import com.training.library.dto.request.LocationRequestDto;
 import com.training.library.dto.request.SectionRequestDto;
+import com.training.library.dto.request.ShelfRequestDto;
 import com.training.library.dto.response.CustomBaseResponseDto;
+import com.training.library.dto.response.MessageResponseDto;
 import com.training.library.dto.response.SectionResponseDto;
 import com.training.library.services.SectionService;
 
@@ -71,5 +78,19 @@ public class SectionController {
 	@DeleteMapping("/section/{id}")
 	public ResponseEntity<CustomBaseResponseDto> deleteSection(@PathVariable Long id) {
 		return sectionService.deleteSection(id);
+	}
+	
+	@PutMapping("/auto")
+	public ResponseEntity<CustomBaseResponseDto> autoDelete(@Valid @RequestBody MessageResponseDto dto,
+			HttpServletRequest req)throws StreamReadException, DatabindException, IOException {
+		SectionRequestDto sectionDto = new ObjectMapper().convertValue(dto.getEntityRequestDto(), SectionRequestDto.class);
+		return sectionService.deleteLetter(sectionDto, dto.getUserName());
+	}
+	
+	@PutMapping("/autodelete")
+	public ResponseEntity<CustomBaseResponseDto> autoDelete(@Valid @RequestBody SectionRequestDto dto,
+			HttpServletRequest req) {
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		return sectionService.autoDeleteMessage(dto, userName,"section");
 	}
 }

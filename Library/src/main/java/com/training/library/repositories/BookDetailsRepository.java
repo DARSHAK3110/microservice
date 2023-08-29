@@ -31,8 +31,7 @@ public interface BookDetailsRepository extends JpaRepository<BookDetails , Long>
 	@Query(value="select count(*) from BookDetails bd left join BookStatus bs on bd.bookDetailsId = bs.bookDetails.bookDetailsId where bs.isAvailable = FALSE and bs.deletedAt is null and bd.bookDetailsId = :id ")
 	Long countBookNotAvailable(Long id);
 
-	Long countByDeletedAtIsNullAndBookDetailsIdAndBookStatus_IsAvailableTrueAndBookStatus_IsReservedIsFalse(
-			Long bookId);
+	Long countByDeletedAtIsNullAndBookDetailsIdAndBookStatus_IsAvailableTrueAndBookStatus_IsReservedFalse(Long bookId);
 
 	  
 }

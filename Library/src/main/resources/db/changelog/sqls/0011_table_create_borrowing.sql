@@ -9,7 +9,6 @@ CREATE TABLE BOOK_BORROWING(
 	updated_at DATETIME,
 	borrower_id BIGINT,
 	user_id BIGINT,
-	borrowing_date DATE,
 	book_status_id BIGINT,
 	FOREIGN KEY(book_status_id) REFERENCES BOOK_STATUS(id),
 	FOREIGN KEY(user_id) REFERENCES USER(id),

@@ -34,7 +34,7 @@ public class LibrarySecurityConfig {
 		resolver.setAllowUriQueryParameter(true);
 		resolver.setBearerTokenHeaderName(HttpHeaders.AUTHORIZATION);
 		security.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource()))
-				.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+		.authorizeHttpRequests(auth->auth.anyRequest().authenticated())
 				.sessionManagement(
 						sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.oauth2ResourceServer(oauth2 -> oauth2.bearerTokenResolver(resolver)

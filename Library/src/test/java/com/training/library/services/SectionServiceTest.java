@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -160,7 +159,6 @@ class SectionServiceTest {
 
 	@Test
 	void findSectionsByFloorsTest2() {
-		List<SectionResponseDto> list = new ArrayList<>();
 		when(repo.getAllByFloor_FloorNoAndDeletedAtIsNotNull(any(Long.class))).thenReturn(null);
 		List<SectionResponseDto> result = service.findSectionsByFloors(0L);
 		assertThat(result).isNull();

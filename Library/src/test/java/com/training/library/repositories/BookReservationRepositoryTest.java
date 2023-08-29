@@ -2,6 +2,7 @@ package com.training.library.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Date;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -30,9 +31,10 @@ class BookReservationRepositoryTest {
 	@Autowired
 	private BookReservationRepository repo;
 	private Long id;
-	
+
 	@Autowired
 	private EntityGenerator entityGenerator;
+
 	@BeforeEach
 	void setUp() throws Exception {
 		BookReservation savedReservation = repo.save(entityGenerator.getBookReservation());
@@ -43,8 +45,9 @@ class BookReservationRepositoryTest {
 	@Test
 	void testFindByBookReservationIdAndDeletedAtIsNull() {
 		Optional<BookReservationResponseDto> result = repo.findByBookReservationIdAndDeletedAtIsNull(id);
-			assertThat(result.get().getBookReservationId()).isEqualTo(id);			
+		assertThat(result.get().getBookReservationId()).isEqualTo(id);
 	}
+
 	@Order(2)
 	@Test
 	void testFailFindByBookReservationIdAndDeletedAtIsNull() {
@@ -52,17 +55,20 @@ class BookReservationRepositoryTest {
 		Optional<BookReservationResponseDto> result = repo.findByBookReservationIdAndDeletedAtIsNull(id);
 		assertThat(result).isEmpty();
 	}
+
 	@Order(3)
 	@Test
 	void testFindAllByDeletedAtIsNull() {
-		Page<BookReservationResponseDto> result = repo.findAllByDeletedAtIsNull("", PageRequest.of(0, 2));
+		Page<BookReservationResponseDto> result = repo.findAllByDeletedAtIsNull("", PageRequest.of(0, 2), new Date(0),
+				new Date(System.currentTimeMillis()));
 		assertThat(result.getContent().size()).isPositive();
 	}
+
 	@Order(4)
 	@Test
 	void testDeleteByBookReservationId() {
 		repo.deleteByBookReservationId(id);
-		Optional<BookReservationResponseDto> authorOtional= repo.findByBookReservationIdAndDeletedAtIsNull(id);
+		Optional<BookReservationResponseDto> authorOtional = repo.findByBookReservationIdAndDeletedAtIsNull(id);
 		assertThat(authorOtional).isEmpty();
 	}
 

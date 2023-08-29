@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.training.library.dto.request.BookReservationRequestDto;
 import com.training.library.dto.request.FilterDto;
@@ -49,6 +50,12 @@ public class BookReservationController {
 		return ResponseEntity.ok(bookReservationList);
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping("/reserver/{id}")
+	public ResponseEntity<Boolean> checkReserver(@PathVariable("id") Long id, @RequestParam Long bookStatusId){
+		Boolean result = bookReservationService.checkReserverByBookStatusId(id,bookStatusId);
+		return ResponseEntity.ok(result);
+	}
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
 	@PostMapping
 	public ResponseEntity<CustomBaseResponseDto> saveBookReservation(@Valid @RequestBody BookReservationRequestDto dto,

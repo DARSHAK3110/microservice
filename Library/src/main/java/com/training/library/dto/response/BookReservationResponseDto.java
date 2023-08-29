@@ -16,6 +16,8 @@ public class BookReservationResponseDto {
 	private Long accptedRequest;
 	private Long totalRequest;
 	private Boolean bookAvailable;
+	private Long assignedBookId;
+	private Date deletedAt;
 
 	public Long getBookReservationId() {
 		return bookReservationId;
@@ -121,8 +123,24 @@ public class BookReservationResponseDto {
 		this.bookAvailable = bookAvailable;
 	}
 
+	public Long getAssignedBookId() {
+		return assignedBookId;
+	}
+
+	public void setAssignedBookId(Long assignedBookId) {
+		this.assignedBookId = assignedBookId;
+	}
+
+	public Date getDeletedAt() {
+		return deletedAt;
+	}
+
+	public void setDeletedAt(Date deletedAt) {
+		this.deletedAt = deletedAt;
+	}
+
 	public BookReservationResponseDto(Long bookReservationId, Long userId, String bookTitle, Long bookId, Long phone,
-			Date reservationDate, Long isbn, Boolean isAccepted, Long totalCopies, Long availableCopies) {
+			Date reservationDate, Long isbn, Boolean isAccepted, Long totalCopies, Long availableCopies, Date deletedAt) {
 		super();
 		this.bookReservationId = bookReservationId;
 		this.userId = userId;
@@ -134,10 +152,11 @@ public class BookReservationResponseDto {
 		this.isAccepted = isAccepted;
 		this.totalCopies = totalCopies;
 		this.availablCopies = availableCopies;
+		this.deletedAt = deletedAt;
 	}
 
 	public BookReservationResponseDto(Long bookReservationId, Long userId, String bookTitle, Long bookId, Long phone,
-			Date reservationDate, Long isbn, Boolean isAccepted) {
+			Date reservationDate, Long isbn, Boolean isAccepted, Long assignedBookId,Date deletedAt) {
 		super();
 		this.bookReservationId = bookReservationId;
 		this.userId = userId;
@@ -147,11 +166,12 @@ public class BookReservationResponseDto {
 		this.reservationDate = reservationDate;
 		this.isbn = isbn;
 		this.isAccepted = isAccepted;
+		this.assignedBookId = assignedBookId;
+		this.deletedAt = deletedAt;
 	}
 
 	public BookReservationResponseDto(Long bookReservationId, Long userId, String bookTitle, Long bookId, Long phone,
-			Date reservationDate, Long isbn, Boolean isAccepted, Long totalCopies, Long availablCopies,
-			Long accptedRequest, Long totalRequest, Boolean bookAvailable) {
+			Date reservationDate, Long isbn, Boolean isAccepted, Boolean bookAvailable,Date deletedAt) {
 		super();
 		this.bookReservationId = bookReservationId;
 		this.userId = userId;
@@ -161,11 +181,8 @@ public class BookReservationResponseDto {
 		this.reservationDate = reservationDate;
 		this.isbn = isbn;
 		this.isAccepted = isAccepted;
-		this.totalCopies = totalCopies;
-		this.availablCopies = availablCopies;
-		this.accptedRequest = accptedRequest;
-		this.totalRequest = totalRequest;
 		this.bookAvailable = bookAvailable;
+		this.deletedAt = deletedAt;
 	}
 
 	public BookReservationResponseDto() {

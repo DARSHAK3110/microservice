@@ -9,7 +9,7 @@ public class BookDetailsResponseDto {
 	private Long authorId;
 	private Long totalCopies;
 	private Long availableCopies;
-	private boolean addedToCart;
+	private boolean addedToFavourite;
 	private boolean isReserved;
 	private Long totalReserved;
 	private Long acceptedReserved;
@@ -81,12 +81,12 @@ public class BookDetailsResponseDto {
 		this.authorId = authorId;
 	}
 
-	public boolean isAddedToCart() {
-		return addedToCart;
+	public boolean isAddedToFavourite() {
+		return addedToFavourite;
 	}
 
-	public void setAddedToCart(boolean addedToCart) {
-		this.addedToCart = addedToCart;
+	public void setAddedToFavourite(boolean addedToFavourite) {
+		this.addedToFavourite = addedToFavourite;
 	}
 
 	

@@ -7,8 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.management.RuntimeErrorException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -61,20 +59,21 @@ public class BookReservationService {
 	public Page<BookReservationResponseDto> findAllBookReservation(FilterDto dto, String userId)
 			throws NumberFormatException, ParseException {
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		if (dto.getStartDate() == null) {
+		if (dto.getStartDate()==null) {
 			dto.setStartDate("2020-01-01");
 		}
-		if (dto.getEndDate() == null) {
+		if (dto.getEndDate()==null) {
 			dto.setEndDate(LocalDate.now().plusDays(1000L).toString());
 		}
+		String pattern = "yyyy-MM-dd";
 		if (dto.isUser()) {
 			return bookReservationRepository.findAllByDeletedAtIsNull(userId, pageable, Long.parseLong(userId),
-					new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
-					new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()));
+					new SimpleDateFormat(pattern).parse(dto.getStartDate()),
+					new SimpleDateFormat(pattern).parse(dto.getEndDate()));
 		}
 		Page<BookReservationResponseDto> result = bookReservationRepository.findAllByDeletedAtIsNull(dto.getSearch(),
-				pageable, new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
-				new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()));
+				pageable, new SimpleDateFormat(pattern).parse(dto.getStartDate()),
+				new SimpleDateFormat(pattern).parse(dto.getEndDate()));
 		List<BookReservationResponseDto> content = result.getContent();
 		for (BookReservationResponseDto response : content) {
 			response.setTotalRequest(getTotalReservations(response.getBookId()));
@@ -84,16 +83,20 @@ public class BookReservationService {
 		return result;
 	}
 
-
-
-	public ResponseEntity<CustomBaseResponseDto> saveBookReservation(BookReservationRequestDto dto, String userName, Boolean isUser) {
-		if(isUser) {
-			Optional<BookReservation> result = bookReservationRepository.findByBookDetails_BookDetailsIdAndReserver_PhoneAndDeletedAtIsNull(dto.getBookDetailsId(), dto.getPhone());
-			if(result.isPresent()) {
-				throw new RuntimeException("You already re- reserve the book");		
+	public ResponseEntity<CustomBaseResponseDto> saveBookReservation(BookReservationRequestDto dto, String userName,
+			Boolean isUser) {
+		if (isUser) {
+			Optional<BookReservation> result = bookReservationRepository
+					.findByBookDetails_BookDetailsIdAndReserver_PhoneAndDeletedAtIsNull(dto.getBookDetailsId(),
+							dto.getPhone());
+			if (result.isPresent()) {
+				throw new RuntimeException("You already re-reserve the book");
 			}
 		}
 		User reserver = userService.findByPhone(dto.getPhone());
+		if (reserver == null) {
+			reserver = userService.newUser(dto.getPhone().toString());
+		}
 		BookDetails bookDetails = bookDetailsService.findBookDetailsById(dto.getBookDetailsId());
 		BookReservation br = new BookReservation();
 		br.setReserver(reserver);
@@ -162,9 +165,11 @@ public class BookReservationService {
 	public Long getTotalReservations(Long bookDetailsId) {
 		return bookReservationRepository.countByBookDetails_BookDetailsIdAndDeletedAtIsNull(bookDetailsId);
 	}
+
 	private Boolean getBookAvailable(Long bookId) {
-		return bookDetailsService.checkBookAvailable(bookId);	
+		return bookDetailsService.checkBookAvailable(bookId);
 	}
+
 	public Long getTotalAcceptedReservations(Long bookDetailsId) {
 		return bookReservationRepository
 				.countByBookDetails_BookDetailsIdAndDeletedAtIsNullAndIsAcceptedTrue(bookDetailsId);
@@ -173,8 +178,15 @@ public class BookReservationService {
 	@Transactional
 	public void deleteByReservationDate() {
 		Date expireDate = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
+		List<BookReservation> result = bookReservationRepository.findAllByReservationDateBefore(expireDate);
+		result.forEach(br -> removeReservation(br.getBookStatus()));
 		bookReservationRepository.deleteAllByReservationDateBefore(expireDate);
 
+	}
+
+	public void removeReservation(BookStatus bookStatus) {
+		bookStatus.setReserved(false);
+		bookStatusService.updateBookStatusAvailability(bookStatus);
 	}
 
 	public Boolean countBookReservationByUserPhone(Long id) {
@@ -183,5 +195,21 @@ public class BookReservationService {
 			return true;
 		}
 		return false;
+	}
+
+	public Boolean checkReserverByBookStatusId(Long id, Long bookStatusId) {
+
+		Long result = bookReservationRepository.countByReserver_PhoneAndDeletedAtIsNullAndBookStatus_BookStatusId(id,
+				bookStatusId);
+		if (result > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	@Transactional
+	public void setReservationFinished(Long phone, Long bookStatusId) {
+		User user = userService.findByPhone(phone);
+		bookReservationRepository.deleteByReservationFinished(user.getUserId(), bookStatusId);
 	}
 }

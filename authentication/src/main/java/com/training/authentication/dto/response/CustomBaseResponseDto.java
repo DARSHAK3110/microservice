@@ -2,6 +2,7 @@ package com.training.authentication.dto.response;
 
 public class CustomBaseResponseDto {
 	protected String message;
+	private Long saveEntityId;
 
 	public String getMessage() {
 		return message;
@@ -18,6 +19,20 @@ public class CustomBaseResponseDto {
 
 	public CustomBaseResponseDto() {
 		super();
+	}
+
+	public Long getSaveEntityId() {
+		return saveEntityId;
+	}
+
+	public void setSaveEntityId(Long saveEntityId) {
+		this.saveEntityId = saveEntityId;
+	}
+
+	public CustomBaseResponseDto(String message, Long saveEntityId) {
+		super();
+		this.message = message;
+		this.saveEntityId = saveEntityId;
 	}
 
 }

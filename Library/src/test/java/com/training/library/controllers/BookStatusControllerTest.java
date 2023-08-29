@@ -181,6 +181,24 @@ class BookStatusControllerTest {
 }
 
 	@Test
+	void findBookStatusByISBNTest1() throws Exception {
+		when(bookStatusService.findAllBookStatusByISBN(any(FilterDto.class), anyLong())).thenReturn(null);
+		mockMvc.perform(get("/library/api/v1/bookstatuses/isbn/{id}", 0).with(SecurityMockMvcRequestPostProcessors
+			.opaqueToken().authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))).andExpect(status().isOk())
+			.andExpect(MockMvcResultMatchers.jsonPath("$").doesNotExist());
+	}
+	
+	
+	
+
+	@Test
+	void findBookStatusByISBNTest2() throws Exception {
+		when(bookStatusService.findAllBookStatusByISBN(any(FilterDto.class), anyLong())).thenReturn(entityGenerator.getBookStatusPage());
+		 mockMvc.perform(get("/library/api/v1/bookstatuses/isbn/{id}", 0).with(SecurityMockMvcRequestPostProcessors
+			.opaqueToken().authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))).andExpect(status().isOk())
+		 	.andExpect((MockMvcResultMatchers.jsonPath("$.numberOfElements").value("1")));
+}
+	@Test
 	void findBookStatusByBookDetailsTest1() throws Exception {
 		 when(bookStatusService.findAllBookStatusByBookDetailsId(any(FilterDto.class),any(Long.class))).thenReturn(entityGenerator.getBookStatusPage());
 		 mockMvc.perform(get("/library/api/v1/bookstatuses/book/{id}",0).content(mapper.writeValueAsString(entityGenerator.getFilterDto()))

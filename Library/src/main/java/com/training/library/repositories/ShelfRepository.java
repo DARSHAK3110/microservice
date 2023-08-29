@@ -20,4 +20,6 @@ public interface ShelfRepository extends JpaRepository<Shelf, Long> {
 
 	@Query(value = "select new com.training.library.dto.response.ShelfResponseDto(shelfId, shelfNo,section.sectionId,section.sectionName,section.floor.floorId,section.floor.floorNo) from Shelf where deletedAt is null and section.sectionId = :sectionId")
 	List<ShelfResponseDto> getAllBySection_SectionIdAndDeletedAtIsNotNull(Long sectionId);
+
+	Long countBySection_SectionIdAndShelfNo(Long sectionId, long nextLong);
 }

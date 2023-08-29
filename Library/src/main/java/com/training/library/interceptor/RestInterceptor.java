@@ -15,6 +15,7 @@ public class RestInterceptor implements ClientHttpRequestInterceptor{
 	@Override
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
 			throws IOException {
+		System.out.println("helloqwert");
 		String token = SecurityContextHolder.getContext().getAuthentication().getCredentials().toString();
 		request.getHeaders().add("Authorization", token);
 		 return execution.execute(request, body);

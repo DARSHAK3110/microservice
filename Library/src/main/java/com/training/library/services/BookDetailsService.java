@@ -77,10 +77,10 @@ public class BookDetailsService {
 			List<BookDetailsResponseDto> content = result.getContent();
 			for (BookDetailsResponseDto response : content) {
 				if (dto.isUser()) {	
-				if (favouriteService.checkCart(response.getBookDetailsId(), userName)) {
-					response.setAddedToCart(true);
+				if (favouriteService.checkFavourite(response.getBookDetailsId(), userName)) {
+					response.setAddedToFavourite(true);
 				} else {
-					response.setAddedToCart(false);
+					response.setAddedToFavourite(false);
 				}
 				if (reserveService.checkReservation(response.getBookDetailsId(), userName)) {
 					response.setReserved(true);
@@ -239,7 +239,7 @@ public class BookDetailsService {
 	}
 
 	public Boolean checkBookAvailable(Long bookId) {
-		Long result = bookDetailsRepository.countByDeletedAtIsNullAndBookDetailsIdAndBookStatus_IsAvailableTrueAndBookStatus_IsReservedIsFalse(bookId);
+		Long result = bookDetailsRepository.countByDeletedAtIsNullAndBookDetailsIdAndBookStatus_IsAvailableTrueAndBookStatus_IsReservedFalse(bookId);
 		if(result>0) {
 			return true;
 		}

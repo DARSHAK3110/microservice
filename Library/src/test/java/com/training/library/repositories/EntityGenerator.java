@@ -18,6 +18,7 @@ import com.training.library.dto.request.BookStatusRequestDto;
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.request.FloorRequestDto;
 import com.training.library.dto.request.LocationRequestDto;
+import com.training.library.dto.request.ReservationStatusDto;
 import com.training.library.dto.request.SectionRequestDto;
 import com.training.library.dto.request.ShelfRequestDto;
 import com.training.library.dto.response.AuthorResponseDto;
@@ -194,7 +195,6 @@ public class EntityGenerator {
 
 		BookBorrowing bookBorrowing = new BookBorrowing();
 		bookBorrowing.setBookStatus(bookStatusRepository.save(getBookStatus()));
-		bookBorrowing.setBorrowingDate(new Date(System.currentTimeMillis()));
 		bookBorrowing.setBorrower(userRepository.save(getUser()));
 		return bookBorrowingRepository.save(bookBorrowing);
 	}
@@ -203,7 +203,6 @@ public class EntityGenerator {
 
 		BookBorrowing bookBorrowing = new BookBorrowing();
 		bookBorrowing.setBookStatus(getMockBookStatus());
-		bookBorrowing.setBorrowingDate(new Date(System.currentTimeMillis()));
 		bookBorrowing.setBorrower(getMockUser());
 		return bookBorrowing;
 	}
@@ -222,6 +221,11 @@ public class EntityGenerator {
 		author.setAuthorName("Author1000");
 		author.setAuthorDOB(new Date(System.currentTimeMillis()));
 		return author;
+	}
+	public FilterDto setDate(FilterDto dto) {
+		dto.setEndDate("1970-01-01");
+		dto.setStartDate("2020-12-12");
+		return dto;
 	}
 
 	public AuthorResponseDto getAuthorResponseDto(Long id) {
@@ -424,6 +428,13 @@ public class EntityGenerator {
 		req.setPhone(1231231231L);
 		req.setBorrowingDate(new Date(System.currentTimeMillis()));
 		return req;
+	}
+
+	public ReservationStatusDto getReservationStatusRequestDto() {
+		ReservationStatusDto dto = new ReservationStatusDto();
+		dto.setBookStatusId(1L);
+		dto.setStatus(true);
+		return dto;
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.training.library.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.training.library.dto.request.FilterDto;
+import com.training.library.dto.request.LocationRequestDto;
 import com.training.library.dto.request.ShelfRequestDto;
 import com.training.library.dto.response.CustomBaseResponseDto;
+import com.training.library.dto.response.MessageResponseDto;
 import com.training.library.dto.response.ShelfResponseDto;
 import com.training.library.services.ShelfService;
 
@@ -73,5 +79,16 @@ public class ShelfController {
 		List<ShelfResponseDto> shelfs = shelfService.findShelfsBySection(sectionId);
 		return ResponseEntity.ok(shelfs);
 	}
-
+	@PutMapping("/auto")
+	public ResponseEntity<CustomBaseResponseDto> autoDelete(@Valid @RequestBody MessageResponseDto dto,
+			HttpServletRequest req)throws StreamReadException, DatabindException, IOException {
+		ShelfRequestDto shelfDto = new ObjectMapper().convertValue(dto.getEntityRequestDto(), ShelfRequestDto.class);
+		return shelfService.deleteLetter(shelfDto, dto.getUserName());
+	}
+	@PutMapping("/autodelete")
+	public ResponseEntity<CustomBaseResponseDto> autoDelete(@Valid @RequestBody ShelfRequestDto dto,
+			HttpServletRequest req) {
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		return shelfService.autoDeleteMessage(dto, userName,"shelf");
+	}
 }

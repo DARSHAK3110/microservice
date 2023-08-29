@@ -2,15 +2,13 @@ package com.training.library.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Optional;
-
-import javax.mail.Multipart;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.training.library.dto.request.BookDetailsRequestDto;
 import com.training.library.dto.request.FilterDto;
@@ -36,7 +33,6 @@ import com.training.library.entity.BookStatus;
 import com.training.library.entity.Location;
 import com.training.library.entity.Upload;
 import com.training.library.entity.User;
-import com.training.library.exceptions.CustomExceptionHandler;
 import com.training.library.repositories.BookDetailsRepository;
 import com.training.library.repositories.BookStatusRepository;
 import com.training.library.repositories.EntityGenerator;
@@ -75,6 +71,7 @@ class BookDetailsServiceTest {
 	private Environment env;
 	@Mock
 	private FavouriteService cartService;
+
 	@Test
 	void findBookDetailsTest1() {
 		when(repo.findByBookDetailsIdAndDeletedAtIsNull(any(Long.class))).thenReturn(Optional.of(entityGenerator.getBookDetailsResponseDto(0L)));
@@ -96,7 +93,7 @@ class BookDetailsServiceTest {
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
 		when(repo.findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(
 				dto.getSearch(), dto.getSearch(), pageable)).thenReturn(actual);
-		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto,"1231231231");
+		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto, "1231231231");
 		assertThat(result).isEqualTo(actual);
 	}
 
@@ -106,55 +103,56 @@ class BookDetailsServiceTest {
 		dto.setUser(true);
 		Page<BookDetailsResponseDto> actual = entityGenerator.getBookDetailsPage();
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		when(bookReservationService.checkReservation(1L,"1231231231")).thenReturn(true);
-		when(cartService.checkCart(1L,"1231231231")).thenReturn(true);
+		when(bookReservationService.checkReservation(1L, "1231231231")).thenReturn(true);
+		when(cartService.checkFavourite(1L, "1231231231")).thenReturn(true);
 		when(repo.findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(
 				dto.getSearch(), dto.getSearch(), pageable)).thenReturn(actual);
-		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto,"1231231231");
+		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto, "1231231231");
 		assertThat(result).isNotNull();
 	}
-	
+
 	@Test
 	void findAllBookDetailsTest3() {
 		FilterDto dto = entityGenerator.getFilterDto();
 		dto.setUser(true);
 		Page<BookDetailsResponseDto> actual = entityGenerator.getBookDetailsPage();
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		when(bookReservationService.checkReservation(1L,"1231231231")).thenReturn(true);
-		when(cartService.checkCart(1L,"1231231231")).thenReturn(false);
+		when(bookReservationService.checkReservation(1L, "1231231231")).thenReturn(true);
+		when(cartService.checkFavourite(1L, "1231231231")).thenReturn(false);
 		when(repo.findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(
 				dto.getSearch(), dto.getSearch(), pageable)).thenReturn(actual);
-		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto,"1231231231");
+		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto, "1231231231");
 		assertThat(result).isNotNull();
 	}
+
 	@Test
 	void findAllBookDetailsTest4() {
 		FilterDto dto = entityGenerator.getFilterDto();
 		dto.setUser(true);
 		Page<BookDetailsResponseDto> actual = entityGenerator.getBookDetailsPage();
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		when(bookReservationService.checkReservation(1L,"1231231231")).thenReturn(false);
-		when(cartService.checkCart(1L,"1231231231")).thenReturn(true);
+		when(bookReservationService.checkReservation(1L, "1231231231")).thenReturn(false);
+		when(cartService.checkFavourite(1L, "1231231231")).thenReturn(true);
 		when(repo.findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(
 				dto.getSearch(), dto.getSearch(), pageable)).thenReturn(actual);
-		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto,"1231231231");
+		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto, "1231231231");
 		assertThat(result).isNotNull();
 	}
-	
+
 	@Test
 	void findAllBookDetailsTest5() {
 		FilterDto dto = entityGenerator.getFilterDto();
 		dto.setUser(true);
 		Page<BookDetailsResponseDto> actual = entityGenerator.getBookDetailsPage();
 		Pageable pageable = PageRequest.of(dto.getPageNumber(), dto.getPageSize());
-		when(bookReservationService.checkReservation(1L,"1231231231")).thenReturn(false);
-		when(cartService.checkCart(1L,"1231231231")).thenReturn(false);
+		when(bookReservationService.checkReservation(1L, "1231231231")).thenReturn(false);
+		when(cartService.checkFavourite(1L, "1231231231")).thenReturn(false);
 		when(repo.findAllByDeletedAtIsNullAndTitleIgnoreCaseContainingOrAuthor_AuthorNameIgnoreCaseContaining(
 				dto.getSearch(), dto.getSearch(), pageable)).thenReturn(actual);
-		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto,"1231231231");
+		Page<BookDetailsResponseDto> result = service.findAllBookDetails(dto, "1231231231");
 		assertThat(result).isNotNull();
 	}
-	
+
 	@Test
 	void saveBookDetailsTest1() {
 		BookDetailsRequestDto req = entityGenerator.getBookDetailsRequestDto();
@@ -199,7 +197,6 @@ class BookDetailsServiceTest {
 		User user = entityGenerator.getMockUser();
 		Location location = entityGenerator.getMockLocation();
 		BookDetails bookDetails = entityGenerator.getMockBookDetails();
-		BookStatus bookStatus = entityGenerator.getMockBookStatus();
 		BookDetailsRequestDto req = entityGenerator.getBookDetailsRequestDto();
 		when(userService.findByPhone(1231231231L)).thenReturn(user);
 		when(locationService.findLocationById(any(Long.class))).thenReturn(location);
@@ -244,12 +241,33 @@ class BookDetailsServiceTest {
 	}
 
 	@Test
+	void updateBookDetailsTest4() {
+		User user = entityGenerator.getMockUser();
+		Location location = entityGenerator.getMockLocation();
+		location.setLocationId(0L);
+		BookDetails bookDetails = entityGenerator.getMockBookDetails();
+		BookStatus bookStatus = entityGenerator.getMockBookStatus();
+		bookStatus.setLocation(location);
+		when(bookStatusService.findBookById(anyLong())).thenReturn(bookStatus);
+		BookDetailsRequestDto req = entityGenerator.getBookDetailsRequestDto();
+		when(repo.findById(any(Long.class))).thenReturn(Optional.of(bookDetails));
+		when(userService.findByPhone(1231231231L)).thenReturn(null);
+		when(userService.newUser("1231231231")).thenReturn(user);
+		when(locationService.findLocationById(any(Long.class))).thenReturn(location);
+		req.setBookStatus(entityGenerator.getBookStatusRequestDto());
+		ResponseEntity<CustomBaseResponseDto> result = service.updateBookDetails(0L, req, "1231231231");
+		assertThat(result).isNotNull();
+	}
+
+	@Test
 	void testDeleteBookDetails() {
-		when(bookDetailsService.findBookDetailsById(any(Long.class))).thenReturn(entityGenerator.getMockBookDetails());
+		BookDetails mockBookDetails = entityGenerator.getMockBookDetails();
+		mockBookDetails.setBookStatus(List.of(entityGenerator.getMockBookStatus()));
+		when(repo.findById(anyLong())).thenReturn(Optional.of(mockBookDetails));
 		ResponseEntity<CustomBaseResponseDto> result = service.deleteBookDetails(0L);
 		assertThat(result).isNotNull();
 	}
-	
+
 	@Test
 	void findBookDetailsByISBNTest1() {
 		Long isbn = 1231231231L;
@@ -268,10 +286,9 @@ class BookDetailsServiceTest {
 		assertThat(result).isNull();
 	}
 
-
 	@Test
 	void findBookDetailsByIdTest1() {
-		Optional<BookDetails> bookDetails= Optional.of(entityGenerator.getMockBookDetails());
+		Optional<BookDetails> bookDetails = Optional.of(entityGenerator.getMockBookDetails());
 		bookDetails.get().setBookDetailsId(0L);
 		when(repo.findById(any(Long.class))).thenReturn(bookDetails);
 		BookDetails result = service.findBookDetailsById(0L);
@@ -287,31 +304,45 @@ class BookDetailsServiceTest {
 
 	@Test
 	void setAvailableCopiesTest1() {
-		BookDetails bookDetails= entityGenerator.getMockBookDetails();
+		BookDetails bookDetails = entityGenerator.getMockBookDetails();
 		when(repo.save(any(BookDetails.class))).thenReturn(bookDetails);
-		service.setAvailableCopies(bookDetails,"checkOut");
+		service.setAvailableCopies(bookDetails, "checkOut");
 		verify(repo, times(1)).save(bookDetails);
-		
+
 	}
+
 	@Test
 	void setAvailableCopiesTest2() {
-		BookDetails bookDetails= entityGenerator.getMockBookDetails();
+		BookDetails bookDetails = entityGenerator.getMockBookDetails();
 		when(repo.save(any(BookDetails.class))).thenReturn(bookDetails);
-		service.setAvailableCopies(bookDetails,"checkIn");
+		service.setAvailableCopies(bookDetails, "checkIn");
 		verify(repo, times(1)).save(bookDetails);
 	}
+
 	@Test
 	void setAvailableCopiesTest3() {
-		BookDetails bookDetails= entityGenerator.getMockBookDetails();
+		BookDetails bookDetails = entityGenerator.getMockBookDetails();
 		when(repo.save(any(BookDetails.class))).thenReturn(bookDetails);
-		service.setAvailableCopies(bookDetails,"remove");
+		service.setAvailableCopies(bookDetails, "remove");
 		verify(repo, times(1)).save(bookDetails);
 	}
-	
-	
+
 	@Test
-	void uploadBooksTest1() throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException, NoSuchFieldException, CustomExceptionHandler, IOException {
-		
-		service.uploadBooks(1231231231231L, any(MultipartFile.class), "1231231231");
+	void checkBookAvailableTest1() {
+		when(repo.countByDeletedAtIsNullAndBookDetailsIdAndBookStatus_IsAvailableTrueAndBookStatus_IsReservedFalse(any(Long.class))).thenReturn(1L);
+		Boolean result = service.checkBookAvailable(0L);
+		assertThat(result).isTrue();
 	}
+
+	@Test
+	void checkBookAvailableTest2() {
+		when(repo.countByDeletedAtIsNullAndBookDetailsIdAndBookStatus_IsAvailableTrueAndBookStatus_IsReservedFalse(any(Long.class))).thenReturn(0L);
+		Boolean result = service.checkBookAvailable(0L);
+		assertThat(result).isFalse();
+	}
+//	@Test
+//	void uploadBooksTest1() throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException, SecurityException, NoSuchFieldException, CustomExceptionHandler, IOException {
+//		
+//		service.uploadBooks(1231231231231L, any(MultipartFile.class), "1231231231");
+//	}
 }

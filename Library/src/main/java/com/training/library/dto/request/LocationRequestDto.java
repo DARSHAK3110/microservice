@@ -14,6 +14,7 @@ public class LocationRequestDto {
 	private Long sectionId;
 	@Min(value = 1, message = "location.validation.shelf.id")
 	private Long shelfId;
+	private Long locationId;
 
 	public String getPosition() {
 		return position;
@@ -21,6 +22,14 @@ public class LocationRequestDto {
 
 	public void setPosition(String position) {
 		this.position = position;
+	}
+
+	public Long getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(Long locationId) {
+		this.locationId = locationId;
 	}
 
 	public Long getFloorId() {

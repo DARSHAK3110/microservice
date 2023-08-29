@@ -9,7 +9,7 @@ public class ShelfRequestDto {
 	@Min(value= 0,message = "shelf.validation.shelf.no")
 	private Long shelfNo;
 
-	@Min(value= 1,message = "shelf.validation.section.id" )
+	@Min(value= 0,message = "shelf.validation.section.id" )
 	private Long sectionId;
 
 	public Long getShelfId() {

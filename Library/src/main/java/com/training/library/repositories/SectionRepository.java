@@ -21,4 +21,6 @@ public interface SectionRepository extends JpaRepository<Section, Long> {
 
 	@Query(value = "select new com.training.library.dto.response.SectionResponseDto(sectionId,sectionName,floor.floorId,floor.floorNo) from Section where deletedAt is null and floor.floorId = :floorId")
 	List<SectionResponseDto> getAllByFloor_FloorNoAndDeletedAtIsNotNull(Long floorId);
+
+	Long countBySectionNameAndFloor_FloorId(String result, Long floorId);
 }

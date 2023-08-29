@@ -1,13 +1,11 @@
 package com.training.library.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,16 +19,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-import com.training.library.dto.request.AuthorRequestDto;
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.request.FloorRequestDto;
-import com.training.library.dto.response.AuthorResponseDto;
 import com.training.library.dto.response.CustomBaseResponseDto;
 import com.training.library.dto.response.FloorResponseDto;
-import com.training.library.entity.Author;
 import com.training.library.entity.Floor;
 import com.training.library.entity.User;
-import com.training.library.repositories.AuthorRepository;
 import com.training.library.repositories.EntityGenerator;
 import com.training.library.repositories.FloorRepository;
 import com.training.library.repositories.UserRepository;
@@ -38,7 +32,6 @@ import com.training.library.repositories.UserRepository;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 class FloorServiceTest {
-
 
 	@Mock
 	private FloorRepository repo;
@@ -53,13 +46,14 @@ class FloorServiceTest {
 	private UserService userService;
 	@Mock
 	private Environment env;
+
 	@Test
 	void findFloorTest1() {
 		when(repo.findByFloorIdAndDeletedAtIsNull(any(Long.class))).thenReturn(Optional.of(entityGenerator.getFloorResponseDto(any(Long.class))));
 		FloorResponseDto result = service.findFloor(0L);
 		assertThat(result.getFloorId()).isEqualTo(0L);
 	}
-	
+
 	@Test
 	void findFloorTest2() {
 		when(repo.findByFloorIdAndDeletedAtIsNull(any(Long.class))).thenReturn(Optional.empty());
@@ -87,7 +81,7 @@ class FloorServiceTest {
 		ResponseEntity<CustomBaseResponseDto> result = service.saveFloor(req, "1231231231");
 		assertThat(result).isNotNull();
 	}
-	
+
 	@Test
 	void saveFloorTest2() {
 		FloorRequestDto req = entityGenerator.getFloorRequestDto();

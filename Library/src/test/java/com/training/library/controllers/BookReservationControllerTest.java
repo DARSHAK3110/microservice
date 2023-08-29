@@ -29,6 +29,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.training.library.dto.request.BookReservationRequestDto;
 import com.training.library.dto.request.FilterDto;
+import com.training.library.dto.request.ReservationStatusDto;
 import com.training.library.repositories.EntityGenerator;
 import com.training.library.security.LibrarySecurityConfig;
 import com.training.library.services.BookReservationService;
@@ -115,16 +116,31 @@ class BookReservationControllerTest {
 						.opaqueToken().authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
 				.andExpect(status().isOk());
 	}
-	
+
 	@Test
 	void saveBookReservationStatus() throws Exception {
+		ReservationStatusDto reservationStatusRequestDto = entityGenerator.getReservationStatusRequestDto();
+		mockMvc.perform(post("/library/api/v1/reservations/status/{id}", 1)
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(reservationStatusRequestDto))
+				.with(SecurityMockMvcRequestPostProcessors.opaqueToken()
+						.authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))).andExpect(status().isOk());
+	}
+
+	@Test
+	void countBookReservationByUserPhoneTest1() throws Exception {
 		mockMvc.perform(
-				post("/library/api/v1/reservations/status/{id}", 0).with(SecurityMockMvcRequestPostProcessors
-						.opaqueToken().authorities(new SimpleGrantedAuthority("ROLE_ADMIN")))		
-						.contentType(MediaType.APPLICATION_JSON)
-						.content(mapper.writeValueAsString(true))
-)
-		
+				get("/library/api/v1/reservations/reservationcounter/{id}", 0).with(SecurityMockMvcRequestPostProcessors
+						.opaqueToken().authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
 				.andExpect(status().isOk());
 	}
+	@Test
+	void checkReserverTest1() throws Exception {
+		mockMvc.perform(
+				get("/library/api/v1/reservations/reserver/{id}", 1L).param("bookStatusId", "0").with(SecurityMockMvcRequestPostProcessors
+						.opaqueToken().authorities(new SimpleGrantedAuthority("ROLE_ADMIN"))))
+				.andExpect(status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$").isBoolean());
+	}
+	
 }

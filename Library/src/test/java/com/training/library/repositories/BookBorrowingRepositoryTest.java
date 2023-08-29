@@ -1,7 +1,6 @@
 package com.training.library.repositories;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Optional;
 
@@ -29,6 +28,7 @@ class BookBorrowingRepositoryTest {
 	private BookBorrowingRepository repo;
 	private Long id;
 	private Long bookStatusId;
+
 	@BeforeEach
 	void setUp() throws Exception {
 		BookBorrowing savedBorrowing = repo.save(entityGenerator.getBookBorrowing());
@@ -48,6 +48,7 @@ class BookBorrowingRepositoryTest {
 		Optional<BookBorrowingResponseDto> result = repo.findByBookBorrowingIdAndDeletedAtIsNull(id);
 		assertThat(result).isEmpty();
 	}
+
 	@Test
 	void testFindAllwithSearch() {
 		Page<BookBorrowingResponseDto> result = repo.findAllwithSearch("", PageRequest.of(0, 2));
@@ -57,7 +58,7 @@ class BookBorrowingRepositoryTest {
 	@Test
 	void testDeleteByBookBorrowingId() {
 		repo.deleteByBookBorrowingId(id);
-		Optional<BookBorrowingResponseDto> authorOtional= repo.findByBookBorrowingIdAndDeletedAtIsNull(id);
+		Optional<BookBorrowingResponseDto> authorOtional = repo.findByBookBorrowingIdAndDeletedAtIsNull(id);
 		assertThat(authorOtional).isEmpty();
 	}
 
