@@ -8,10 +8,15 @@ import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
 import com.training.authentication.dto.request.FilterDto;
 import com.training.authentication.dto.request.TokenRequestDto;
 import com.training.authentication.dto.request.UserRequestDto;
@@ -46,7 +51,8 @@ public class UserService {
 	private UserSpecifications userSpecifications;
 	@Autowired
 	private LogRepository logRepository;
-
+	public String ACCESS_STRING = "access";
+	private String REFRESH_STRING = "refresh"; 
 	public Page<UserResponseDto> getAllUsers(FilterDto searchWord) {
 		return userSpecifications.searchSpecification(searchWord);
 	}
@@ -74,9 +80,22 @@ public class UserService {
 	}
 
 	@Transactional
-	public ResponseEntity<CustomBaseResponseDto> deleteUser(Long userId) {
-		this.userRepository.deleteUser(userId);
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+	public ResponseEntity<CustomBaseResponseDto> deleteUser(Long userId, String token) {
+		UserResponseDto user = getUser(userId);
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(token.replace("Bearer ", ""));
+		HttpEntity<String> entity = new HttpEntity<>("body", headers);
+
+		ResponseEntity<Boolean> isUserBorrowedBookEntity = restTemplate.exchange(
+				"http://localhost:8091/library/api/v1/borrowings/checkuser/" + user.getPhoneNumber(), HttpMethod.GET,
+				entity, Boolean.class);
+		if (Boolean.TRUE.equals(isUserBorrowedBookEntity.getBody())) {
+			throw new RuntimeException("Already user borrowed book, so you can't delete them now");
+		} else {
+			this.userRepository.deleteUser(userId);
+			return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		}
 	}
 
 	public ResponseEntity<CustomBaseResponseDto> updateUser(Long userId, UserRequestDto user) {
@@ -116,7 +135,7 @@ public class UserService {
 
 	public ClaimsResponseDto getDetails(String token) {
 		token = token.replace("Bearer ", "");
-		Claims extractAllClaims = this.jwtService.extractAllClaims(token, "access");
+		Claims extractAllClaims = this.jwtService.extractAllClaims(token, ACCESS_STRING);
 		ClaimsResponseDto res = new ClaimsResponseDto();
 		res.setSubject(extractAllClaims.getSubject());
 		res.setIssuedDate(extractAllClaims.getIssuedAt());
@@ -129,16 +148,16 @@ public class UserService {
 	public TokenResponseDto refreshToken(TokenRequestDto tokenDto) {
 		String subject = null;
 		try {
-			this.jwtService.extractAllClaims(tokenDto.getToken(), "access");
+			this.jwtService.extractAllClaims(tokenDto.getToken(), ACCESS_STRING);
 		} catch (ExpiredJwtException e) {
 			Claims claims = e.getClaims();
 			subject = claims.getSubject();
 		}
-		
-			Claims refreshClaim = this.jwtService.extractAllClaims(tokenDto.getRefreshToken(), "refresh");
-			if (refreshClaim.getSubject().equals(subject)) {
-				return generateToken(Long.parseLong(subject));
-			}
+
+		Claims refreshClaim = this.jwtService.extractAllClaims(tokenDto.getRefreshToken(), REFRESH_STRING );
+		if (refreshClaim.getSubject().equals(subject)) {
+			return generateToken(Long.parseLong(subject));
+		}
 		return null;
 	}
 
@@ -152,9 +171,8 @@ public class UserService {
 
 	}
 
-	public Map<String, Object>  getClaims(String jwt) {
-		Claims extractAllClaims = jwtService.extractAllClaims(jwt, "access");
-		Map<String, Object> claimsMap= new HashMap<>(extractAllClaims);
-		return claimsMap;
+	public Map<String, Object> getClaims(String jwt) {
+		Claims extractAllClaims = jwtService.extractAllClaims(jwt, ACCESS_STRING);
+		return new HashMap<>(extractAllClaims);
 	}
 }

@@ -98,7 +98,7 @@ public class FloorService {
 			floor = floorOptional.get();
 			List<Section> sections = floor.getSection();
 			newFloorResult = saveFloor(dto, userName);
-			newFloorOptional = floorRepository.findById(Long.parseLong(newFloorResult.getBody().getMessage()));
+			newFloorOptional = floorRepository.findById(newFloorResult.getBody().getSaveEntityId());
 			if (newFloorOptional.isPresent()) {
 				newFloor = newFloorOptional.get();
 			}

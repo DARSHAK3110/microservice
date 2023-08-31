@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import com.training.authentication.entity.User;
 import com.training.authentication.repository.UserRepository;
@@ -24,7 +24,7 @@ public class SecurityBean {
 
 	@Autowired
 	private UserRepository userRepo;
-	
+
 	@Bean
 	public UserDetailsService userDetailsService() {
 		return new UserDetailsService() {
@@ -59,4 +59,8 @@ public class SecurityBean {
 		return config.getAuthenticationManager();
 	}
 
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
 }

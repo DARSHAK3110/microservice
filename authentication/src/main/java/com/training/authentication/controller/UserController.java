@@ -50,7 +50,7 @@ import jakarta.validation.constraints.Min;
 @PropertySource("classpath:message.properties")
 @RequestMapping("/api/v1/users")
 public class UserController {
-	
+
 	@Autowired
 	private UserService userSerivceImpl;
 	Logger log = Logger.getLogger(UserController.class.getName());
@@ -91,8 +91,9 @@ public class UserController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@DeleteMapping("/{userId}") // delete user
-	public ResponseEntity<CustomBaseResponseDto> deleteUser(@PathVariable @Min(1) Long userId) {
-		return this.userSerivceImpl.deleteUser(userId);
+	public ResponseEntity<CustomBaseResponseDto> deleteUser(@PathVariable @Min(1) Long userId, HttpServletRequest req) {
+		String token = req.getHeader("Authorization");
+		return this.userSerivceImpl.deleteUser(userId, token);
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN') or #userId == authentication.principal")
@@ -129,10 +130,9 @@ public class UserController {
 
 	@PostMapping("/refresh") // get refresh token
 	public ResponseEntity<TokenResponseDto> refreshToken(@RequestBody TokenRequestDto tokenDto) {
-		TokenResponseDto res = this.userSerivceImpl.refreshToken(tokenDto);		
+		TokenResponseDto res = this.userSerivceImpl.refreshToken(tokenDto);
 		return ResponseEntity.ok(res);
 
 	}
-
 
 }

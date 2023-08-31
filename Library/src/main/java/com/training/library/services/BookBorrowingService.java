@@ -3,7 +3,6 @@ package com.training.library.services;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,9 +87,10 @@ public class BookBorrowingService {
 		BookStatus bookStatus = bookStatusService.findBookById(dto.getBookStatusId());
 		bookStatus.setAvailable(false);
 		bookStatus.setReserved(false);
-		bookStatusService.updateBookStatusAvailability(bookStatus);
 		BookBorrowing br = new BookBorrowing();
-		br.setBorrower(borrower);
+		if (borrower == null) {
+			borrower = userService.newUser(dto.getPhone().toString());
+		}br.setBorrower(borrower);
 		br.setBookStatus(bookStatus);
 		BookDetails bookDetails = bookStatus.getBookDetails();
 		bookDetailService.setAvailableCopies(bookDetails, "checkIn");
@@ -99,6 +99,7 @@ public class BookBorrowingService {
 			user = userService.newUser(userName);
 		}
 		br.setUser(user);
+		bookStatusService.updateBookStatusAvailability(bookStatus);
 		bookBorrowingRepository.save(br);
 		if(dto.getIsReserved()) {
 			bookReservationService.setReservationFinished(dto.getPhone(),dto.getBookStatusId());	
@@ -137,6 +138,16 @@ public class BookBorrowingService {
 
 		Long counter = bookBorrowingRepository.countByDeletedAtIsNullAndBorrower_Phone(id);
 		if(counter<3) {
+			return true;
+		}
+		return false;
+	}
+	
+	public Boolean checkUserForDeletion(Long id) {
+
+		Long counter = bookBorrowingRepository.countByDeletedAtIsNullAndBorrower_Phone(id);
+		System.out.println(counter);
+		if(counter>0) {
 			return true;
 		}
 		return false;

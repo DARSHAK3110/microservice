@@ -42,6 +42,14 @@ public class BookBorrowingController {
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping("checkuser/{id}")
+	public ResponseEntity<Boolean> isUserBorrowedNow(@PathVariable("id") Long id) {
+		Boolean result = bookBorrowingService.checkUserForDeletion(id);
+		return ResponseEntity.ok(result);
+	}
+
+	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/bookstatus/{id}")
 	public ResponseEntity<BookBorrowingResponseDto> findBookBorrowingByBookStatus(@PathVariable Long id) {
 		BookBorrowingResponseDto bookBorrowing = bookBorrowingService.findBookBorrowingByBookStatus(id);
