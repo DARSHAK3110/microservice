@@ -220,6 +220,7 @@ public class BookDetailsService {
 		}
 		upload.setUser(user);
 		BookDetails bookDetails = findBookDetailsByISBN(isbn);
+		System.out.println(bookDetails.getBookStatus().size());
 		if (bookDetails != null) {
 			for (BookStatus book : books) {
 				book.setAvailable(true);
@@ -232,7 +233,7 @@ public class BookDetailsService {
 				locationService.updateLocationAvailability(location);
 			}
 		}
-
+System.out.println(upload+"abcs");
 		upload.addAllBookDetails(List.of(bookDetails));
 		uploadRepository.save(upload);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));

@@ -95,7 +95,7 @@ private EntityGenerator entityGenerator;
 	
 	@Test
 	void deleteUserTest() {
-		service.deleteUser(0L);
+		service.deleteUser(0L,"abcd");
 		verify(repo,times(1)).deleteUser(any(Long.class));
 	}
 

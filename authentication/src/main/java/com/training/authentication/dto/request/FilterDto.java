@@ -87,6 +87,7 @@ public class FilterDto implements Specification<User> {
 					"%" + getPhoneNumber().trim().toLowerCase() + "%"));
 
 		}
+		pred.add(criteriaBuilder.like(root.get("role").as(String.class), "%USER%"));
 		pred.add(criteriaBuilder.isNull(root.get("deletedAt")));
 		return criteriaBuilder.and(pred.toArray(new Predicate[pred.size()]));
 	}

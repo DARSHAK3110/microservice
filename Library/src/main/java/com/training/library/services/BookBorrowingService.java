@@ -41,6 +41,7 @@ public class BookBorrowingService {
 	@Autowired
 	private UserService userService;
 	private static final String OPERATION_SUCCESS = "operation.success";
+	private static final String DATE_FORMAT="yyyy-MM-dd";
 	@Autowired
 	private Environment env;
 
@@ -64,21 +65,21 @@ public class BookBorrowingService {
 		if (!dto.isDeletedAt()) {
 			if (dto.isUser()) {
 				return bookBorrowingRepository.findAllwithSearchByBorrowingDate(dto.getSearch(), pageble, userName,
-						new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
-						new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()));
+						new SimpleDateFormat(DATE_FORMAT).parse(dto.getStartDate()),
+						new SimpleDateFormat(DATE_FORMAT).parse(dto.getEndDate()));
 			}
 			return bookBorrowingRepository.findAllwithSearchBorrowingDate(dto.getSearch(), pageble,
-					new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
-					new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()));
+					new SimpleDateFormat(DATE_FORMAT).parse(dto.getStartDate()),
+					new SimpleDateFormat(DATE_FORMAT).parse(dto.getEndDate()));
 		} else {
 			if (dto.isUser()) {
 				return bookBorrowingRepository.findAllwithSearchByReturnDate(dto.getSearch(), pageble, userName,
-						new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
-						new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()));
+						new SimpleDateFormat(DATE_FORMAT).parse(dto.getStartDate()),
+						new SimpleDateFormat(DATE_FORMAT).parse(dto.getEndDate()));
 			}
 			return bookBorrowingRepository.findAllwithSearchReturnDate(dto.getSearch(), pageble,
-					new SimpleDateFormat("yyyy-MM-dd").parse(dto.getStartDate()),
-					new SimpleDateFormat("yyyy-MM-dd").parse(dto.getEndDate()));
+					new SimpleDateFormat(DATE_FORMAT).parse(dto.getStartDate()),
+					new SimpleDateFormat(DATE_FORMAT).parse(dto.getEndDate()));
 		}
 	}
 

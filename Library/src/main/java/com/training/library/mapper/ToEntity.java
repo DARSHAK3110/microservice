@@ -22,7 +22,6 @@ public abstract class ToEntity {
 
 	@AfterMapping
 	public void setLocationOnBookStatusTreeDTO(BookDto bookDto, @MappingTarget BookStatus book) {
-		System.out.println(book);
 		book.setLocation(mapLocationFromLocationId(bookDto.getLocationId()));
 	}
 
