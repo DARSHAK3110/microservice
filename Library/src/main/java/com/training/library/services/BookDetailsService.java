@@ -2,6 +2,7 @@ package com.training.library.services;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -153,7 +154,6 @@ public class BookDetailsService {
 				user = userService.newUser(userName);
 			}
 			upload.setUser(user);
-			upload.setUser(user);
 			uploadRepository.save(upload);
 		}
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
@@ -212,6 +212,7 @@ public class BookDetailsService {
 		ExcelToDtoMapper mapper = new ExcelToDtoMapper(file);
 		List<BookDto> booksDto = mapper.mapToList(BookDto.class);
 		List<BookStatus> books = dtoToEntity.toBookStatus(booksDto);
+		List<BookStatus> resultBSList = new ArrayList<>(); 
 		Upload upload = new Upload();
 		upload.setFileName(file.getOriginalFilename());
 		User user = userService.findByPhone(Long.parseLong(userName));
@@ -220,22 +221,24 @@ public class BookDetailsService {
 		}
 		upload.setUser(user);
 		BookDetails bookDetails = findBookDetailsByISBN(isbn);
-		System.out.println(bookDetails.getBookStatus().size());
+	
 		if (bookDetails != null) {
 			for (BookStatus book : books) {
 				book.setAvailable(true);
 				book.setUpload(upload);
-				bookDetails.addBookStatus(book);
+				book.setReserved(false);
+				resultBSList.add(book);
 				bookDetails.setAvailableCopies(bookDetails.getAvailableCopies() + 1L);
 				bookDetails.setTotalCopies(bookDetails.getTotalCopies() + 1L);
 				Location location = book.getLocation();
 				location.setIsAvailable(false);
 				locationService.updateLocationAvailability(location);
 			}
+			bookDetails.addAllBookStatus(resultBSList);
 		}
-System.out.println(upload+"abcs");
-		upload.addAllBookDetails(List.of(bookDetails));
+		upload.addBookDetails(bookDetails);
 		uploadRepository.save(upload);
+		
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 

@@ -22,7 +22,15 @@ public abstract class ToEntity {
 
 	@AfterMapping
 	public void setLocationOnBookStatusTreeDTO(BookDto bookDto, @MappingTarget BookStatus book) {
-		book.setLocation(mapLocationFromLocationId(bookDto.getLocationId()));
+		Location location = mapLocationFromLocationId(bookDto.getLocationId());
+		if(location == null) {
+			throw new RuntimeException("The Location is invalid:" + bookDto.getLocationId());
+				
+		}if (!location.getIsAvailable()) {
+			throw new RuntimeException("The Location with id:" + location.getLocationId() + "already reserved!!");
+		} else {
+			book.setLocation(location);
+		}
 	}
 
 	@BeforeMapping
@@ -30,12 +38,20 @@ public abstract class ToEntity {
 		Long locationId = bookDto.getLocationId();
 		BookStatus bookStatus = bookStatusService.findByLocationId(locationId);
 		Location location = locationService.findLocationById(locationId);
+		if(location == null) {
+			throw new RuntimeException("The Location with id: "+  locationId+"is invalid");
+				
+		}
 		if (bookStatus != null) {
+			if (!location.getIsAvailable()) {
+				throw new RuntimeException("The Location with id:" + location.getLocationId() + "already reserved!!");
+			} else {
+				bookStatus.setLocation(location);
+			}
 			Location locationNowAvailable = bookStatus.getLocation();
 			locationNowAvailable.setIsAvailable(true);
 			locationService.updateLocationAvailability(locationNowAvailable);
 			bookStatus.setAvailable(true);
-			bookStatus.setLocation(location);
 		}
 		return bookStatus;
 	}

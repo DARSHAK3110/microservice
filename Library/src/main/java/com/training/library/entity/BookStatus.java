@@ -38,7 +38,7 @@ public class BookStatus {
 	private List<BookBorrowing> bookBorrowing;
 
 	@Column(name = "is_available")
-	private boolean isAvailable;
+	private boolean isAvailable=true;
 
 	@Column(name = "is_reserved")
 	private boolean isReserved = false;

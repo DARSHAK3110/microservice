@@ -3,6 +3,7 @@ package com.training.library.entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -177,9 +178,16 @@ public class BookDetails {
 		this.favourite = favourite;
 	}
 
-	public void addBookStatus(BookStatus bs) {
+	public BookStatus addBookStatus(BookStatus bs) {
 		bs.setBookDetails(this);
 		getBookStatus().add(bs);
+		return bs;
+	}
+
+	public void addAllBookStatus(List<BookStatus> resultBSList) {
+		List<BookStatus> bs = getBookStatus();
+		List<BookStatus> result = resultBSList.stream().map(res->addBookStatus(res)).collect(Collectors.toList());
+		bs.addAll(result);
 	}
 
 }
