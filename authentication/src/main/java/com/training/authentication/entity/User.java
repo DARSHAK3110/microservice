@@ -36,6 +36,9 @@ public class User implements Serializable {
 	@Column(name = "phone_number")
 	private Long phoneNumber;
 
+	@Column(name = "email", unique = true, nullable = false)
+	private String email;
+
 	@Column(name = "role")
 	@Enumerated(value = EnumType.STRING)
 	private Roles role;
@@ -59,6 +62,14 @@ public class User implements Serializable {
 
 	public User() {
 		super();
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public Long getUserId() {

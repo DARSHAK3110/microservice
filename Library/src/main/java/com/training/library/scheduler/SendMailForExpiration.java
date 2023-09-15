@@ -4,17 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.training.library.services.BookBorrowingService;
 import com.training.library.services.BookReservationService;
 
 @Component
-public class DeleteResevationSchedular {
+public class SendMailForExpiration {
+
 
 	@Autowired
-	private BookReservationService bookReservationService;
+	private BookBorrowingService bookBorrowingService;
 	
 	@Scheduled(cron = "0 0 0 * * *")
-		public void deleteReservationSchedulerMethod() {
-			bookReservationService.deleteByReservationDate();
+		public void sendMailBookBorrowingSchedulerMethod() {
+		bookBorrowingService.sendMailForRemember();
 		}
 	
 }

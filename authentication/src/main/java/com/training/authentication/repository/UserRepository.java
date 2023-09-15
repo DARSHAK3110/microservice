@@ -18,6 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 	
 	Optional<User> findByPhoneNumberAndDeletedAtIsNull(Long phoneNumber);
 	
-	@Query(value = "SELECT new com.training.authentication.dto.response.UserResponseDto(firstName, lastName,phoneNumber, role) from User where phoneNumber= :phoneNumber and deletedAt is null")
+	@Query(value = "SELECT new com.training.authentication.dto.response.UserResponseDto(firstName, lastName,phoneNumber, role, email) from User where phoneNumber= :phoneNumber and deletedAt is null")
 	Optional<UserResponseDto> findUser(Long phoneNumber);
+
+	Optional<User> findByEmail(String email);
 }

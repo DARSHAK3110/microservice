@@ -70,6 +70,11 @@ public class UserController {
 		UserResponseDto user = this.userSerivceImpl.getUser(Long.parseLong(userId));
 		return ResponseEntity.of(Optional.of(user));
 	}
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@GetMapping("/email/{phone}") // get user
+	public ResponseEntity<String> getEmail(@PathVariable @Min(1) Long phone) {
+		return ResponseEntity.ok(this.userSerivceImpl.getEmailByPhone(phone));
+	}
 
 	@ResponseStatus(code = HttpStatus.OK)
 	@PostMapping("/check_token")

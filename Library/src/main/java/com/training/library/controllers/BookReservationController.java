@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.training.library.dto.request.BookReservationRequestDto;
+import com.training.library.dto.request.EmailRequestDto;
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.request.ReservationStatusDto;
 import com.training.library.dto.response.BookReservationResponseDto;
@@ -69,9 +70,14 @@ public class BookReservationController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/status/{id}")
 	public ResponseEntity<CustomBaseResponseDto> saveBookReservationStatus(@PathVariable("id") Long id, @Valid @RequestBody ReservationStatusDto dto) {
-		return bookReservationService.saveBookReservationStatus(id,dto.getStatus(),dto.getBookStatusId());
+		return bookReservationService.saveBookReservationStatus(id,dto.getStatus(),dto.getBookStatusId(),dto.getEmail());
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@PostMapping("/mail/{id}")
+	public ResponseEntity<CustomBaseResponseDto> sendMailBookReservationStatus(@PathVariable("id") Long id, @Valid @RequestBody EmailRequestDto dto) {
+		return bookReservationService.sendMail(id,dto);
+	}
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
 	@GetMapping("/reservationcounter/{id}")
 	public ResponseEntity<Boolean> countBookReservationByUserPhone(@PathVariable Long id) {

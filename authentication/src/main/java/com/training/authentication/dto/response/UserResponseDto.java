@@ -9,13 +9,15 @@ public class UserResponseDto {
 	private Long phoneNumber;
 	private Roles role;
 	private String password;
+	private String email;
 
-	public UserResponseDto(String firstName, String lastName, Long phoneNumber, Roles role) {
+	public UserResponseDto(String firstName, String lastName, Long phoneNumber, Roles role, String email) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.phoneNumber = phoneNumber;
 		this.role = role;
+		this.email = email;
 	}
 
 	public Long getUserId() {
@@ -64,6 +66,14 @@ public class UserResponseDto {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public UserResponseDto() {

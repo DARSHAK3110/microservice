@@ -17,9 +17,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.training.library.dto.request.BookReservationRequestDto;
+import com.training.library.dto.request.EmailRequestDto;
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.response.BookReservationResponseDto;
 import com.training.library.dto.response.CustomBaseResponseDto;
+import com.training.library.emails.EmailSender;
 import com.training.library.entity.BookDetails;
 import com.training.library.entity.BookReservation;
 import com.training.library.entity.BookStatus;
@@ -28,6 +30,7 @@ import com.training.library.repositories.BookReservationRepository;
 import com.training.library.repositories.BookStatusRepository;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 
 @Service
 @PropertySource("classpath:message.properties")
@@ -46,7 +49,9 @@ public class BookReservationService {
 	private static final String OPERATION_SUCCESS = "operation.success";
 	@Autowired
 	private Environment env;
-
+	@Autowired
+	private EmailSender emailSender;
+	
 	public BookReservationResponseDto findBookReservation(Long id) {
 		Optional<BookReservationResponseDto> bookReservation = bookReservationRepository
 				.findByBookReservationIdAndDeletedAtIsNull(id);
@@ -130,14 +135,15 @@ public class BookReservationService {
 	}
 
 	@Transactional
-	public ResponseEntity<CustomBaseResponseDto> saveBookReservationStatus(Long id, Boolean status, Long bookStatusId) {
+	public ResponseEntity<CustomBaseResponseDto> saveBookReservationStatus(Long id, Boolean status, Long bookStatusId, String email) {
 		Optional<BookReservation> reservationOptional = bookReservationRepository.findById(id);
 		Optional<BookStatus> bookStatusOptional = null;
+		BookReservation reservation = null;
 		if (bookStatusId != null) {
 			bookStatusOptional = bookStautsRepository.findById(bookStatusId);
 		}
 		if (reservationOptional.isPresent()) {
-			BookReservation reservation = reservationOptional.get();
+			reservation = reservationOptional.get();
 			BookStatus bookStatus = reservation.getBookStatus();
 			if (bookStatus != null) {
 				bookStatus.setReserved(false);
@@ -145,6 +151,7 @@ public class BookReservationService {
 			}
 			reservation.setIsAccepted(status);
 			bookReservationRepository.save(reservation);
+			
 			if (status) {
 
 				if (bookStatusOptional.isPresent()) {
@@ -152,14 +159,16 @@ public class BookReservationService {
 					reservation.setBookStatus(newBookStatus);
 					newBookStatus.setReserved(true);
 					bookStatusService.updateReservation(newBookStatus);
+//					emailSender.sendSimpleMessage(email, "Reservation is accepted", "hello", "");
 				}
 
 			} else {
 				bookReservationRepository.deleteByBookReservationId(id);
+//				emailSender.sendSimpleMessage(email, "Reservation is rejected", "hello", "");
 			}
 
 		}
-		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
+		return ResponseEntity.ok(new CustomBaseResponseDto(reservation.getReserver().getPhone().toString()));
 	}
 
 	public Long getTotalReservations(Long bookDetailsId) {
@@ -211,5 +220,18 @@ public class BookReservationService {
 	public void setReservationFinished(Long phone, Long bookStatusId) {
 		User user = userService.findByPhone(phone);
 		bookReservationRepository.deleteByReservationFinished(user.getUserId(), bookStatusId);
+	}
+
+	public ResponseEntity<CustomBaseResponseDto> sendMail(Long id, EmailRequestDto dto) {
+		String status = (dto.getStatus()) ? " Accepted" : " Rejected";
+		Optional<BookReservation> bookReservationOptional = bookReservationRepository.findById(id);
+		BookReservation bookReservation = null;
+		if(bookReservationOptional.isPresent()) {
+			bookReservation = bookReservationOptional.get();
+		}
+		String subject = "Your Reservation for book  " + bookReservation.getBookDetails().getTitle();
+		String body = (dto.getStatus()) ? "Reservation is"+status+"\n"+"Your assigned bookId: "+bookReservation.getBookReservationId() : "Sorry, But we can't serve your request right now.";
+		emailSender.sendSimpleMessage(dto.getEmail(), subject,body);
+		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 }

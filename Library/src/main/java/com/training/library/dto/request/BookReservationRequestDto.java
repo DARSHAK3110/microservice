@@ -12,6 +12,15 @@ public class BookReservationRequestDto {
 	@Min(value = 1, message = "bookReservation.validation.bookDetails.id")
 	private Long bookDetailsId;
 	private Date reservationDate;
+	private String email;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	public BookReservationRequestDto() {
 		super();

@@ -3,6 +3,8 @@ package com.training.library.services;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.training.library.dto.request.BookBorrowingRequestDto;
 import com.training.library.dto.request.FilterDto;
 import com.training.library.dto.response.BookBorrowingResponseDto;
 import com.training.library.dto.response.CustomBaseResponseDto;
+import com.training.library.emails.EmailSender;
 import com.training.library.entity.BookBorrowing;
 import com.training.library.entity.BookDetails;
 import com.training.library.entity.BookStatus;
@@ -31,6 +35,8 @@ import jakarta.transaction.Transactional;
 public class BookBorrowingService {
 
 	@Autowired
+	private EmailSender emailSender;
+	@Autowired
 	private BookBorrowingRepository bookBorrowingRepository;
 	@Autowired
 	private BookStatusService bookStatusService;
@@ -40,8 +46,10 @@ public class BookBorrowingService {
 	private BookReservationService bookReservationService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private RestTemplate restTemplate;
 	private static final String OPERATION_SUCCESS = "operation.success";
-	private static final String DATE_FORMAT="yyyy-MM-dd";
+	private static final String DATE_FORMAT = "yyyy-MM-dd";
 	@Autowired
 	private Environment env;
 
@@ -91,7 +99,8 @@ public class BookBorrowingService {
 		BookBorrowing br = new BookBorrowing();
 		if (borrower == null) {
 			borrower = userService.newUser(dto.getPhone().toString());
-		}br.setBorrower(borrower);
+		}
+		br.setBorrower(borrower);
 		br.setBookStatus(bookStatus);
 		BookDetails bookDetails = bookStatus.getBookDetails();
 		bookDetailService.setAvailableCopies(bookDetails, "checkIn");
@@ -102,8 +111,8 @@ public class BookBorrowingService {
 		br.setUser(user);
 		bookStatusService.updateBookStatusAvailability(bookStatus);
 		bookBorrowingRepository.save(br);
-		if(dto.getIsReserved()) {
-			bookReservationService.setReservationFinished(dto.getPhone(),dto.getBookStatusId());	
+		if (dto.getIsReserved()) {
+			bookReservationService.setReservationFinished(dto.getPhone(), dto.getBookStatusId());
 		}
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
@@ -138,19 +147,44 @@ public class BookBorrowingService {
 	public Boolean countBookBorrowingByUserPhone(Long id) {
 
 		Long counter = bookBorrowingRepository.countByDeletedAtIsNullAndBorrower_Phone(id);
-		if(counter<3) {
+		if (counter < 3) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public Boolean checkUserForDeletion(Long id) {
 
 		Long counter = bookBorrowingRepository.countByDeletedAtIsNullAndBorrower_Phone(id);
-		System.out.println(counter);
-		if(counter>0) {
+		if (counter > 0) {
 			return true;
 		}
 		return false;
 	}
+
+	public void sendMailForRemember() {
+		Calendar startDate = Calendar.getInstance();
+		startDate.add(Calendar.DATE, -7);
+		startDate.set(Calendar.HOUR_OF_DAY, 0);
+		startDate.set(Calendar.MINUTE, 0);
+		startDate.set(Calendar.SECOND, 0);
+
+		Calendar endDate = Calendar.getInstance();
+		endDate.add(Calendar.DATE, -6);
+		endDate.set(Calendar.HOUR_OF_DAY, 0);
+		endDate.set(Calendar.MINUTE, 0);
+		endDate.set(Calendar.SECOND, 0);
+		List<BookBorrowing> borrowings = bookBorrowingRepository
+				.findAllByCreatedAtBetweenAndDeletedAtIsNull(startDate.getTime(), endDate.getTime());
+		borrowings.forEach(b -> {
+			String email = restTemplate.getForObject(
+					"http://localhost:8090/api/v1/users/email/" + b.getBorrower().getPhone(), String.class);
+			String subject = "This is reminder!!!";
+			String body = "Today is last day for return the book.\nThe book with title: "
+					+ b.getBookStatus().getBookDetails().getTitle()
+					+ " has been expired today. \nYou must return it today\nOtherwise you will be charged 500$";
+			emailSender.sendSimpleMessage(email, subject, body);
+		});
+	}
+
 }

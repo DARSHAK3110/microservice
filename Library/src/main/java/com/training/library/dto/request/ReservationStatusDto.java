@@ -6,6 +6,15 @@ public class ReservationStatusDto {
 	@Min(value = 1, message = "bookReservation.validation.bookstatus.id")
 	private Long bookStatusId;
 	private Boolean status = false;
+	private String email;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	public Long getBookStatusId() {
 		return bookStatusId;

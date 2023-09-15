@@ -34,6 +34,7 @@ import com.training.authentication.security.CustomUserDetail;
 import com.training.authentication.security.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.validation.constraints.Min;
 
 @Service
 public class UserService {
@@ -52,7 +53,8 @@ public class UserService {
 	@Autowired
 	private LogRepository logRepository;
 	public String ACCESS_STRING = "access";
-	private String REFRESH_STRING = "refresh"; 
+	private String REFRESH_STRING = "refresh";
+
 	public Page<UserResponseDto> getAllUsers(FilterDto searchWord) {
 		return userSpecifications.searchSpecification(searchWord);
 	}
@@ -72,6 +74,11 @@ public class UserService {
 		user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 		user.setPhoneNumber(userDto.getPhoneNumber());
 		user.setRole(Roles.valueOf(userDto.getRole()));
+		user.setEmail(userDto.getEmail());
+		Optional<User> userByEmail = userRepository.findByEmail(user.getEmail());
+		if(userByEmail.isPresent()) {
+			throw new RuntimeException("This email already used!!");
+		}
 		this.userRepository.save(user);
 		Map<String, Object> map = new HashedMap<>();
 		map.put("name", user.getFirstName() + " " + user.getLastName());
@@ -107,9 +114,6 @@ public class UserService {
 			savedUser.setLastName(user.getLastName());
 			savedUser.setUpdatedAt(new Date());
 			this.userRepository.save(savedUser);
-			Map<String, Object> map = new HashedMap<>();
-			map.put("name", user.getFirstName() + " " + user.getLastName());
-			map.put("role", user.getRole());
 			return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 		}
 		return null;
@@ -154,7 +158,7 @@ public class UserService {
 			subject = claims.getSubject();
 		}
 
-		Claims refreshClaim = this.jwtService.extractAllClaims(tokenDto.getRefreshToken(), REFRESH_STRING );
+		Claims refreshClaim = this.jwtService.extractAllClaims(tokenDto.getRefreshToken(), REFRESH_STRING);
 		if (refreshClaim.getSubject().equals(subject)) {
 			return generateToken(Long.parseLong(subject));
 		}
@@ -174,5 +178,13 @@ public class UserService {
 	public Map<String, Object> getClaims(String jwt) {
 		Claims extractAllClaims = jwtService.extractAllClaims(jwt, ACCESS_STRING);
 		return new HashMap<>(extractAllClaims);
+	}
+
+	public String getEmailByPhone(@Min(1) Long phone) {
+		Optional<User> userOptional = userRepository.findByPhoneNumberAndDeletedAtIsNull(phone);
+		if (userOptional.isPresent()) {
+			return userOptional.get().getEmail();
+		}
+		return null;
 	}
 }

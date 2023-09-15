@@ -1,6 +1,7 @@
 package com.training.library.repositories;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -46,5 +47,7 @@ public interface BookBorrowingRepository extends JpaRepository<BookBorrowing, Lo
 			Date endDate);
 
 	Long countByDeletedAtIsNullAndBorrower_Phone(Long id);
+
+	List<BookBorrowing> findAllByCreatedAtBetweenAndDeletedAtIsNull(Date time, Date time2);
 	
 }

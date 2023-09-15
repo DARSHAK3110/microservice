@@ -2,6 +2,8 @@ package com.training.authentication.dto.request;
 
 import com.training.authentication.constraint.PhoneNumberConstraint;
 import com.training.authentication.constraint.RoleConstraint;
+
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -28,6 +30,9 @@ public class UserRequestDto {
 	@Size(min = 6, max = 8, message = "validation.passwordSize")
 	private String password;
 
+	@Email
+	private String email;
+
 	public Long getUserId() {
 		return userId;
 	}
@@ -46,6 +51,14 @@ public class UserRequestDto {
 
 	public String getLastName() {
 		return lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public void setLastName(String lastName) {
