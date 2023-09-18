@@ -3,6 +3,7 @@ package com.training.library.repositories;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,5 +50,7 @@ public interface BookBorrowingRepository extends JpaRepository<BookBorrowing, Lo
 	Long countByDeletedAtIsNullAndBorrower_Phone(Long id);
 
 	List<BookBorrowing> findAllByCreatedAtBetweenAndDeletedAtIsNull(Date time, Date time2);
+
+	List<BookBorrowing> findAllByCreatedAtBeforeAndDeletedAtIsNull(Date time);
 	
 }

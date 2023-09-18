@@ -1,11 +1,15 @@
 package com.training.library.services;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -162,7 +166,7 @@ public class BookBorrowingService {
 		return false;
 	}
 
-	public void sendMailForRemember() {
+	public void sendMailForRememberBeforeExpiration(){
 		Calendar startDate = Calendar.getInstance();
 		startDate.add(Calendar.DATE, -7);
 		startDate.set(Calendar.HOUR_OF_DAY, 0);
@@ -180,11 +184,48 @@ public class BookBorrowingService {
 			String email = restTemplate.getForObject(
 					"http://localhost:8090/api/v1/users/email/" + b.getBorrower().getPhone(), String.class);
 			String subject = "This is reminder!!!";
-			String body = "Today is last day for return the book.\nThe book with title: "
-					+ b.getBookStatus().getBookDetails().getTitle()
-					+ " has been expired today. \nYou must return it today\nOtherwise you will be charged 500$";
-			emailSender.sendSimpleMessage(email, subject, body);
+			String body = "<div>Today is last day for return the book.</div><div>The book with title: " + "<b>"
+					+ b.getBookStatus().getBookDetails().getTitle() + "</b>"
+					+ " has been expired today.</div><div>You must return it today Otherwise you will be charged 500$</div>";
+			try {
+				emailSender.sendSimpleMessage(email, subject, body, false);
+			} catch (MessagingException | IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		});
 	}
 
+	public void sendMailForRememberAfterExpiration() {
+		Calendar startDate = Calendar.getInstance();
+		startDate.add(Calendar.DATE, -7);
+		startDate.set(Calendar.HOUR_OF_DAY, 0);
+		startDate.set(Calendar.MINUTE, 0);
+		startDate.set(Calendar.SECOND, 0);
+
+		List<BookBorrowing> borrowings = bookBorrowingRepository
+				.findAllByCreatedAtBeforeAndDeletedAtIsNull(startDate.getTime());
+		borrowings.forEach(b -> {
+			Calendar expireDate = Calendar.getInstance();
+			expireDate.setTime(b.getCreatedAt());
+			expireDate.add(Calendar.DATE, +7);
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			String email = restTemplate.getForObject(
+					"http://localhost:8090/api/v1/users/email/" + b.getBorrower().getPhone(), String.class);
+			String subject = "This is reminder!!! You already lost the date for book "
+					+ b.getBookStatus().getBookDetails().getTitle();
+			String body = "<div><span style='color:red'>" + formatter.format(expireDate.getTime())
+					+ "</span> was last day for return the book.</div><div>The book with title:" + "<b>"
+					+ b.getBookStatus().getBookDetails().getTitle() + "</b>" + "had been expired already. </div>"
+					+ "<div><span style='color:red'>*You must return it today and you have to pay 500$</span></div>";
+			try {
+				emailSender.sendSimpleMessage(email, subject, body, false);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+
+	}
 }

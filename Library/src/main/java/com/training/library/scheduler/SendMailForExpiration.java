@@ -16,7 +16,7 @@ public class SendMailForExpiration {
 	
 	@Scheduled(cron = "0 0 0 * * *")
 		public void sendMailBookBorrowingSchedulerMethod() {
-		bookBorrowingService.sendMailForRemember();
+		bookBorrowingService.sendMailForRememberBeforeExpiration();
+		bookBorrowingService.sendMailForRememberAfterExpiration();
 		}
-	
 }

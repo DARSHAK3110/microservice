@@ -1,11 +1,14 @@
 package com.training.library.services;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -222,7 +225,7 @@ public class BookReservationService {
 		bookReservationRepository.deleteByReservationFinished(user.getUserId(), bookStatusId);
 	}
 
-	public ResponseEntity<CustomBaseResponseDto> sendMail(Long id, EmailRequestDto dto) {
+	public ResponseEntity<CustomBaseResponseDto> sendMail(Long id, EmailRequestDto dto) throws MessagingException, IOException {
 		String status = (dto.getStatus()) ? " Accepted" : " Rejected";
 		Optional<BookReservation> bookReservationOptional = bookReservationRepository.findById(id);
 		BookReservation bookReservation = null;
@@ -231,7 +234,7 @@ public class BookReservationService {
 		}
 		String subject = "Your Reservation for book  " + bookReservation.getBookDetails().getTitle();
 		String body = (dto.getStatus()) ? "Reservation is"+status+"\n"+"Your assigned bookId: "+bookReservation.getBookReservationId() : "Sorry, But we can't serve your request right now.";
-		emailSender.sendSimpleMessage(dto.getEmail(), subject,body);
+		emailSender.sendSimpleMessage(dto.getEmail(), subject,body,true);
 		return ResponseEntity.ok(new CustomBaseResponseDto(env.getRequiredProperty(OPERATION_SUCCESS)));
 	}
 }

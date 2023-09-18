@@ -1,6 +1,9 @@
 package com.training.library.controllers;
 
+import java.io.IOException;
 import java.text.ParseException;
+
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -75,7 +78,7 @@ public class BookReservationController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/mail/{id}")
-	public ResponseEntity<CustomBaseResponseDto> sendMailBookReservationStatus(@PathVariable("id") Long id, @Valid @RequestBody EmailRequestDto dto) {
+	public ResponseEntity<CustomBaseResponseDto> sendMailBookReservationStatus(@PathVariable("id") Long id, @Valid @RequestBody EmailRequestDto dto) throws MessagingException, IOException {
 		return bookReservationService.sendMail(id,dto);
 	}
 	@PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
